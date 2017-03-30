@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Generate Flyway database migrations with current timestamp name.
+
+set -e
+function usage {
+  echo -e "Usage: $0 <description>\n"
+  echo    "Example: "
+  echo    "  $ $0 \"added user_id index to users\""
+  echo    "  > 20170101010101__added_user_id_index_to_users"
+
+  exit -1
+}
+
+test -z "$1" && usage
+
+MIGRATION_PATH=resources/sql/
+DESCRIPTION=${1//\ /_}
+DATE=$(date "+%Y%m%d%H%M%S")
+SQL="${MIGRATION_PATH}V${DATE}__${DESCRIPTION}.sql"
+
+echo $SQL
+touch $SQL
