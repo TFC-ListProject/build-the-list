@@ -17,7 +17,7 @@ Build the most exhaustive list of campaigns down to the district level.
 ## Running
 
 ```
-python pdf_etl/pdf_extract.py -f resources/sample_presidential_nj.pdf
+python build_the_list/pdf_extract.py -f resources/sample_presidential_nj.pdf
 ```
 
 ## Tests
