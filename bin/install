@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -e
+
+command -v brew >/dev/null 2>&1 ||
+  { echo >&2 "Homebrew is required. Please install from https://brew.sh"; exit 1; }
+
+R="\x1B[1;31m"
+G="\x1B[1;32m"
+W="\x1B[0m"
+
+function output {
+  echo -e "${R}${1}${W}"
+}
+
+case $SHELL in
+  /bin/bash)
+    profile=~/.bash_profile
+    ;;
+  /bin/zsh)
+    profile=~/.zshrc
+    ;;
+esac
+
+already_activated=`cat $profile | grep activate.sh | wc -c`
+
+if [[ $already_activated -eq 0 ]]; then
+  brew install autoenv
+  echo "source $(brew --prefix autoenv)/activate.sh" >> $profile
+fi
+
+if [ ! -d ".venv" ]; then
+  echo install virtualenv
+  pip install virtualenv
+  virtualenv -p /usr/local/bin/python2 .venv --no-site-packages
+  echo "source .venv/bin/activate" > .env
+  source .venv/bin/activate
+
+  pip install -r requirements.txt
+
+  echo
+  echo Please run the following:
+  output "source .venv/bin/activate"
+else
+  pip install -r requirements.txt
+fi
