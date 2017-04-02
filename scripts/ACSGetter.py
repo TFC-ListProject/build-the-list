@@ -10,82 +10,108 @@
 #
 # https://docs.google.com/spreadsheets/d/177Enys9L3UfaPNaGbXLE8zJHc-tLzO206Zum9NbQPXI/edit?usp=sharing
 
-import requests
-import urllib
-import csv
-import os
+import configparser
 import logging
+import os
 import sys
-import state_config
 
-def main():
+import requests
+import state_config
+import pandas as pd
+
+
+def main(year):
     # list of state FIPS codes
     state_codes = {k: v['numeric_code'] for k, v in state_config.state_fips_codes.items()
                    if v['status'] == 'State'}
 
-    # list of get variables
-    # TODO: rework to handle variables over 50 var max
-    get_vars = ['DP04_0002E','DP05_0001E','DP05_0002E','DP05_0003E','DP05_0082E','DP05_0083E','DP05_0084E','DP03_0063E','DP03_0062E','DP05_0028E','DP05_0029E','DP05_0030E','DP05_0031E','DP05_0032E','DP05_0033E','DP05_0034E','DP05_0039E','DP05_0047E','DP05_0052E','DP05_0053E','DP05_0054E','DP05_0055E','DP05_0056E','DP05_0057E','DP05_0058E','DP05_0059E','DP05_0060E','DP05_0061E','DP05_0062E','DP05_0063E','DP05_0064E','DP05_0065E','DP05_0066E','DP05_0071E','DP05_0072E','DP05_0073E','DP05_0074E','DP05_0075E','DP05_0076E','DP05_0077E','DP05_0078E','DP05_0079E','DP05_0080E']
-    get_string = "NAME," + ",".join(get_vars)
+    # parse config
+    config = configparser.ConfigParser()
+    config.read('acs_config.ini')
+    field_filename = config[year]['field_file']
+    field_df = pd.read_csv(field_filename, sep='\t', index_col=0)
+    max_api_fields = int(config[year]['max_api_fields_per_get'])
+    url = config[year]['url']
+    row_key = config[year]['row_key']
+    get_vars = [f for f in config[year]['fields'].split('\n') if f]
 
     # data to call
-    for_hierarchies = [['state+legislative+district+(upper+chamber):*','upper_chamber'],['state+legislative+district+(lower+chamber):*','lower_chamber']]
-
-    url = 'http://api.census.gov/data/2015/acs5/profile'
-    prep, s = make_session(url)
+    # TODO: move to config?
+    for_hierarchies = [
+        ['state+legislative+district+(upper+chamber):*', 'upper_chamber'],
+        ['state+legislative+district+(lower+chamber):*', 'lower_chamber']
+    ]
 
     try:
         acs_key = os.environ['ACS_API_KEY']
-    except:
+    except KeyError:
         logging.error('ACS_API_KEY must be set')
         sys.exit(1)
 
     # loop through levels and states
     for hierarchy in for_hierarchies:
+        all_results = pd.DataFrame()
         for state, state_code in state_codes.items():
             logging.info('running:%s', state)
-            get_acs(acs_key, get_string, hierarchy, state_code, url, prep, s)
-
-# set up session
-def make_session(url):
-    s = requests.Session()
-    req = requests.Request(method='GET', url=url)
-    prep = req.prepare()
-    return prep, s
-
-# function to get list of variables appended by state, new csv by hierarchy
-def get_acs(acs_key, get_string, for_hierarchy, state_code, url, prep, s):
-    in_var = 'state:' + state_code
-
-    payload = {
-        'get': get_string,
-        'for': for_hierarchy[0],
-        'in': in_var,
-        'key': acs_key,
-    }
-
-    # translate url encoding back for plus sign
-    qry = urllib.urlencode(payload).replace('%2B', '+')
-    prep.url = url + '?' + qry
-
-    # occasionally throws errors
-    # TODO: handle problematic returns
-    try:
-        # get output
-        r = s.send(prep)
-        # grab output in json format
-        req_return = r.json()
-        # if not first state, drop the header
-        if(state_code != '01'): req_return.pop(0)
+            state_result = get_acs(acs_key, row_key, get_vars, hierarchy,
+                                   state_code, url, max_api_fields)
+            all_results = pd.concat([all_results, state_result])
 
         # write to csv
-        # TODO: concatenation across 50+ variables
-        out_file = for_hierarchy[1] + '.csv'
-        with open(out_file, 'a') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerows(req_return)
-    except: pass
+        all_results = translate_columns(all_results, field_df)
+        all_results.to_csv(hierarchy[1] + '.csv', index=False)
+
+
+def translate_columns(target_df, field_df):
+    # TODO: label should be MUCH more human consumable than it
+    # currently is in the tsv file
+    columns = target_df.columns
+    new_columns = []
+    for col in columns:
+        if col in field_df.index:
+            new_columns.append(field_df.loc[col, 'Label'])
+        else:
+            new_columns.append(col)
+    target_df.columns = new_columns
+    return target_df
+
+
+# function to get list of variables appended by state
+def get_acs(acs_key, row_key, get_vars, for_hierarchy, state_code, url, max_fields):
+
+    get_splits = [get_vars[x:x+max_fields] for x in range(0, len(get_vars), max_fields)]
+    results = pd.DataFrame()
+
+    for field_list in get_splits:
+        gets = [row_key] + field_list
+
+        payload = {
+            'get': ",".join(gets),
+            'for': for_hierarchy[0],
+            'in': 'state:' + state_code,
+            'key': acs_key,
+        }
+        payload_str = "&".join("%s=%s" % (k, v) for k, v in payload.items())
+
+        # occasionally throws errors
+        # TODO: handle problematic returns
+        try:
+            # grab output in json format
+            logging.info('requesting %d fields', len(field_list))
+            resp = requests.get(url, params=payload_str)
+            req_return = resp.json()
+            req_df = pd.DataFrame(req_return[1:], columns=req_return[0])
+            if results.empty:
+                results = req_df
+            else:
+                cols_to_use = req_df.columns.difference(results.columns).union([row_key])
+                results = results.merge(req_df[cols_to_use], on=row_key)
+        except:
+            logging.error('ACS request failed')
+
+    return results
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-    main()
+    YEAR = '2015'
+    main(YEAR)
