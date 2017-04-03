@@ -24,6 +24,16 @@ def candidates(extracted_pdf):
         extracted_pdf[17],
     ]
 
+def candidates2(extracted_pdf):
+    filtered = _filtered2(extracted_pdf)
+    return [
+        filtered[1],
+        filtered[3],
+        filtered[5],
+        filtered[7],
+        filtered[9],
+    ]
+
 def parties(extracted_pdf):
     return [
         extracted_pdf[2],
@@ -35,6 +45,16 @@ def parties(extracted_pdf):
         extracted_pdf[14],
         extracted_pdf[16],
         extracted_pdf[18],
+    ]
+
+def parties2(extracted_pdf):
+    filtered = _filtered2(extracted_pdf)
+    return [
+        filtered[2],
+        filtered[4],
+        filtered[6],
+        filtered[8],
+        filtered[10],
     ]
 
 def votes_by_municipality(extracted_pdf):
@@ -54,17 +74,60 @@ def votes_by_municipality(extracted_pdf):
 
     return municipalities
 
+def votes_by_municipality2(extracted_pdf):
+    f = _filtered2(extracted_pdf)[11:]
+
+    county_indicies     = [0, 5, 266]
+    municipality_counts = [2, 37, 15]
+    vote_idx_start      = [44, 47, 284]
+    column_step         = [41, 41, 17]
+    candidate_count     = 5
+
+    results = {}
+    for index, county_index in enumerate(county_indicies):
+        municipalities_in_county = []
+        for j in range(county_index + 1, county_index + 1 + municipality_counts[index]):
+            municipalities_in_county.append(f[j])
+
+        def vote_counts_by_municipality_for_county(acc, memo):
+            """
+            1. Get first vote count column's index for a single row.
+            2. Get the rest of the indices for that row based on the step value.
+            3. For each index, get its value and convert it to an integer.
+            """
+            first_column_idx = vote_idx_start[index] + len(acc)
+            indices = [first_column_idx] + [column_step[index] * j + first_column_idx for j in range(1, candidate_count)]
+            vote_counts = [_stoi(f[i]) for i in indices]
+            acc[memo] = vote_counts
+            return acc
+
+        results[f[county_index]] = reduce(vote_counts_by_municipality_for_county, municipalities_in_county, {})
+
+    return results
+
 def _filtered(extracted_pdf):
     """
     Removes election lines at beginning and noise at the end.
     """
     return extracted_pdf[4:-2]
 
+def _filtered2(extracted_pdf):
+    """
+    Removes election lines at beginning and noise at the end.
+    """
+    return extracted_pdf[3:-4]
+
 def _vote_filtered(extracted_pdf):
     """
     Removes up to municipalities list and assumes list has been pre-filtered.
     """
     return extracted_pdf[19:]
+
+def _vote_filtered2(extracted_pdf):
+    """
+    Removes up to municipalities list and assumes list has been pre-filtered.
+    """
+    return extracted_pdf[11:]
 
 def _stoi(x):
     return int(x.replace(',', ''))
@@ -77,13 +140,17 @@ if __name__ == '__main__':
                         help='path to PDF file')
     args = parser.parse_args()
 
-    # 1. fetch pdf
-    # 2. extract text from pdf
-    text = _filtered(extract_pdf_text(args.file))
-    # 3. build data structure
-    candidates = candidates(text)
-    parties = parties(text)
-    votes_by_municipality = votes_by_municipality(_vote_filtered(text))
-    # 4. insert into database
+    text = extract_pdf_text(args.file)
+    candidates = candidates2(text)
+    parties = parties2(text)
+    votes_by_municipality = votes_by_municipality2(text)
 
-    print(text)
+    # text = _filtered(extract_pdf_text(args.file))
+    # candidates = candidates(text)
+    # parties = parties(text)
+    # votes_by_municipality = votes_by_municipality(_vote_filtered(text))
+
+    # print(text)
+    # print(candidates)
+    # print(parties)
+    # print(votes_by_municipality)

@@ -51,4 +51,5 @@ flyway clean -configFile=./config/flyway.{env}.conf
 
 ```
 pytest tests/
+ptw # pytest-watch: run tests automatically
 ```
