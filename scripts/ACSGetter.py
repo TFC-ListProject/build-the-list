@@ -63,13 +63,13 @@ def main(year):
 
 
 def translate_columns(target_df, field_df):
-    # TODO: label should be MUCH more human consumable than it
-    # currently is in the tsv file
+    # note that data_label field has been manually added to the dataset
+    # for some, but not all columns
     columns = target_df.columns
     new_columns = []
     for col in columns:
         if col in field_df.index:
-            new_columns.append(field_df.loc[col, 'Label'])
+            new_columns.append(field_df.loc[col, 'data_label'])
         else:
             new_columns.append(col)
     target_df.columns = new_columns
