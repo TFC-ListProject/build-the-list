@@ -3,7 +3,7 @@ import scrapy
 class VpapDistrictItem(scrapy.Item):
   name = scrapy.Field()
   url = scrapy.Field()
-  representative_name = scrapy.Field()
+  representativeName = scrapy.Field()
 
 class VpapDistrictCandidateItem(scrapy.Item):
   district = scrapy.Field()
@@ -21,6 +21,10 @@ class VpapDistrictCandidateItem(scrapy.Item):
   withdrew = scrapy.Field()
 
 class VpapDistrictVoteHistoryForOtherElection(scrapy.Item):
-  election_name = scrapy.Field()
-  party = scrapy.Field()
+  district = scrapy.Field()
+  electionName = scrapy.Field()
+  vpapElectionId = scrapy.Field()
+  candidateName = scrapy.Field()
+  candidateParty = scrapy.Field()
+  numVotes = scrapy.Field()
   percentage = scrapy.Field()

@@ -23,7 +23,7 @@ class VpapPipeline(object):
     try:
       if type(item) is VpapDistrictCandidateItem:
         self.cursor.execute("""
-          INSERT INTO candidates
+          INSERT INTO district_house_candidates
           (district, year, electionType, firstName, lastName, party, percentage, numVotes,
            dollars, wasIncumbent, wasWinner, withdrew)
           VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -31,10 +31,16 @@ class VpapPipeline(object):
            item.get('lastName'), item.get('party'), item.get('percentage'),  item.get('numVotes'),
            item.get('dollars'), item.get('wasIncumbent'), item.get('wasWinner'),
            item.get('withdrew')))
-      elif type(item) is VpapDistrictItem:
-        self.cursor.execute("""INSERT INTO categories (id, name) VALUES(%s, %s)""", (item.get('id'), item.get('code'), ))
+      elif type(item) is VpapDistrictVoteHistoryForOtherElection:
+        self.cursor.execute("""
+          INSERT INTO statewide_candidates
+          (district, electionName, vpapElectionId, candidateName, candidateParty, numVotes,
+          percentage)
+          VALUES(%s, %s, %s, %s, %s, %s, %s)""",
+          (item.get('district'), item.get('electionName'), item.get('vpapElectionId'),
+           item.get('candidateName'), item.get('candidateParty'), item.get('numVotes'),
+           item.get('percentage')))
       self.connection.commit()
-      # self.cursor.fetchall()
 
     except psycopg2.DatabaseError, e:
       print "Error: %s" % e
