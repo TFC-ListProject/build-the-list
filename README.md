@@ -24,8 +24,24 @@ These are required and will be install automatically if missing.
 
 ## Running
 
+### PDF Extraction
+
+PDFs currently require some manual preprocessing. Run
+
 ```
-python build_the_list/pdf_extract.py -f resources/sample_presidential_nj.pdf
+python build_the_list/pdf_extract.py -f path/to/pdf -o
+```
+
+and update the `config/pdf_meta.json` file with the following properties:
+
+* `candidates`: list of candidate names
+* `parties`: list of party names
+* `county_indices`: list of indices where counties list starts
+* `total_row_indices`: list of indices where totals are described
+* `skip_row_indices`: list of indices of rows to not process
+
+```
+python build_the_list/pdf_extract.py -f path/to/pdf
 ```
 
 ## Migrations

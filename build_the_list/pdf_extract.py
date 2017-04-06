@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import re
+import sys
 
 def extract_pdf_text(file_name):
     tmp_filename = file_name + '.tmp'
@@ -55,13 +56,22 @@ def votes_by_municipality(rows, config):
 def _stoi(x):
     return int(x.replace(',', ''))
 
-def get_config(file_name):
+def get_config(pdf_name):
+    return open_config('config/pdf_meta.json')[pdf_name]
+
+def open_config(file_name):
     with open(file_name) as f:
         return json.load(f)
 
+
+
 def debug(extracted_pdf):
-    for i, x in enumerate(extracted_pdf):
-        print("'" + x + "',")
+    for i, row in enumerate(extracted_pdf):
+        print("'" + row + "',")
+
+def preprocess(extracted_pdf):
+    for i, row in enumerate(extracted_pdf):
+        print(str(i), ': ' + row)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -69,9 +79,16 @@ if __name__ == '__main__':
                         '--file',
                         required=True,
                         help='path to PDF file')
+    parser.add_argument('-o',
+                        '--output',
+                        action='store_true',
+                        help='output PDF for preprocessing')
     args = parser.parse_args()
-    config = get_config('config/pdf_meta.json')[args.file.split('/')[1]]
     text = extract_pdf_text(args.file)
+    if args.output:
+        preprocess(text)
+        sys.exit()
+    config = get_config(args.file.split('/')[1])
 
     print(candidates(config))
     print(parties(config))
