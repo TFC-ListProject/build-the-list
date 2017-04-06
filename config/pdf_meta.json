@@ -40,5 +40,32 @@
         "county_indices": [5, 31, 36, 46, 65, 88, 103, 122],
         "total_row_indices": [30, 35, 39, 64, 81, 102, 115, 140],
         "skip_row_indices": [0, 1, 2, 3, 4, 40, 41, 42, 43, 44, 45, 82, 83, 84, 85, 86, 87, 116, 117, 118, 119, 120, 121, 141, 142]
+    },
+    "sample_presidential_nj.pdf": {
+        "candidates": [
+            "Hillary Rodham Clinton",
+            "Donald J. Trump",
+            "Gary Johnson",
+            "Jill Stein",
+            "Darrell Castle",
+            "Alyson Kennedy",
+            "Rocky Roque De la Fuente",
+            "Monica Moorehead",
+            "Gloria La Riva"
+        ],
+        "parties": [
+            "Democratic",
+            "Republican",
+            "Libertarian Party",
+            "Green Party",
+            "Constitution Party",
+            "Socialist Workers Party",
+            "American Delta Party",
+            "Workers World Party",
+            "Socialism and Liberation"
+        ],
+        "county_indices": [],
+        "total_row_indices": [],
+        "skip_row_indices": []
     }
 }

@@ -60,10 +60,8 @@ def get_config(pdf_name):
     return open_config('config/pdf_meta.json')[pdf_name]
 
 def open_config(file_name):
-    with open(file_name) as f:
+    with open(file_name, 'r') as f:
         return json.load(f)
-
-
 
 def debug(extracted_pdf):
     for i, row in enumerate(extracted_pdf):
