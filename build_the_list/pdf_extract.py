@@ -1,52 +1,8 @@
 from __future__ import print_function
 import argparse
-import re
+import json
 import os
-
-config = {
-    'sample_hor_nj1.pdf': {
-        'candidates': [
-            'Donald W. Norcross',
-            'Bob Patterson',
-            'Michael Berman',
-            'William F. Sihr IV',
-            'Scot John Tomaszewski',
-        ],
-        'parties': [
-            'Democratic',
-            'Republican',
-            'AmericanIndependents.org',
-            'Libertarian Party',
-            'We Deserve Better',
-        ],
-        'county_indices': [3, 7, 49],
-        'total_row_indices': [6, 44, 64],
-        'skip_row_indices': [0, 1, 2, 3, 45, 46, 47, 48, 65, 66],
-    },
-    'sample_hor_nj2.pdf': {
-        'candidates': [
-            'Frank A. LoBiondo',
-            'David H. Cole',
-            'Eric Beechwood',
-            'Steven Fenichel',
-            'Gabriel Brian Franco',
-            'James Keenan',
-            'John Ordille',
-        ],
-        'parties': [
-            'Republican',
-            'Democratic',
-            "People's Independent Progressive",
-            'Representing the 99%',
-            'For Political Revolution',
-            'Make Government Work',
-            'Libertarian Party',
-        ],
-        'county_indices': [5, 31, 36, 46, 65, 88, 103, 122],
-        'total_row_indices': [30, 35, 39, 64, 81, 102, 115, 140],
-        'skip_row_indices': [0, 1, 2, 3, 4, 40, 41, 42, 43, 44, 45, 82, 83, 84, 85, 86, 87, 116, 117, 118, 119, 120, 121, 141, 142]
-    }
-}
+import re
 
 def extract_pdf_text(file_name):
     tmp_filename = file_name + '.tmp'
@@ -99,7 +55,11 @@ def votes_by_municipality(rows, config):
 def _stoi(x):
     return int(x.replace(',', ''))
 
-def output(extracted_pdf):
+def get_config(file_name):
+    with open(file_name) as f:
+        return json.load(f)
+
+def debug(extracted_pdf):
     for i, x in enumerate(extracted_pdf):
         print("'" + x + "',")
 
@@ -110,7 +70,7 @@ if __name__ == '__main__':
                         required=True,
                         help='path to PDF file')
     args = parser.parse_args()
-    config = config[args.file.split('/')[1]]
+    config = get_config('config/pdf_meta.json')[args.file.split('/')[1]]
     text = extract_pdf_text(args.file)
 
     print(candidates(config))

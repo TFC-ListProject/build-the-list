@@ -1,0 +1,44 @@
+{
+    "sample_hor_nj1.pdf": {
+        "candidates": [
+            "Donald W. Norcross",
+            "Bob Patterson",
+            "Michael Berman",
+            "William F. Sihr IV",
+            "Scot John Tomaszewski"
+        ],
+        "parties": [
+            "Democratic",
+            "Republican",
+            "AmericanIndependents.org",
+            "Libertarian Party",
+            "We Deserve Better"
+        ],
+        "county_indices": [3, 7, 49],
+        "total_row_indices": [6, 44, 64],
+        "skip_row_indices": [0, 1, 2, 3, 45, 46, 47, 48, 65, 66]
+    },
+    "sample_hor_nj2.pdf": {
+        "candidates": [
+            "Frank A. LoBiondo",
+            "David H. Cole",
+            "Eric Beechwood",
+            "Steven Fenichel",
+            "Gabriel Brian Franco",
+            "James Keenan",
+            "John Ordille"
+        ],
+        "parties": [
+            "Republican",
+            "Democratic",
+            "People's Independent Progressive",
+            "Representing the 99%",
+            "For Political Revolution",
+            "Make Government Work",
+            "Libertarian Party"
+        ],
+        "county_indices": [5, 31, 36, 46, 65, 88, 103, 122],
+        "total_row_indices": [30, 35, 39, 64, 81, 102, 115, 140],
+        "skip_row_indices": [0, 1, 2, 3, 4, 40, 41, 42, 43, 44, 45, 82, 83, 84, 85, 86, 87, 116, 117, 118, 119, 120, 121, 141, 142]
+    }
+}
