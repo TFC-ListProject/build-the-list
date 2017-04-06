@@ -18,6 +18,7 @@ function output {
 # required homebrew programs
 command -v psql >/dev/null 2>&1 || { brew install postgresql; }
 command -v flyway >/dev/null 2>&1 || { brew install flyway; }
+command -v ps2ascii >/dev/null 2>&1 || { brew install gs; }
 
 case $SHELL in
   /bin/bash)

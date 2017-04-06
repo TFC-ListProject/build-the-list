@@ -13,6 +13,7 @@ These are required and will be install automatically if missing.
 
 * [Autoenv](https://github.com/kennethreitz/autoenv) - per-project shell environment
 * [Flyway](https://flywaydb.org/) - database migrations
+* [Ghostscript](https://www.ghostscript.com/)
 * [Postgresql](https://www.postgresql.org/) - relational database
 
 ## Installation
