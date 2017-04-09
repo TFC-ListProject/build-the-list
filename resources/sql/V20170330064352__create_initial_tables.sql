@@ -4,6 +4,11 @@ CREATE TABLE IF NOT EXISTS candidates (
     last_name varchar(255) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS counties (
+    id SERIAL PRIMARY KEY,
+    name varchar(255) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS district_types (
     id SERIAL PRIMARY KEY,
     name CITEXT NOT NULL
@@ -19,6 +24,11 @@ CREATE TABLE IF NOT EXISTS districts (
 );
 CREATE UNIQUE INDEX idx_districts_state_lower_unique ON districts (lower(state));
 CREATE INDEX idx_districts_district_type_id ON districts(district_type_id);
+
+CREATE TABLE IF NOT EXISTS counties_districts (
+    county_id integer REFERENCES counties(id) NOT NULL,
+    district_id integer REFERENCES districts(id) NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS election_types (
     id SERIAL PRIMARY KEY,
@@ -38,20 +48,28 @@ CREATE INDEX idx_elections_election_type_id ON elections(election_type_id);
 
 CREATE TABLE IF NOT EXISTS municipalities (
     id SERIAL PRIMARY KEY,
-    district_id integer REFERENCES districts(id) NOT NULL,
+    county_id integer REFERENCES counties(id) NOT NULL,
     name varchar(255) NOT NULL
 );
-CREATE INDEX idx_elections_district_id ON municipalities(district_id);
+CREATE INDEX idx_municipalities_county_id ON municipalities(county_id);
 
 CREATE TABLE IF NOT EXISTS parties (
     id SERIAL PRIMARY KEY,
     name varchar(255) NOT NULL
 );
+CREATE UNIQUE INDEX idx_parties_name_lower_unique ON parties (lower(name));
 
 CREATE TABLE IF NOT EXISTS candidates_elections (
     candidate_id integer REFERENCES candidates(id) NOT NULL,
     election_id integer REFERENCES elections(id) NOT NULL,
     party_id integer REFERENCES parties(id) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS county_election_results (
+    candidate_id integer REFERENCES candidates(id) NOT NULL,
+    county_id integer REFERENCES counties(id) NOT NULL,
+    election_id integer REFERENCES elections(id) NOT NULL,
+    votes integer NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS district_election_results (
