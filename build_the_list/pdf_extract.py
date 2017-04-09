@@ -20,7 +20,7 @@ def candidates(config):
 def parties(config):
     return config['parties']
 
-def votes_by_municipality(rows, config):
+def votes_by_municipality_with_counties(rows, config):
     county_indices = config['county_indices']
     total_row_indices = config['total_row_indices']
     skip_row_indices = config['skip_row_indices']
@@ -28,30 +28,62 @@ def votes_by_municipality(rows, config):
     current_county = None
 
     for i, row in enumerate(rows):
-        if i in county_indices:
+        if i in skip_row_indices:
+            pass
+        elif i in county_indices:
             current_county = row.strip()
             results[row] = {}
-        elif i in skip_row_indices:
-            pass
+        elif i in total_row_indices:
+            total_row_with_blank_muni_match = r'(?<=\d)([a-zA-Z]+\stotal.+$)'
+            if re.search(total_row_with_blank_muni_match, row, re.IGNORECASE):
+                total_row = re.sub(total_row_with_blank_muni_match, '', row, flags=re.IGNORECASE)
+                votes = re.search(r'(\d+.+)$', total_row).group(0)
+                muni_name = total_row.replace(votes, '').strip()
+                vote_counts = map(lambda x: _stoi(x), votes.split(' '))
+                results[current_county][muni_name] = vote_counts
         else:
-            if i in total_row_indices:
-                total_row_with_blank_muni_match = r'(?<=\d)([a-zA-Z]+\sTotals.+$)'
-                if re.search(total_row_with_blank_muni_match, row):
-                    total_row = re.sub(total_row_with_blank_muni_match, '', row)
-                    votes = re.search(r'(\d+.+)$', total_row).group(0)
-                    muni_name = total_row.replace(votes, '').strip()
-                    vote_counts = map(lambda x: _stoi(x), votes.split(' '))
-                    results[current_county][muni_name] = vote_counts
-            else:
-                votes_match = re.search(r'(\d+.+)$', row)
-                if votes_match:
-                    votes = votes_match.group(0)
-                    muni_name = row.replace(votes, '').strip()
-                    vote_counts = map(lambda x: _stoi(x), votes.split(' '))
-                    results[current_county][muni_name] = vote_counts
-            pass
+            votes_match = re.search(r'(\d+.+)$', row)
+            if votes_match:
+                votes = votes_match.group(0)
+                muni_name = row.replace(votes, '').strip()
+                vote_counts = map(lambda x: _stoi(x), votes.split(' '))
+                results[current_county][muni_name] = vote_counts
 
     return results
+
+def votes_by_municipality_without_counties(rows, config):
+    total_row_indices = config['total_row_indices']
+    skip_row_indices = config['skip_row_indices']
+    results = {}
+
+    for i, row in enumerate(rows):
+        if i in skip_row_indices:
+            pass
+        elif i in total_row_indices:
+            total_row_with_blank_muni_match = r'(?<=\d)([a-zA-Z]+\stotal.+$)'
+            if re.search(total_row_with_blank_muni_match, row, re.IGNORECASE):
+                total_row = re.sub(total_row_with_blank_muni_match, '', row, flags=re.IGNORECASE)
+                votes = re.search(r'(\d+.+)$', total_row).group(0)
+                muni_name = total_row.replace(votes, '').strip()
+                vote_counts = map(lambda x: _stoi(x), votes.split(' '))
+                results[muni_name] = vote_counts
+        else:
+            votes_match = re.search(r'(\d+.+)$', row)
+            if votes_match:
+                votes = votes_match.group(0)
+                muni_name = row.replace(votes, '').strip()
+                vote_counts = map(lambda x: _stoi(x), votes.split(' '))
+                results[muni_name] = vote_counts
+    return results
+
+def votes_by_foo(rows, config):
+    reduce
+
+def votes_by_municipality(extract_pdf, config):
+    return {
+        True: votes_by_municipality_with_counties,
+        False: votes_by_municipality_without_counties
+    }[config['has_counties']](extract_pdf, config)
 
 def _stoi(x):
     return int(x.replace(',', ''))
@@ -86,8 +118,8 @@ if __name__ == '__main__':
     if args.output:
         preprocess(text)
         sys.exit()
-    config = get_config(args.file.split('/')[1])
 
-    print(candidates(config))
-    print(parties(config))
-    print(votes_by_municipality(text, config))
+    config = get_config(args.file.split('/')[1])
+    # print(candidates(config))
+    # print(parties(config))
+    # print(votes_by_municipality(text, config))
