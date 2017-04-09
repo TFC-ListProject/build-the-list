@@ -17,19 +17,42 @@ function error {
 function go_db {
   output "accessing database"
 
+  DB_ACTION=NONE
+  DB_NAME=buildthelist
+  DB_ROLE=techforcampaigns
   ENVIRONMENT=development
 
-  while getopts ":e:dn:" opt; do
+  while getopts ":e:cd" opt; do
      case $opt in
+       c)
+         DB_ACTION=CREATE
+         ;;
+       d)
+         DB_ACTION=DROP
+         ;;
        e)
          ENVIRONMENT=$OPTARG
          ;;
      esac
   done
 
-  case $ENVIRONMENT in
-    development)
-      psql -U techforcampaigns -d build_the_list
+  case $DB_ACTION in
+    CREATE)
+      psql postgres -c 'create role "'"$DB_ROLE"'" login createdb'
+      psql postgres -c 'CREATE DATABASE '"$DB_NAME"''
+      psql ${DB_NAME} -c 'CREATE EXTENSION citext'
+      ;;
+    DROP)
+      psql postgres -c 'DROP DATABASE '"$DB_NAME"''
+      psql postgres -c 'DROP role '"$DB_ROLE"''
+      ;;
+    NONE)
+      case $ENVIRONMENT in
+        development)
+          psql -U "${DB_ROLE}" -d "${DB_NAME}"
+          ;;
+        #production)
+      esac
       ;;
   esac
 }
@@ -62,6 +85,8 @@ function go_help {
   output ""
   output "Available commands are:"
   output "    db          Access database CLI"
+  output "      -c        Create database in environment"
+  output "      -d        Drops database in environment"
   output "      -e        Environment [development (default)|production]"
   output "    extract_pdf Extract text from PDF"
   output "      -f        Path to file"
@@ -69,8 +94,8 @@ function go_help {
   output "    help        Describes usage"
   output "    install     Installs required software"
   output "    migrate     Runs database migration"
+  output "      -d        Drops tables in environment"
   output "      -e        Environment [development (default)|production]"
-  output "      -d        Drops database in environment"
   output "      -n        Create new migration with given string"
   output "    test        Runs automated tests"
   output "      -w        Run tests continuously"
