@@ -105,6 +105,7 @@ function go_help {
 function go_install {
   output "running install"
   ./bin/install
+  ./go db -c
 }
 
 function go_migrate {
