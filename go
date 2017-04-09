@@ -38,18 +38,18 @@ function go_db {
 
   case $DB_ACTION in
     CREATE)
-      psql postgres -c 'create role "'"$DB_ROLE"'" login createdb'
-      psql postgres -c 'CREATE DATABASE '"$DB_NAME"''
-      psql ${DB_NAME} -c 'CREATE EXTENSION citext'
+      psql postgres -c 'CREATE ROLE "'"$DB_ROLE"'" login createdb'
+      psql postgres -c 'CREATE DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
+      psql "$DB_NAME"_"$ENVIRONMENT" -c 'CREATE EXTENSION citext'
       ;;
     DROP)
-      psql postgres -c 'DROP DATABASE '"$DB_NAME"''
-      psql postgres -c 'DROP role '"$DB_ROLE"''
+      psql postgres -c 'DROP DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
+      psql postgres -c 'DROP ROLE '"$DB_ROLE"''
       ;;
     NONE)
       case $ENVIRONMENT in
-        development)
-          psql -U "${DB_ROLE}" -d "${DB_NAME}"
+        test|development)
+          psql -U "${DB_ROLE}" -d "${DB_NAME}"_"$ENVIRONMENT"
           ;;
         #production)
       esac
@@ -87,7 +87,7 @@ function go_help {
   output "    db          Access database CLI"
   output "      -c        Create database in environment"
   output "      -d        Drops database in environment"
-  output "      -e        Environment [development (default)|production]"
+  output "      -e        Environment [test|development (default)|production]"
   output "    extract_pdf Extract text from PDF"
   output "      -f        Path to file"
   output "      -o        Output PDF as indexed list"
@@ -95,7 +95,7 @@ function go_help {
   output "    install     Installs required software"
   output "    migrate     Runs database migration"
   output "      -d        Drops tables in environment"
-  output "      -e        Environment [development (default)|production]"
+  output "      -e        Environment [test|development (default)|production]"
   output "      -n        Create new migration with given string"
   output "    test        Runs automated tests"
   output "      -w        Run tests continuously"
