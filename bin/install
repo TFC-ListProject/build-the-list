@@ -7,14 +7,6 @@ command -v brew >/dev/null 2>&1 || {
   exit 1
 }
 
-R="\x1B[1;31m"
-G="\x1B[1;32m"
-W="\x1B[0m"
-
-function output {
-  echo -e "${R}${1}${W}"
-}
-
 # required homebrew programs
 command -v psql >/dev/null 2>&1 || { brew install postgresql; }
 command -v flyway >/dev/null 2>&1 || { brew install flyway; }
@@ -29,10 +21,10 @@ case $SHELL in
     ;;
 esac
 
-already_activated=`cat $profile | grep activate.sh | wc -c`
+ALREADY_ACTIVATED=`cat $profile | grep activate.sh | wc -c`
 
 # configure autoenv
-if [[ $already_activated -eq 0 ]]; then
+if [[ $ALREADY_ACTIVATED -eq 0 ]]; then
   brew install autoenv
   echo "source $(brew --prefix autoenv)/activate.sh" >> $profile
 fi
@@ -49,7 +41,5 @@ if [ ! -d ".venv" ]; then
 
   echo
   echo Please run the following:
-  output "source .venv/bin/activate"
-else
-  pip install -qr requirements.txt
+  echo"source .venv/bin/activate"
 fi

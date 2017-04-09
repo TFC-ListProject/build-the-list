@@ -19,7 +19,7 @@ These are required and will be install automatically if missing.
 ## Installation
 
 ```
-./bin/install
+./go/install
 ```
 
 ## Running
@@ -29,19 +29,20 @@ These are required and will be install automatically if missing.
 PDFs currently require some manual preprocessing. Run
 
 ```
-python build_the_list/pdf_extract.py -f path/to/pdf -o
+./go extract_pdf -f path/to/pdf -o
 ```
 
 and update the `config/pdf_meta.json` file with the following properties:
 
 * `candidates`: list of candidate names
 * `parties`: list of party names
+* `has_counties`: `true` if results have municipalities and counties, `false` if just municipalities
 * `county_indices`: list of indices where counties list starts
 * `total_row_indices`: list of indices where totals are described
 * `skip_row_indices`: list of indices of rows to not process
 
 ```
-python build_the_list/pdf_extract.py -f path/to/pdf
+./go extract_pdf -f path/to/pdf
 ```
 
 ## Migrations
@@ -49,24 +50,24 @@ python build_the_list/pdf_extract.py -f path/to/pdf
 Create a new migration:
 
 ```
-./bin/migration "description of migration"
+./go migrate -n "description of migration"
 ```
 
 Run all pending migrations:
 
 ```
-flyway migrate -q -locations=filesystem:./resources/sql/ -configFile=./config/flyway.{env}.conf
+./go migrate -e {env}
 ```
 
 Truncate all migrated tables, removing all data:
 
 ```
-flyway clean -configFile=./config/flyway.{env}.conf
+./go migrate -e {env} -d
 ```
 
 ## Tests
 
 ```
-pytest tests/
-ptw # pytest-watch: run tests automatically
+./go test
+./go test -w # run tests continuously with pytest-watch
 ```
