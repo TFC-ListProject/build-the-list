@@ -26,3 +26,17 @@ def test_insert_candidates():
     result = db.insert_candidates(DB, candidates)
 
     assert result == expected
+
+def test_insert_candidates_as_lowercase():
+    DB.query('TRUNCATE candidates RESTART IDENTITY CASCADE')
+    candidates = ['Hillary Rodham Clinton ', 'Donald J. Trump', 'Jill Stein']
+    db.insert_candidates(DB, candidates)
+
+    expected = [
+        { 'first_name': 'hillary', 'last_name': 'rodham clinton', 'id': 1 },
+        { 'first_name': 'donald',  'last_name': 'j. trump',       'id': 2 },
+        { 'first_name': 'jill',    'last_name': 'stein',          'id': 3 },
+    ]
+    result = DB.query('SELECT * FROM candidates').as_dict()
+
+    assert result == expected
