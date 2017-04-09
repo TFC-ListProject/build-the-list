@@ -29,7 +29,7 @@ function go_db {
 
   case $ENVIRONMENT in
     development)
-      psql -U techforcampaigns -d postgres
+      psql -U techforcampaigns -d build_the_list
       ;;
   esac
 }
