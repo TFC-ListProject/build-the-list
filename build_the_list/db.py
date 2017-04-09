@@ -9,7 +9,7 @@ def insert_candidates_sql(candidates):
 
     def build_values_sql(l):
         head, rest = l[0], l[1:]
-        return "('{}', '{}')".format(head, ' '.join(rest))
+        return "('{}', '{}')".format(_format_str(head), _format_str(' '.join(rest)))
     values_sql = ', '.join(map(build_values_sql, split))
     return """
     INSERT INTO candidates (first_name, last_name) VALUES
@@ -20,6 +20,9 @@ def insert_candidates_sql(candidates):
 def insert_candidates(db, candidates):
     sql = insert_candidates_sql(candidates)
     return db.query(sql).as_dict()
+
+def _format_str(s):
+    return s.lower().strip()
 
 if __name__ == '__main__':
     db = db()

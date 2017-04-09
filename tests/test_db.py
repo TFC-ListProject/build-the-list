@@ -17,7 +17,7 @@ def test_insert_candidates_sql():
 
 def test_insert_candidates():
     DB.query('TRUNCATE candidates RESTART IDENTITY CASCADE')
-    candidates = ['c 1', 'c 2', 'c 3 4']
+    candidates = ['Hillary Rodham Clinton', 'Donald J. Trump', 'Jill Stein']
     expected = [
         { 'id': 1 },
         { 'id': 2 },
