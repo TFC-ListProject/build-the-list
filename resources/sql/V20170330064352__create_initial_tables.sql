@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS parties (
     id SERIAL PRIMARY KEY,
     name varchar(255) NOT NULL
 );
+CREATE UNIQUE INDEX idx_parties_name_lower_unique ON parties (lower(name));
 
 CREATE TABLE IF NOT EXISTS candidates_elections (
     candidate_id integer REFERENCES candidates(id) NOT NULL,
