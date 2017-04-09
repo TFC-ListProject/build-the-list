@@ -6,8 +6,10 @@ CREATE TABLE IF NOT EXISTS candidates (
 
 CREATE TABLE IF NOT EXISTS district_types (
     id SERIAL PRIMARY KEY,
-    name varchar(100) NOT NULL
+    name CITEXT NOT NULL
 );
+CREATE UNIQUE INDEX idx_district_types_name_unique ON district_types (name);
+CREATE UNIQUE INDEX idx_district_types_name_lower_unique ON district_types (lower(name));
 
 CREATE TABLE IF NOT EXISTS districts (
     id SERIAL PRIMARY KEY,
@@ -20,8 +22,10 @@ CREATE INDEX idx_districts_district_type_id ON districts(district_type_id);
 
 CREATE TABLE IF NOT EXISTS election_types (
     id SERIAL PRIMARY KEY,
-    name varchar(100) NOT NULL
+    name CITEXT NOT NULL
 );
+CREATE UNIQUE INDEX idx_election_types_name_unique ON election_types (name);
+CREATE UNIQUE INDEX idx_election_types_name_lower_unique ON election_types (lower(name));
 
 CREATE TABLE IF NOT EXISTS elections (
     id SERIAL PRIMARY KEY,

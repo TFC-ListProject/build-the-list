@@ -45,6 +45,10 @@ and update the `config/pdf_meta.json` file with the following properties:
 ./go extract_pdf -f path/to/pdf
 ```
 
+### Database
+
+We should probably insert all strings as lowercase for consistency. There are tables such as `district_types` that use [`citext` module](https://www.postgresql.org/docs/9.6/static/citext.html) to internally call `lower` in queries. Consider modifying `varchar` fields to `citext` if we want this elsewhere.
+
 ## Migrations
 
 Create a new migration:
