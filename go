@@ -14,6 +14,26 @@ function error {
   echo -e "${R}${1}${W}"
 }
 
+function go_db {
+  output "accessing database"
+
+  ENVIRONMENT=development
+
+  while getopts ":e:dn:" opt; do
+     case $opt in
+       e)
+         ENVIRONMENT=$OPTARG
+         ;;
+     esac
+  done
+
+  case $ENVIRONMENT in
+    development)
+      psql -U techforcampaigns -d postgres
+      ;;
+  esac
+}
+
 function go_extract_pdf {
   output "extracting PDF"
   PDF=unset
@@ -41,6 +61,8 @@ function go_help {
   output "Usage: ./go <command> [sub-command]"
   output ""
   output "Available commands are:"
+  output "    db          Access database CLI"
+  output "      -e        Environment [development (default)|production]"
   output "    extract_pdf Extract text from PDF"
   output "      -f        Path to file"
   output "      -o        Output PDF as indexed list"
@@ -117,6 +139,10 @@ function go_update {
 CMD=${1:-help}
 
 case "$CMD" in
+  db)
+    shift
+    go_db "$@"
+    ;;
   extract_pdf)
     shift
     go_extract_pdf "$@"
