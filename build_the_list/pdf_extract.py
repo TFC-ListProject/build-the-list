@@ -1,5 +1,6 @@
 from __future__ import print_function
 import argparse
+import db
 import json
 import os
 import re
@@ -120,6 +121,18 @@ if __name__ == '__main__':
         sys.exit()
 
     config = get_config(args.file.split('/')[1])
+
+    candidates = candidates(config)
+    parties = parties(config)
+    votes = votes_by_municipality(text, config)
+    # print(votes)
+
+    db.save(
+        candidates,
+        parties,
+        votes
+    )
+
     # print(candidates(config))
     # print(parties(config))
     # print(votes_by_municipality(text, config))
