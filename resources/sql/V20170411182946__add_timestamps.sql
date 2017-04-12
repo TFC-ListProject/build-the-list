@@ -1,0 +1,11 @@
+ALTER TABLE candidates ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE counties ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE district_types ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE districts ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE election_types ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE elections ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE municipalities ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE parties ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE county_election_results ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE district_election_results ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE municipality_election_results ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
