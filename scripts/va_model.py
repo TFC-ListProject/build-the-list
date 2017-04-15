@@ -82,8 +82,9 @@ def generate_features(database):
 
     # add target
     df['dem_won'] = df['votes_d'] > df['votes_r']
+    df['total_votes'] = df['votes_d'] + df['votes_r']
 
-    feature_columns = ['dollars_r', 'dollars_d']
+    feature_columns = ['dollars_r', 'dollars_d', 'total_votes']
     target_column = 'dem_won'
 
     # filter out NAs.. TODO may not be desirec for all columns
