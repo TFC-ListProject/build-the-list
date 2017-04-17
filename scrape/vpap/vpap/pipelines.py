@@ -10,13 +10,13 @@ from vpap.items import *
 
 class VpapPipeline(object):
   def __init__(self):
-      self.connection = psycopg2.connect(
-        host='localhost',
-        database='vpap_spider',
-        user='scrapy',
-        password='Scr@py!'
-      )
-      self.cursor = self.connection.cursor()
+    self.connection = psycopg2.connect(
+      host='localhost',
+      database='vpap_spider',
+      user='scrapy',
+      password='Scr@py!'
+    )
+    self.cursor = self.connection.cursor()
 
   def process_item(self, item, spider):
     # check item type to decide which table to insert
