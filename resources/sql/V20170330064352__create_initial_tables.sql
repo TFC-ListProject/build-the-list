@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS elections (
     id SERIAL PRIMARY KEY,
     election_type_id integer REFERENCES election_types(id) NOT NULL,
     year smallint NOT NULL,
-    state varchar(2)
+    state varchar(2) NOT NULL
 );
 CREATE INDEX idx_elections_election_type_id ON elections(election_type_id);
 

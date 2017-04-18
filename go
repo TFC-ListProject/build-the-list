@@ -38,13 +38,14 @@ function go_db {
 
   case $DB_ACTION in
     CREATE)
-      psql postgres -c 'CREATE ROLE "'"$DB_ROLE"'" login createdb'
+      #psql postgres -c 'CREATE ROLE "'"$DB_ROLE"'" login createdb'
       psql postgres -c 'CREATE DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
+      psql postgres -c 'GRANT ALL PRIVILEGES ON '"$DB_NAME"_"$ENVIRONMENT"' TO '"$DB_ROLE"''
       psql "$DB_NAME"_"$ENVIRONMENT" -c 'CREATE EXTENSION citext'
       ;;
     DROP)
       psql postgres -c 'DROP DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
-      psql postgres -c 'DROP ROLE '"$DB_ROLE"''
+      #psql postgres -c 'DROP ROLE '"$DB_ROLE"''
       ;;
     NONE)
       case $ENVIRONMENT in
@@ -74,9 +75,9 @@ function go_extract_pdf {
   done
 
   if [ "$OUTPUT_FLAG" = true ] ; then
-      python build_the_list/pdf_extract.py -f "$PDF" -o
+      python build_the_list/main.py -f "$PDF" -o
   else
-      python build_the_list/pdf_extract.py -f "$PDF"
+      python build_the_list/main.py -f "$PDF"
   fi
 }
 

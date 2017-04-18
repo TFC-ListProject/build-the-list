@@ -14,10 +14,17 @@
             "Libertarian Party",
             "We Deserve Better"
         ],
-        "has_counties": true,
         "county_indices": [3, 7, 49],
         "total_row_indices": [6, 44, 64],
-        "skip_row_indices": [0, 1, 2, 45, 46, 47, 48, 65, 66]
+        "skip_row_indices": [0, 1, 2, 45, 46, 47, 48, 65, 66],
+        "county": null,
+        "district": {
+            "name": "District 1",
+            "type": "congressional"
+        },
+        "state": "nj",
+        "type": "legislative",
+        "year": 2016
     },
     "sample_hor_nj2.pdf": {
         "candidates": [
@@ -38,10 +45,17 @@
             "Make Government Work",
             "Libertarian Party"
         ],
-        "has_counties": true,
         "county_indices": [5, 31, 36, 46, 65, 88, 103, 122],
         "total_row_indices": [30, 35, 39, 64, 81, 102, 115, 140],
-        "skip_row_indices": [0, 1, 2, 3, 4, 40, 41, 42, 43, 44, 45, 82, 83, 84, 85, 86, 87, 116, 117, 118, 119, 120, 121, 141, 142]
+        "skip_row_indices": [0, 1, 2, 3, 4, 40, 41, 42, 43, 44, 45, 82, 83, 84, 85, 86, 87, 116, 117, 118, 119, 120, 121, 141, 142],
+        "county": null,
+        "district": {
+            "name": "District 1",
+            "type": "congressional"
+        },
+        "state": "nj",
+        "type": "legislative",
+        "year": 2016
     },
     "sample_presidential_nj.pdf": {
         "candidates": [
@@ -66,8 +80,16 @@
             "Workers World Party",
             "Socialism and Liberation"
         ],
-        "has_counties": false,
+        "county_indices": [],
         "total_row_indices": [25],
-        "skip_row_indices": [0, 1, 2, 26]
+        "skip_row_indices": [0, 1, 2, 26],
+        "county": "Atlantic County",
+        "district": {
+            "name": null,
+            "type": null
+        },
+        "state": "nj",
+        "type": "presidential",
+        "year": 2016
     }
 }
