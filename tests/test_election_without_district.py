@@ -33,7 +33,7 @@ def test_get_parties():
     assert result == expected
 
 def test_get_rows():
-    config = utils.get_config('sample_presidential_nj.pdf')
+    config = utils.get_config('2016-gen-elect-presidential-results-atlantic.pdf')
     result = e.get_rows(pdf_rows, config)[0:2]
     expected = [
         [

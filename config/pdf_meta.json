@@ -1,5 +1,5 @@
 {
-    "sample_hor_nj1.pdf": {
+    "2016-municipality-hor-district1.pdf": {
         "candidates": [
             "Donald W. Norcross",
             "Bob Patterson",
@@ -26,7 +26,7 @@
         "type": "legislative",
         "year": 2016
     },
-    "sample_hor_nj2.pdf": {
+    "2016-municipality-hor-district2.pdf": {
         "candidates": [
             "Frank A. LoBiondo",
             "David H. Cole",
@@ -57,7 +57,7 @@
         "type": "legislative",
         "year": 2016
     },
-    "sample_presidential_nj.pdf": {
+    "2016-gen-elect-presidential-results-atlantic.pdf": {
         "candidates": [
             "Hillary Rodham Clinton",
             "Donald J. Trump",
