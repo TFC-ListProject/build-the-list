@@ -56,6 +56,43 @@ def party_results(party_name, database):
         group by 1, 2, 3
     ''' % ((party_name, ) * 4), con=build_con_string(database))
 
+def party_incumbent(party_name, database):
+    return pd.read_sql('''
+    with candidate_results as (
+        select
+           e.id as election_id,
+           der.district_id,
+           der.candidate_id,
+           der.won,
+           e.year
+        from elections e
+        join election_types et
+          on e.election_type_id = et.id
+        join district_election_results der
+          on e.id = der.election_id
+        join candidates_elections ce
+          on der.candidate_id = ce.candidate_id
+          and der.election_id = ce.election_id
+        join parties p
+          on ce.party_id = p.id
+        where
+          et.name = 'state house regular'
+          and der.percentage > 0
+          and p.name = '%s'
+    )
+        select
+            c1.election_id,
+            c1.district_id,
+            count(c2.year) as incumbents_%s
+        from candidate_results c1
+        left join candidate_results c2
+          on c1.district_id = c2.district_id
+             and c1.candidate_id = c2.candidate_id
+             and c2.won = 't'
+             and c2.year < c1.year
+        group by 1, 2
+    ''' % ((party_name, ) * 2), con=build_con_string(database))
+
 def merge_to_elections_districts(df, new_df):
     merged = df.merge(new_df, how='left', on=['election_id', 'district_id'], suffixes=('', '_y'))
     cols_to_drop = [x for x in merged.columns if x.find('_y') > 0]
@@ -71,11 +108,15 @@ def generate_features(database):
     # generate other features, each should have election_id, district_id
     r_outcomes = party_results('R', database)
     d_outcomes = party_results('D', database)
+    r_incumbents = party_incumbent('R', database)
+    d_incumbents = party_incumbent('D', database)
 
     # merge in features
     df = election_set
     df = merge_to_elections_districts(df, r_outcomes)
     df = merge_to_elections_districts(df, d_outcomes)
+    df = merge_to_elections_districts(df, d_incumbents)
+    df = merge_to_elections_districts(df, r_incumbents)
 
     # merge in features, make sure we didn't expand the dataset!
     assert n_races == len(df), 'too many rows were added'
@@ -84,7 +125,10 @@ def generate_features(database):
     df['dem_won'] = df['votes_d'] > df['votes_r']
     df['total_votes'] = df['votes_d'] + df['votes_r']
 
-    feature_columns = ['dollars_r', 'dollars_d', 'total_votes']
+    feature_columns = ['dollars_r', 'dollars_d', 'total_votes',
+                       'incumbents_d', 'incumbents_r']
+    # compare to
+    feature_columns = ['incumbents_d', 'incumbents_r', 'total_votes']
     target_column = 'dem_won'
 
     # filter out NAs.. TODO may not be desirec for all columns
