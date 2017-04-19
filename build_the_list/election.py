@@ -28,6 +28,7 @@ def get_rows(rows, config):
     results = []
 
     for i, row in enumerate(rows):
+        # print(i, row) # uncomment to inspect row
         if i in skip_row_indices:
             pass
         elif i in county_indices:

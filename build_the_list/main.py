@@ -20,7 +20,6 @@ if __name__ == '__main__':
                         help='output PDF for preprocessing')
     args = parser.parse_args()
 
-    print('EXTRACTING PDF')
     rows = extract_pdf_text(args.file)
     config = utils.get_config(args.file.split('/')[1])
 
@@ -28,10 +27,8 @@ if __name__ == '__main__':
         utils.preprocess(rows)
         sys.exit()
 
-    print('PREPARING TO SAVE')
     election = e.from_pdf(rows, config)
 
-    print('SAVING')
     er.save(
         candidates=election['candidates'],
         db=db,
@@ -39,5 +36,3 @@ if __name__ == '__main__':
         election=election['election'],
         rows=election['rows']
     )
-
-    print('FINISHED')
