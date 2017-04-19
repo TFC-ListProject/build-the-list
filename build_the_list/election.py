@@ -37,11 +37,12 @@ def get_rows(rows, config):
             pass
         else:
             parsed_row = extract_row(row)
-            parsed_row['district'] = config['district']['name']
-            parsed_row['district_type'] = config['district']['type']
-            parsed_row['county'] = current_county
 
-            results.append(flatten_row(parsed_row))
+            if parsed_row:
+                parsed_row['district'] = config['district']['name']
+                parsed_row['district_type'] = config['district']['type']
+                parsed_row['county'] = current_county
+                results.append(flatten_row(parsed_row))
 
     return results
 
@@ -58,13 +59,14 @@ def extract_row(row):
         re.IGNORECASE
     )
 
-    municipality = match.group(1).strip()
-    votes = map(int, match.group(2).replace(',', '').split(' '))
+    if match:
+        municipality = match.group(1).strip()
+        votes = map(int, match.group(2).replace(',', '').split(' '))
 
-    return {
-        'municipality': municipality,
-        'votes': votes,
-    }
+        return {
+            'municipality': municipality,
+            'votes': votes,
+        }
 
 def flatten_row(row):
     return [
