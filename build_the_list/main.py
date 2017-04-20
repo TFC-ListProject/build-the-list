@@ -21,12 +21,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     rows = extract_pdf_text(args.file)
-    config = utils.get_config(args.file.split('/')[1])
 
     if args.output:
         utils.preprocess(rows)
         sys.exit()
 
+    config = utils.get_config(args.file.split('/')[1])
     election = e.from_pdf(rows, config)
 
     er.save(
