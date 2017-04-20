@@ -26,7 +26,7 @@ if __name__ == '__main__':
         utils.preprocess(rows)
         sys.exit()
 
-    config = utils.get_config(args.file.split('/')[1])
+    config = utils.get_config(args.file.split('/')[-1:][0])
     election = e.from_pdf(rows, config)
 
     er.save(
