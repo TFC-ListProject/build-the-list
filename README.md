@@ -26,20 +26,26 @@ These are required and will be install automatically if missing.
 
 ### PDF Extraction
 
-PDFs currently require some manual preprocessing. Run
+PDFs currently require some manual preprocessing.
 
-```
-./go extract_pdf -f path/to/pdf -o
-```
+* Download the list of PDFs to the `resources/tmp directory`, either manually or using something like `wget -i -P resources/tmp resources/urls.csv`.
+* `./go extract_pdf -f path/to/pdf -o`. This outputs each row number and line of text.
+* In `config/pdf_meta.json`, create a new entry in the JSON.
+* After entering values, run the above command again but without the `-o` flag. If everything goes well, it will complete without comment.
+* If there is an error, the saved data is rolled back. To debug, it's probably easiest to uncomment line 31 in `build_the_list/election.py`, rerun, and look at the row that failed. It may just be a missed row to skip.
+* Commit the updated JSON file.
 
-and update the `config/pdf_meta.json` file with the following properties:
+### PDF JSON
 
 * `candidates`: list of candidate names
-* `parties`: list of party names
-* `has_counties`: `true` if results have municipalities and counties, `false` if just municipalities
+* `county`: name of the county if applicable
 * `county_indices`: list of indices where counties list starts
-* `total_row_indices`: list of indices where totals are described
+* `district`: name and type ("congressional", "legislative") of the district if applicable
+* `parties`: list of party names
 * `skip_row_indices`: list of indices of rows to not process
+* `state`: name of the state
+* `type`: type of election ("presidential", "congressional", "legislative")
+* `year`: year of election
 
 ```
 ./go extract_pdf -f path/to/pdf
@@ -47,7 +53,10 @@ and update the `config/pdf_meta.json` file with the following properties:
 
 ### Database
 
-We should probably insert all strings as lowercase for consistency. There are tables such as `district_types` that use [`citext` module](https://www.postgresql.org/docs/9.6/static/citext.html) to internally call `lower` in queries. Consider modifying `varchar` fields to `citext` if we want this elsewhere.
+We should probably insert all strings as lowercase for consistency. There are tables such as
+`district_types` that use [`citext` module](https://www.postgresql.org/docs/9.6/static/citext.html)
+to internally call `lower` in queries. Consider modifying `varchar` fields to `citext` if we want
+this elsewhere.
 
 ## Migrations
 
