@@ -21,6 +21,17 @@
         "type": "congressional",
         "year": 2014
     },
+    "2014-us-hor-gen-elec-results-by-district-10.pdf": {
+        "candidates": ["Donald M. Payne Jr.", "Yolanda Dentley", "Gwendolyn A. Franklin", "Dark Angel"],
+        "county": null,
+        "county_indices": [56, 68, 72],
+        "district": { "name": "District 10", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Bullying Breaks Hearts", "Future.Vision."],
+        "skip_row_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 67, 71, 79, 80, 81],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2014
+    },
     "2014-us-senate-gen-elec-results-by-county-atlantic.pdf": {
         "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Eugene Martin La Vergne", "Hank Schroader", "Jeff Boss", "Antonio N. Sabas"],
         "county": "Atlantic County",
