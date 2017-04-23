@@ -61,11 +61,14 @@ def extract_row(row):
 
     if match:
         municipality = match.group(1).strip()
-        votes = map(int, match.group(2).replace(',', '').split(' '))
+
+        def to_int(s):
+            return int(s) if s != '' else None
+        votes = map(to_int, match.group(2).replace(',', '').split(' '))
 
         return {
             'municipality': municipality,
-            'votes': votes,
+            'votes': list(filter(lambda x: x is not None, votes)),
         }
 
 def flatten_row(row):

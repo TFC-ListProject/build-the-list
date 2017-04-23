@@ -64,6 +64,16 @@ def test_extract_row():
 
     assert result == expected
 
+def test_extract_row_with_extra_spaces():
+    row = 'Bloomfield 2,627  761 50 33'
+    result = e.extract_row(row)
+    expected = {
+        'municipality': 'Bloomfield',
+        'votes': [2627, 761, 50, 33],
+    }
+
+    assert result == expected
+
 def test_extract_row_with_totals():
     row = 'Weymouth Twp. 550 854 25 6 3 2 1 1 3COUNTY TOTAL 60,924 52,690 2,109 999 264 46 56 57 146'
     result = e.extract_row(row)
