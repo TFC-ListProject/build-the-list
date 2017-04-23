@@ -10,6 +10,17 @@
         "type": "congressional",
         "year": 2014
     },
+    "2014-us-hor-gen-elec-results-by-district-07.pdf": {
+        "candidates": ["Leonard Lance", "Janice Kovach", "James Gawron"],
+        "county": null,
+        "county_indices": [42, 45, 126, 131, 150, 208],
+        "district": { "name": "District 7", "type": "congressional" },
+        "parties": ["Republican", "Democratic", "Libertarian Party"],
+        "skip_row_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 44, 72, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 130, 149, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 216, 217, 218],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2014
+    },
     "2014-us-senate-gen-elec-results-by-county-atlantic.pdf": {
         "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Eugene Martin La Vergne", "Hank Schroader", "Jeff Boss", "Antonio N. Sabas"],
         "county": "Atlantic County",
