@@ -51,18 +51,128 @@
         "parties": ["Democratic", "Republican", "AmericanIndependents.org", "Libertarian Party", "We Deserve Better"],
         "skip_row_indices": [0, 1, 2, 6, 44, 45, 46, 47, 48, 49, 50, 64, 67, 68, 69],
         "state": "nj",
-        "type": "legislative",
+        "type": "congressional",
         "year": 2016
     },
     "2016-municipality-hor-district2.pdf": {
         "candidates": ["Frank A. LoBiondo", "David H. Cole", "Eric Beechwood", "Steven Fenichel", "Gabriel Brian Franco", "James Keenan", "John Ordille"],
         "county": null,
         "county_indices": [5, 31, 36, 46, 65, 88, 103, 122],
-        "district": { "name": "District 1", "type": "congressional" },
+        "district": { "name": "District 2", "type": "congressional" },
         "parties": ["Republican", "Democratic", "People's Independent Progressive", "Representing the 99%", "For Political Revolution", "Make Government Work", "Libertarian Party"],
         "skip_row_indices": [0, 1, 2, 3, 4, 30, 35, 39, 40, 41, 42, 43, 44, 45, 64, 81, 82, 83, 84, 85, 86, 87, 102, 115, 116, 117, 118, 119, 120, 121, 140, 141, 142],
         "state": "nj",
-        "type": "legislative",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district3.pdf": {
+        "candidates": ["Tom MacArthur", "Frederick John LaVergne", "Lawrence W. Berlinski Jr."],
+        "county": null,
+        "county_indices": [3, 46],
+        "district": { "name": "District 3", "type": "congressional" },
+        "parties": ["Republican", "Democratic", "Constitution Party"],
+        "skip_row_indices": [0, 1, 2, 41, 42, 43, 44, 45, 65, 66, 67],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district4.pdf": {
+        "candidates": ["Christopher H. Smith", "Lorna Phillipson", "Jeremy Marcus", "Hank Schroeder"],
+        "county": null,
+        "county_indices": [3, 8, 49],
+        "district": { "name": "District 4", "type": "congressional" },
+        "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth"],
+        "skip_row_indices": [0, 1, 2, 7, 44, 45, 46, 47, 48, 59, 60, 61],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district5.pdf": {
+        "candidates": ["Joshua S. Gottheimer", "Scott Garrett", "Claudio Belusic"],
+        "county": null,
+        "county_indices": [3, 53, 58, 80],
+        "district": { "name": "District 5", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Libertarian Party"],
+        "skip_row_indices": [0, 1, 2, 48, 49, 50, 51, 52, 57, 79, 97, 98, 99],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district6.pdf": {
+        "candidates": ["Frank Pallone Jr.", "Brent Sonnek-Schmelz", "Rajit B. Malliah", "Judith Shamy"],
+        "county": null,
+        "county_indices": [3, 18],
+        "district": { "name": "District 6", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Green Party", "Libertarian Party"],
+        "skip_row_indices": [0, 1, 2, 17, 40, 41, 42],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district7.pdf": {
+        "candidates": ["Leonard Lance", "Peter Jacob", "Dan O'Neill", "Arthur T. Haussmann Jr."],
+        "county": null,
+        "county_indices": [3, 7, 36, 54, 74, 90],
+        "district": { "name": "District 7", "type": "congressional" },
+        "parties": ["Republican", "Democratic", "Libertarian Party", "Conservative Party"],
+        "skip_row_indices": [0, 1, 2, 6, 35, 49, 50, 51, 52, 53, 73, 89, 99, 100, 101],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district8.pdf": {
+        "candidates": ["Albio Sires", "Agha Khan", "Pablo Olivera", "Dan Delaney"],
+        "county": null,
+        "county_indices": [3, 7, 12, 26],
+        "district": { "name": "District 8", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Wake Up America", "Libertarian Party"],
+        "skip_row_indices": [0, 1, 2, 6, 11, 25, 29, 30, 31],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district9.pdf": {
+        "candidates": ["Bill Pascrell Jr.", "Hector L. Castillo", "Diego Rivera", "Jeff Boss"],
+        "county": null,
+        "county_indices": [3, 33, 38],
+        "district": { "name": "District 9", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Libertarian Party", "NSA DID 911"],
+        "skip_row_indices": [0, 1, 2, 32, 37, 46, 47, 48],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district10.pdf": {
+        "candidates": ["Donald M. Payne Jr.", "David H. Pinckney", "Joanne Miller", "Aaron Walter Fraser"],
+        "county": null,
+        "county_indices": [3, 16, 21],
+        "district": { "name": "District 10", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Women of Power", "New Beginning's"],
+        "skip_row_indices": [0, 1, 2, 15, 20, 29, 30, 31],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district11.pdf": {
+        "candidates": ["Rodney P. Frelinghuysen", "Joseph M. Wenzel", "Thomas DePasquale", "Jeff Hetrick"],
+        "county": null,
+        "county_indices": [3, 19, 54, 65],
+        "district": { "name": "District 11", "type": "congressional" },
+        "parties": ["Republican", "Democratic", "Financial Independence", "Libertarian Party"],
+        "skip_row_indices": [0, 1, 2, 18, 49, 50, 51, 52, 53, 64, 72, 73, 74],
+        "state": "nj",
+        "type": "congressional",
+        "year": 2016
+    },
+    "2016-municipality-hor-district12.pdf": {
+        "candidates": ["Bonnie Watson", "Steven J. Uccio", "R. Edward Forchion", "Robert Shapiro", "Thomas Fitzpatrick", "Steven Welzer", "Michael R. Bollentin"],
+        "county": null,
+        "county_indices": [3, 16, 37, 44],
+        "district": { "name": "District 12", "type": "congressional" },
+        "parties": ["Democratic", "Republican", "Legalize Marijuana Party", "Teddy Roosevelt Progressive", "Libertarian Party", "Green Party", "We The People"],
+        "skip_row_indices": [0, 1, 2, 15, 32, 33, 34, 35, 36, 43, 49, 50, 51],
+        "state": "nj",
+        "type": "congressional",
         "year": 2016
     },
     "2016-gen-elect-presidential-results-atlantic.pdf": {
@@ -75,6 +185,50 @@
         "state": "nj",
         "type": "presidential",
         "year": 2016
+    },
+    "2016-gen-elect-presidential-results-somerset.pdf": {
+      "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
+      "county": "Sussex County",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
+      "skip_row_indices": [0, 1, 2, 24, 25],
+      "state": "nj",
+      "type": "presidential",
+      "year": 2016
+    },
+    "2016-gen-elect-presidential-results-sussex.pdf": {
+      "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
+      "county": "Sussex County",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
+      "skip_row_indices": [0, 1, 2, 28, 29],
+      "state": "nj",
+      "type": "presidential",
+      "year": 2016
+    },
+    "2016-gen-elect-presidential-results-union.pdf": {
+      "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
+      "county": "Union County",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
+      "skip_row_indices": [0, 1, 2, 24, 25],
+      "state": "nj",
+      "type": "presidential",
+      "year": 2016
+    },
+    "2016-gen-elect-presidential-results-warren.pdf": {
+      "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
+      "county": "Warren County",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
+      "skip_row_indices": [0, 1, 2, 26, 27],
+      "state": "nj",
+      "type": "presidential",
+      "year": 2016
     },
     "2015-GenAssembly-gen-elect-results-1st-ld-municipality.pdf": {
       "candidates": ["Bob Andrzejczak", "R. Bruce Land", "Sam Fiocchi", "Jim Sauro"],

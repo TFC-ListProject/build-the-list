@@ -64,7 +64,7 @@ def extract_row(row):
 
         def to_int(s):
             return int(s) if s != '' else None
-        votes = map(to_int, match.group(2).replace(',', '').split(' '))
+        votes = map(to_int, re.split('\s+', match.group(2).replace(',', '')))
 
         return {
             'municipality': municipality,
