@@ -40,7 +40,8 @@ function go_db {
     CREATE)
       #psql postgres -c 'CREATE ROLE "'"$DB_ROLE"'" login createdb'
       psql postgres -c 'CREATE DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
-      psql postgres -c 'GRANT ALL PRIVILEGES ON '"$DB_NAME"_"$ENVIRONMENT"' TO '"$DB_ROLE"''
+      psql postgres -c 'REVOKE CONNECT ON DATABASE '"$DB_NAME"_"$ENVIRONMENT"' FROM PUBLIC'
+      psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE '"$DB_NAME"_"$ENVIRONMENT"' TO '"$DB_ROLE"''
       psql "$DB_NAME"_"$ENVIRONMENT" -c 'CREATE EXTENSION citext'
       ;;
     DROP)
