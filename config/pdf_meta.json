@@ -669,5 +669,115 @@
       "state": "nj",
       "type": "legislative",
       "year": 2015
+    },
+    "2014-us-senate-gen-elec-results-by-county-middlesex.pdf": {
+      "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Antonio N. Sabas", "Eugene Martin LaVergne"],
+      "county": "Middlesex",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Democratic", "Republican", "Libertarian Party", "Economic Growth", "Independent", "Independent", "D-R Party"],
+      "skip_row_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 131, 132],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-monmouth.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Eugene Martin LaVergne", "Antonio N. Sabas"],
+      "county": "Monmouth",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth", "Independent", "D-R Party", "Independent"],
+      "skip_row_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 131, 132],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-morris.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Antonio N. Sabas", "Eugene Martin LaVergne"],
+      "county": "Morris",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth", "Independent", "Independent", "D-R Party"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,162,163],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-ocean.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Eugene Martin LaVergne", "Hank Schroeder", "Antonio N. Sabas", "Jeff Boss"],
+      "county": "Ocean",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Libertarian Party", "D-R Party", "Economic Growth", "Independent", "Independent"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,139,140],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-passaic.pdf": {
+      "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Antonio N. Sabas", "Eugene Martin LaVergne"],
+      "county": "Passaic",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": [ "Democratic", "Republican", "Libertarian Party", "Economic Growth", "Independent", "Independent", "D-R Party"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,123,124],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-salem.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Jeff Boss", "Joseph Baratelli", "Antonio N. Sabas", "Hank Schroeder", "Eugene Martin LaVergne"],
+      "county": "Salem",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Independent", "Libertarian Party", "Independent", "Economic Growth", "D-R Party"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,121,122],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-somerset.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Antonio N. Sabas", "Eugene Martin LaVergne"],
+      "county": "Somerset",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth", "Independent", "Independent", "D-R Party"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,127,128],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-sussex.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Hank Schroeder", "Antonio N. Sabas", "Jeff Boss", "Eugene Martin LaVergne"],
+      "county": "Sussex",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth", "Independent", "Independent", "D-R Party"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,130,131,132],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-union.pdf": {
+      "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Hank Schroeder", "Antonio N. Sabas", "Eugene Martin LaVergne", "Jeff Boss"],
+      "county": "Union",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Democratic", "Republican", "Libertarian Party", "Economic Growth", "Independent", "D-R Party", "Independent"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,127,128],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
+    },
+    "2014-us-senate-gen-elec-results-by-county-warren.pdf": {
+      "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Eugene Martin LaVergne", "Antonio N. Sabas"],
+      "county": "Warren",
+      "county_indices": [],
+      "district": { "name": null, "type": null },
+      "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth", "Independent", "D-R Party", "Independent"],
+      "skip_row_indices": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,128,129],
+      "state": "nj",
+      "type": "congressional",
+      "year": 2014
     }
 }
