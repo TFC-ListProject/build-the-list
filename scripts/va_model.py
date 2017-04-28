@@ -102,7 +102,8 @@ def merge_to_elections_districts(df, new_df):
 def generate_features(database):
     # base set of elections
     election_set = pd.concat([base_info(2015, database),
-                              base_info(2013, database)])
+                              base_info(2013, database),
+                              base_info(2011, database)])
     n_races = len(election_set)
 
     # generate other features, each should have election_id, district_id
