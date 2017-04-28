@@ -38,15 +38,15 @@ function go_db {
 
   case $DB_ACTION in
     CREATE)
-      #psql postgres -c 'CREATE ROLE "'"$DB_ROLE"'" login createdb'
-      psql postgres -c 'CREATE DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
-      psql postgres -c 'REVOKE CONNECT ON DATABASE '"$DB_NAME"_"$ENVIRONMENT"' FROM PUBLIC'
-      psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE '"$DB_NAME"_"$ENVIRONMENT"' TO '"$DB_ROLE"''
-      psql "$DB_NAME"_"$ENVIRONMENT" -c 'CREATE EXTENSION citext'
+      psql -q postgres -c 'CREATE ROLE "'"$DB_ROLE"'" login createdb' > /dev/null 2>&1 || true
+      psql -q postgres -c 'CREATE DATABASE '"$DB_NAME"_"$ENVIRONMENT"'' > /dev/null 2>&1 || true
+      psql -q postgres -c 'REVOKE CONNECT ON DATABASE '"$DB_NAME"_"$ENVIRONMENT"' FROM PUBLIC'
+      psql -q postgres -c 'GRANT ALL PRIVILEGES ON DATABASE '"$DB_NAME"_"$ENVIRONMENT"' TO '"$DB_ROLE"''
+      psql -q "$DB_NAME"_"$ENVIRONMENT" -cq 'CREATE EXTENSION citext' > /dev/null 2>&1 || true
       ;;
     DROP)
-      psql postgres -c 'DROP DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
-      #psql postgres -c 'DROP ROLE '"$DB_ROLE"''
+      psql -q postgres -c 'DROP DATABASE '"$DB_NAME"_"$ENVIRONMENT"''
+      psql -q postgres -c 'DROP ROLE '"$DB_ROLE"''
       ;;
     NONE)
       case $ENVIRONMENT in
