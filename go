@@ -51,9 +51,13 @@ function go_db {
     NONE)
       case $ENVIRONMENT in
         test|development)
-          psql -U "${DB_ROLE}" -d "${DB_NAME}"_"$ENVIRONMENT"
+          psql -U "$DB_ROLE" -d "$DB_NAME"_"$ENVIRONMENT"
           ;;
-        #production)
+        production)
+          psql -h "$DB_ROLE".czp6qfvbka3n.us-west-2.rds.amazonaws.com \
+            -p 5432 \
+            -U "$DB_ROLE" \
+            -d "$DB_NAME"_"$ENVIRONMENT"
       esac
       ;;
   esac
