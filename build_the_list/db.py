@@ -53,6 +53,8 @@ def save_election(conn, data):
         """
         INSERT INTO elections (election_type_id, year, state)
         VALUES (:election_type_id, :year, :state)
+        ON CONFLICT (election_type_id, state, year) DO UPDATE SET
+        election_type_id = :election_type_id, state = :state, year = :year
         RETURNING id
         """,
         election_type_id=election_type_id,
