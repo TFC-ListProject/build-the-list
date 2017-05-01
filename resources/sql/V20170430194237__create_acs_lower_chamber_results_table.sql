@@ -1,11 +1,11 @@
-CREATE TABLE census_results (
+CREATE TABLE census_lower_chamber_results (
     geographic_area_name_acs varchar(255),
     geographic_area_name varchar(255),
     api_year integer,
     data_year integer,
     state varchar(255),
     state_fips integer,
-    state_legislative_district_upper_chamber varchar(100),
+    state_legislative_district_lower_chamber varchar(100),
     median_household_income_e integer,
     mean_household_income_e integer,
     housing_total_occupied_e integer,
