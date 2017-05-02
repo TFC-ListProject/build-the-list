@@ -24,6 +24,17 @@ These are required and will be install automatically if missing.
 
 ## Running
 
+### Application
+
+```
+docker run -it --rm \
+  -p 5000:5000 \
+  -e ENV='development' \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  build_the_list
+```
+
 ### PDF Extraction
 
 PDFs currently require some manual preprocessing.
