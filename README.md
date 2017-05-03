@@ -22,6 +22,13 @@ These are required and will be install automatically if missing.
 ./go/install
 ```
 
+## Deploy
+
+```
+docker build -t build_the_list .
+eb deploy
+```
+
 ## Running
 
 ### Application
