@@ -192,15 +192,33 @@ def generate_features(database):
     df['dem_won'] = df['votes_d'] > df['votes_r']
     df['total_votes'] = df['votes_d'] + df['votes_r']
 
-    feature_columns = ['dollars_r', 'dollars_d', 'total_votes',
-                       'incumbents_d', 'incumbents_r']
-    # compare to
-    feature_columns = ['incumbents_d', 'incumbents_r', 'total_votes', 'prior_demvote_president', 'prior_demvote_senate']
+    # add normalized variables
+    df['normalized_dollars_d'] = df['dollars_d'] / df['total_votes']
+    df['normalized_dollars_r'] = df['dollars_r'] / df['total_votes']
+    df['normalized_dollar_difference'] = df['normalized_dollars_d'] - df['normalized_dollars_r']
+    df['normalized_dollar_ratio'] = df['normalized_dollars_d'] / df['normalized_dollars_r']
+
+    # join past election
+    df['yearM2'] = df['year'] - 2
+    df = df.merge(df, how='inner', left_on=['district_id', 'yearM2'], right_on=['district_id', 'year'], suffixes=('', '_prior1'))
+
+    feature_columns = [
+        'incumbents_d',
+        'incumbents_r',
+        'total_votes',
+        'normalized_dollar_ratio',
+        'prior_demvote_president',
+        'prior_demvote_senate',
+        'votes_r_prior1',
+        'votes_d_prior1',
+        'dem_won_prior1',
+    ]
     target_column = 'dem_won'
 
     # filter out NAs.. TODO may not be desirec for all columns
     print('WARNING: dropping rows with any NAs, this may or may not be intended!')
-    df = df.dropna()
+
+    df = df[feature_columns + [target_column]].dropna()
 
     return df, feature_columns, target_column
 
