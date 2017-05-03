@@ -3,6 +3,7 @@ import psycopg2
 import pandas as pd
 import numpy as np
 import argparse
+import sys
 from patsy import dmatrices
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
@@ -93,6 +94,67 @@ def party_incumbent(party_name, database):
         group by 1, 2
     ''' % ((party_name, ) * 2), con=build_con_string(database))
 
+def prior_election(kind, database):
+    if kind == 'president':
+        et_name = 'US President - Regular General'
+    elif kind == 'senate':
+        et_name = 'US Senator - Regular General'
+    else:
+        print('bad election type')
+        sys.exit(1)
+    df = pd.read_sql('''
+    with candidate_results as (
+        select
+           e.id as election_id,
+           der.district_id,
+           e.year
+        from elections e
+        join election_types et
+          on e.election_type_id = et.id
+        join district_election_results der
+          on e.id = der.election_id
+        where
+          et.name = 'state house regular'
+    ),
+    election_results as (
+        select
+           e.id as election_id,
+           der.district_id,
+           der.candidate_id,
+           der.percentage as prior_demvote_%s,
+           e.year
+        from elections e
+        join election_types et
+          on e.election_type_id = et.id
+        join district_election_results der
+          on e.id = der.election_id
+        join candidates_elections ce
+          on der.candidate_id = ce.candidate_id
+          and der.election_id = ce.election_id
+        join parties p
+          on ce.party_id = p.id
+        where
+          et.name = '%s'
+          --- ugh, pick a side! definitely a hack
+          --- counts Indys as dems, but we're only
+          --- using this for senate/pres at the moment
+          and (p.name = 'D' or p.name = 'I')
+    )
+        select distinct
+            c1.election_id,
+            c1.district_id,
+            c1.year,
+            er.year as other_year,
+            er.prior_demvote_%s
+        from candidate_results c1
+        left join election_results er
+          on c1.district_id = er.district_id
+        where er.year < c1.year
+    ''' % (kind, et_name, kind), con=build_con_string(database))
+    idx = df.groupby(['election_id', 'district_id', 'year'])['other_year'].transform(max) == df['other_year']
+    df2 = df[idx]
+    return df2[['election_id', 'district_id', 'prior_demvote_%s' % kind]]
+
 def merge_to_elections_districts(df, new_df):
     merged = df.merge(new_df, how='left', on=['election_id', 'district_id'], suffixes=('', '_y'))
     cols_to_drop = [x for x in merged.columns if x.find('_y') > 0]
@@ -111,6 +173,8 @@ def generate_features(database):
     d_outcomes = party_results('D', database)
     r_incumbents = party_incumbent('R', database)
     d_incumbents = party_incumbent('D', database)
+    prior_pres = prior_election('president', database)
+    prior_senate = prior_election('senate', database)
 
     # merge in features
     df = election_set
@@ -118,6 +182,8 @@ def generate_features(database):
     df = merge_to_elections_districts(df, d_outcomes)
     df = merge_to_elections_districts(df, d_incumbents)
     df = merge_to_elections_districts(df, r_incumbents)
+    df = merge_to_elections_districts(df, prior_pres)
+    df = merge_to_elections_districts(df, prior_senate)
 
     # merge in features, make sure we didn't expand the dataset!
     assert n_races == len(df), 'too many rows were added'
@@ -129,7 +195,7 @@ def generate_features(database):
     feature_columns = ['dollars_r', 'dollars_d', 'total_votes',
                        'incumbents_d', 'incumbents_r']
     # compare to
-    feature_columns = ['incumbents_d', 'incumbents_r', 'total_votes']
+    feature_columns = ['incumbents_d', 'incumbents_r', 'total_votes', 'prior_demvote_president', 'prior_demvote_senate']
     target_column = 'dem_won'
 
     # filter out NAs.. TODO may not be desirec for all columns
