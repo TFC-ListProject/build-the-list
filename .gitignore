@@ -4,3 +4,8 @@ __pycache__/
 .env
 *.pyc
 resources/tmp
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
