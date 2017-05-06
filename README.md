@@ -25,7 +25,6 @@ These are required and will be install automatically if missing.
 ## Deploy
 
 ```
-docker build -t build_the_list .
 eb deploy
 ```
 
@@ -34,12 +33,14 @@ eb deploy
 ### Application
 
 ```
-docker run -it --rm \
-  -p 5000:5000 \
-  -e ENV='development' \
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  build_the_list
+python application.py
+```
+
+To access API:
+
+```
+curl -i http://localhost:5000
+curl -i http://buildthelist-production.gddfi33pyh.us-west-2.elasticbeanstalk.com
 ```
 
 ### PDF Extraction

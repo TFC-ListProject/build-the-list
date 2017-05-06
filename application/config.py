@@ -1,11 +1,8 @@
 import os
 
 class DefaultConfig(object):
-    DB_HOST = ''
-    DB_NAME = ''
+    DATABASE_FILE = 'application/database.json'
     DB_PASSWORD = ''
-    DB_PORT = 5432
-    DB_USERNAME = ''
     DEBUG = False
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -13,19 +10,13 @@ class DefaultConfig(object):
 
 class DevelopmentConfig(DefaultConfig):
     APP_ENV = 'development'
-    DB_HOST = 'localhost'
-    DB_NAME = 'buildthelist_development'
+    DATABASE_FILE = 'application/database.json'
     DB_PASSWORD = ''
-    DB_PORT = 5432
-    DB_USERNAME = 'techforcampaigns'
     DEBUG = True
     SQLALCHEMY_ECHO = True
 
 class ProductionConfig(DefaultConfig):
     APP_ENV = 'production'
-    DB_HOST = 'techforcampaigns.czp6qfvbka3n.us-west-2.rds.amazonaws.com'
-    DB_NAME = 'buildthelist_production'
+    DATABASE_FILE = '/tmp/beanstalk-database.json'
     DB_PASSWORD = os.getenv('DB_PASSWORD')
-    DB_PORT = 5432
-    DB_USERNAME = 'techforcampaigns'
     DEBUG = False
