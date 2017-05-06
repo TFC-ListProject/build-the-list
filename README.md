@@ -20,6 +20,8 @@ These are required and will be install automatically if missing.
 
 ```
 ./go/install
+eb init
+# use buildthelist_user keys that can be shared with you
 ```
 
 ## Deploy
