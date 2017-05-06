@@ -40,7 +40,7 @@ To access API:
 
 ```
 curl -i http://localhost:5000
-curl -i http://buildthelist-production.gddfi33pyh.us-west-2.elasticbeanstalk.com
+curl -i http://buildthelist-production.hgaprmwkwy.us-west-2.elasticbeanstalk.com
 ```
 
 ### PDF Extraction
