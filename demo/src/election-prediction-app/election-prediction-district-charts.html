@@ -1,0 +1,184 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<link type="text/css" rel="stylesheet" href="../../bower_components/britecharts/dist/css/common/common.css">
+<link type="text/css" rel="stylesheet" href="../../bower_components/britecharts/dist/css/charts/line.css">
+
+<dom-module id="election-prediction-district-charts">
+  <template>
+    <style include="iron-flex">
+      h3 {
+        font-weight: 400;
+        font-size: 18px;
+        margin: 0;
+      }
+
+      #container paper-material {
+        background-color: white;
+        margin: 0 16px 16px 0;
+      }
+
+      #container paper-material:nth-of-type(even) {
+        margin-right: 0;
+      }
+
+      #container paper-material:nth-of-type(3),
+      #container paper-material:nth-of-type(4) {
+        margin-bottom: 0;
+      }
+
+      #container {
+        height: calc(100vh - 175px);
+      }
+
+      .header {
+        margin-bottom: 8px;
+      }
+
+      label {
+        @apply(--paper-font-caption);
+      }
+
+      paper-icon-button {
+        color: var(--paper-grey-600);
+        transition: color 250ms ease-in-out;
+      }
+
+      paper-icon-button:hover {
+        color: var(--paper-grey-700);
+      }
+
+      paper-material.controls {
+        background-color: white;
+        margin-bottom: 16px;
+        padding: 4px 16px;
+      }
+
+      .control {
+        margin-right: 32px;
+      }
+    </style>
+    <iron-media-query full query="(max-width: 768px)" query-matches="{{shouldStackGraphs}}"></iron-media-query>
+    <paper-material class="controls horizontal layout center">
+      <paper-dropdown-menu class="flex control" label="Election">
+        <paper-listbox class="dropdown-content" selected="0">
+          <paper-item>Congressional</paper-item>
+          <paper-item>Legislative</paper-item>
+          <paper-item>Governor</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <paper-input class="flex control" label="Turnout" type="number" value="{{turnout}}">
+        <div suffix>%</div>
+      </paper-input>
+      <paper-input class="flex control" label="Money spent" type="number" value="{{money}}">
+        <div prefix>$</div>
+      </paper-input>
+      <paper-checkbox class="control">Incumbent</paper-checkbox>
+      <paper-icon-button icon="settings"></paper-icon-button>
+    </paper-material>
+    <div id="container">
+      <div class="layout horizontal wrap">
+        <template id="graphs" is="dom-repeat" items="[[traits]]" as="trait">
+          <paper-material id="[[trait]]" class="graph-container"></paper-material>
+        </template>
+      </div>
+    </div>
+
+  </template>
+  <script src="../../bower_components/britecharts/dist/umd/bar.min.js"></script>
+  <script src="../../bower_components/britecharts/dist/umd/colors.min.js"></script>
+  <script src="../../bower_components/britecharts/dist/umd/tooltip.min.js"></script>
+  <script>
+    Polymer({
+      is: 'election-prediction-district-charts',
+
+      behaviors: [Polymer.IronResizableBehavior],
+
+      listeners: {
+        'iron-resize': 'onResize_'
+      },
+
+      properties: {
+        appTitle: {
+          type: String,
+          notify: true,
+          computed: 'computeAppTitle_(district, state)',
+          value: ''
+        },
+        district: String,
+        state: String,
+        money: {
+          type: Number,
+          value: 0
+        },
+        shouldStackGraphs: {
+          type: Boolean,
+          value: false
+        },
+        turnout: {
+          type: Number,
+          value: 0
+        },
+        traits: {
+          type: Array,
+          value: () => []
+        }
+      },
+
+      observers: ['onTabChanged_(district, traits, shouldStackGraphs)'],
+
+      ready() {
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          this.traits = ['race', 'age', 'education', 'income'];
+        });
+      },
+
+      drawCharts() {
+        Polymer.dom.flush();
+        const boundingClientRect = this.$.container.getBoundingClientRect();
+        const fakeData = [
+          {name: 'Foo', value: 0.15},
+          {name: 'Bar', value: 0.76},
+          {name: 'Foobar', value: 0.78},
+          {name: 'Foofoobar', value: 0.11},
+          {name: 'Other', value: 0.67}
+        ];
+        d3.selectAll('.bar-chart').remove();
+        this.traits.forEach(trait => {
+          const barChart = new britecharts.bar();
+          const container = d3.select(this.$$(`#${trait}`));
+          const chartMargin = {top: 8, bottom: 8, left: 40, right: 8};
+          let width = this.shouldStackGraphs ?
+            (boundingClientRect.width - 16 - (chartMargin.left + chartMargin.right)) :
+            (boundingClientRect.width - 16- ((chartMargin.left + chartMargin.right) * 2)) / 2;
+          let height = (boundingClientRect.height - 32 - (chartMargin.top + chartMargin.bottom)) / 2;
+          console.log(boundingClientRect.width, boundingClientRect.height, width, height);
+          barChart.width(width).height(height).usePercentage(false).margin(chartMargin);
+          container.datum(fakeData).call(barChart);
+        });
+      },
+
+      computeAppTitle_(district, state) {
+        return `District ${district} (${state.toUpperCase()})`;
+      },
+
+      onResize_() {
+        this.debounce('draw-charts', () => this.drawCharts());
+      },
+
+      onTabChanged_(district, traits, shouldStackGraphs) {
+        this.onResize_();
+      }
+    });
+  </script>
+</dom-module>

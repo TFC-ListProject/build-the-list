@@ -1,0 +1,1 @@
+module.exports=function(t){"use strict";t.config.set("karma",{unit:{configFile:"karma.conf.js",autoWatch:!0}}),t.registerTask("test","Run the unit tests of the charts",["karma:unit"])};

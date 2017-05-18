@@ -1,0 +1,1 @@
+define(function(e){var n=e("underscore"),i=e("d3-selection"),r=e("pubsub-js"),d=200,o=window.innerWidth;return i.select(window).on("resize",n.debounce(function(){var e=window.innerWidth;o!==e&&(o=e,r.publish("resize"))},d)),{}});

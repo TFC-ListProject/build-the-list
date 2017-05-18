@@ -1,0 +1,1 @@
+define(function(n){"use strict";function i(n){this.Klass=i,this.config=t.defaults({},n),this.with1Source=function(){var n=t.extend({},this.config,s);return new this.Klass(n)},this.build=function(){return this.config}}var t=n("underscore"),s=n("json!../json/sparklineOneSource.json");return{SparklineDataBuilder:i}});

@@ -1,0 +1,189 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<dom-module id="election-prediction-state-graph">
+  <template>
+    <style include="iron-flex">
+      :host {
+        display: block;
+      }
+
+      paper-material {
+        background-color: white;
+        margin-bottom: 16px;
+      }
+
+      paper-tooltip {
+        --paper-tooltip-background: white;
+        --paper-tooltip-opacity: 1;
+        --paper-tooltip-text-color: #212121;
+        --paper-tooltip: {
+          @apply(--shadow-elevation-4dp);
+          font-size: 13px;
+        };
+      }
+
+      svg {
+        filter: drop-shadow(16px 16px 20px rgba(0, 0, 0, 0.14));
+        height: calc(100vh - 180px);
+      }
+
+      svg .district {
+        fill: var(--paper-red-500);
+      }
+
+      .graph {
+        position: relative;
+        margin-bottom: 0;
+      }
+
+      .controls {
+        padding: 4px 16px;
+      }
+
+      .controls paper-input, .controls .control {
+        margin-right: 32px;
+      }
+
+      .district-box {
+        margin-left: 32px;
+        padding: 16px;
+      }
+
+      paper-icon-button {
+        color: var(--paper-grey-600);
+        transition: color 250ms ease-in-out;
+      }
+
+      paper-icon-button:hover {
+        color: var(--paper-grey-700);
+      }
+
+      paper-icon-item {
+        --paper-item-icon: {
+          background-color: var(--paper-red-500);
+          border: 1px solid var(--paper-grey-700);
+        }
+      }
+
+      paper-icon-item.democrat {
+        --paper-item-icon: {
+          background-color: var(--paper-blue-700);
+          border: 1px solid var(--paper-grey-700);
+        }
+      }
+    </style>
+    <iron-ajax auto url="../src/[[state]].json" params="{}" last-response="{{response}}" loading="{{loading}}"></iron-ajax>
+    <paper-material class="controls layout horizontal center">
+      <!-- <paper-dropdown-menu label="State">
+        <paper-menu attr-for-selected="name" class="dropdown-content" selected="{{state}}">
+          <paper-item name="nj">New Jersey</paper-item>
+          <paper-item name="va">Virgina</paper-item>
+        </paper-menu>
+      </paper-dropdown-menu> -->
+      <paper-dropdown-menu class="flex control" label="Election">
+        <paper-listbox class="dropdown-content" selected="0">
+          <paper-item>Congressional</paper-item>
+          <paper-item>Legislative</paper-item>
+          <paper-item>Governor</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <paper-input class="flex control" label="Turnout" type="number" value="0">
+        <div suffix>%</div>
+      </paper-input>
+      <paper-input class="flex control" label="Money spent" type="number" value="0">
+        <div prefix>$</div>
+      </paper-input>
+      <paper-checkbox class="control">Incumbent</paper-checkbox>
+      <paper-icon-button icon="settings"></paper-icon-button>
+    </paper-material>
+    <div class="graph layout horizontal center">
+      <paper-material hidden$="[[!district.NAME]]" class="district-box" elevation="4">
+        <h3>District [[district.NAME]]</h3>
+        TODO: Fill in with stuff
+      </paper-material>
+      <div id="vis" class="flex">
+        <svg id="svg" viewBox="0 0 500 500"></svg>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'election-prediction-state-graph',
+      properties: {
+        appTitle: {
+          type: String,
+          computed: 'computeAppTitle_(state)',
+          notify: true
+        },
+        district: {
+          type: Object,
+          notify: true
+        },
+        state: {
+          type: String,
+          notify: true,
+          value: 'nj'
+        },
+        tooltipText: String
+      },
+
+      observers: ['onResponse_(response, isAttached)'],
+
+      computeAppTitle_(state) {
+        return state == 'nj' ? 'New Jersey' : 'Virgina';
+      },
+
+      onResponse_(response) {
+        console.log(response);
+        let width = 500;
+        let height = 500;
+
+        const projection = d3.geoAlbersUsa().scale(1).translate([0, 0]);
+        const path = d3.geoPath().projection(projection);
+
+        const svg = d3.select(this.$.svg); //.attr('width', width).attr('height', height);
+        const bounds = path.bounds(response);
+        const s = 0.95 / Math.max((bounds[1][0] - bounds[0][0]) / width, (bounds[1][1] - bounds[0][1]) / height);
+        const t = [(width - s * (bounds[1][0] + bounds[0][0])) / 2, (height - s * (bounds[1][1] + bounds[0][1])) / 2];
+
+        projection.scale(s).translate(t);
+        svg.append('g')
+           .selectAll('path')
+           .data(response.features)
+           .enter()
+           .append('path')
+           .attr('d', path)
+           .attr('id', d => `district-${d.properties.NAME}`)
+           .attr('stroke', 'white')
+           .attr('fill-opacity', 0.8)
+           .attr('class', d => {
+             const rand = d3.randomUniform(1, 4)();
+             switch (parseInt(rand)) {
+               case 1:
+               return 'district red';
+               case 2:
+                return 'district blue';
+              default:
+                return 'district purple';
+             }
+             return 'district';
+           })
+           .on('mouseover', d => {
+             this.district = d.properties;
+           })
+           .on('click', d => {
+             window.location.hash = `#/district/${d.properties.NAME}`;
+           });
+      }
+    });
+  </script>
+</dom-module>
