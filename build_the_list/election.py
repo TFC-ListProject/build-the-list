@@ -50,12 +50,12 @@ def extract_row(row):
     total_row_re = r'(?<=\d)([a-zA-Z]+\stotal.+$)'
     name_with_votes_re = r'(\D+)(\d.+$)'
 
-    if re.search(total_row_re, row, re.IGNORECASE):
+    if re.search(total_row_re, str(row), re.IGNORECASE):
         row = re.sub(total_row_re, '', row, flags=re.IGNORECASE)
 
     match = re.search(
         name_with_votes_re,
-        row,
+        str(row),
         re.IGNORECASE
     )
 
@@ -80,4 +80,4 @@ def flatten_row(row):
     ] + row['votes']
 
 def skip_row(row):
-    return re.search(r'^\D+total', row, re.IGNORECASE) is not None
+    return re.search(r'^\D+total', str(row), re.IGNORECASE) is not None

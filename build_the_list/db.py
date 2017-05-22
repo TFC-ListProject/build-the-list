@@ -1,3 +1,5 @@
+import json
+
 import records
 
 def connection():
@@ -65,13 +67,17 @@ def save_election(conn, data):
 def save_candidate(conn, data):
     first_name = data['first_name']
     last_name = data['last_name']
-    values_sql = "('{}', '{}')".format(format_str(first_name), format_str(last_name))
-    sql = """
-    INSERT INTO candidates (first_name, last_name) VALUES
-    {}
-    RETURNING id
-    """.format(values_sql)
-    return conn.query(sql).as_dict()[0]['id']
+    return conn.query(
+        """
+        INSERT INTO candidates (first_name, last_name) VALUES
+        (:first_name, :last_name)
+        ON CONFLICT (first_name, last_name)
+        DO UPDATE SET first_name = :first_name, last_name = :last_name
+        RETURNING id
+        """,
+        first_name=format_str(first_name),
+        last_name=format_str(last_name)
+    ).as_dict()[0]['id']
 
 def save_district(conn, data):
     name = data['name']
