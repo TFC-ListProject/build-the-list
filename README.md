@@ -32,7 +32,7 @@ eb deploy
 
 ## Running
 
-### Application
+### Application Server
 
 ```
 python application.py
@@ -70,6 +70,13 @@ PDFs currently require some manual preprocessing.
 
 ```
 ./go extract_pdf -f path/to/pdf
+```
+
+The following generates a JSON file of the extracted PDF data and saves it to the database.
+
+```
+python build_the_list/nj_pdf.py -g
+python build_the_list/nj_pdf.py -s
 ```
 
 ### Database
