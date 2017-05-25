@@ -28,11 +28,11 @@ def main(year):
     # parse config
     config = configparser.ConfigParser()
     config.read('acs_config.ini')
-    field_filename = config[year]['field_file']
+    field_filename = config['full']['field_file']
     field_df = pd.read_csv(field_filename, sep='\t', index_col=0)
-    max_api_fields = int(config[year]['max_api_fields_per_get'])
+    max_api_fields = int(config['full']['max_api_fields_per_get'])
     url = config[year]['url']
-    row_key = config[year]['row_key']
+    row_key = config['full']['row_key']
     get_vars = [f for f in config[year]['fields'].split('\n') if f]
 
     # data to call
@@ -59,7 +59,7 @@ def main(year):
 
         # write to csv
         all_results = translate_columns(all_results, field_df)
-        all_results.to_csv(hierarchy[1] + '.csv', index=False)
+        all_results.to_csv(hierarchy[1] + '_' + year + '.csv', index=False)
 
 
 def translate_columns(target_df, field_df):
@@ -113,5 +113,8 @@ def get_acs(acs_key, row_key, get_vars, for_hierarchy, state_code, url, max_fiel
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-    YEAR = '2015'
+    if len(sys.argv) == 1:
+        YEAR = '2015'
+    else: 
+        YEAR = sys.argv[1]
     main(YEAR)
