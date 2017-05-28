@@ -105,20 +105,20 @@ def save_district(conn, data):
         state=format_str(state)
     ).as_dict()[0]['id']
 
-def add_county_to_district(conn, data):
-    county_id = data['county_id']
-    district_id = data['district_id']
+# def add_county_to_district(conn, data):
+#     county_id = data['county_id']
+#     district_id = data['district_id']
 
-    conn.query(
-        """
-        INSERT INTO counties_districts (county_id, district_id)
-        VALUES (:county_id, :district_id)
-        ON CONFLICT (county_id, district_id) DO UPDATE
-        SET county_id = :county_id, district_id = :district_id
-        """,
-        county_id=county_id,
-        district_id=district_id
-    )
+#     conn.query(
+#         """
+#         INSERT INTO counties_districts (county_id, district_id)
+#         VALUES (:county_id, :district_id)
+#         ON CONFLICT (county_id, district_id) DO UPDATE
+#         SET county_id = :county_id, district_id = :district_id
+#         """,
+#         county_id=county_id,
+#         district_id=district_id
+#     )
 
 def save_party(conn, data):
     name = data['name']

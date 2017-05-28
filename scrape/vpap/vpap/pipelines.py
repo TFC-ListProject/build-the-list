@@ -23,7 +23,7 @@ class VpapPipeline(object):
     try:
       if type(item) is VpapDistrictCandidateItem:
         self.cursor.execute("""
-          INSERT INTO district_house_candidates
+          INSERT INTO raw_district_house_candidates
           (district, year, electionType, firstName, lastName, party, percentage, numVotes,
            dollars, wasIncumbent, wasWinner, withdrew)
           VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -33,7 +33,7 @@ class VpapPipeline(object):
            item.get('withdrew')))
       elif type(item) is VpapDistrictVoteHistoryForOtherElection:
         self.cursor.execute("""
-          INSERT INTO statewide_candidates
+          INSERT INTO raw_statewide_candidates
           (district, electionName, vpapElectionId, candidateName, candidateParty, numVotes,
           percentage)
           VALUES(%s, %s, %s, %s, %s, %s, %s)""",

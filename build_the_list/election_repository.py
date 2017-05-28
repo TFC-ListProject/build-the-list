@@ -68,10 +68,10 @@ def save(db, candidates, parties, election, rows):
                 'state': election['state'],
                 'type': row[1],
             })
-            db.add_county_to_district(conn, {
-                'county_id': county_id,
-                'district_id': district_id,
-            })
+            # db.add_county_to_district(conn, {
+            #     'county_id': county_id,
+            #     'district_id': district_id,
+            # })
             districts.append({
                 'id': district_id,
                 'name': row[0],
