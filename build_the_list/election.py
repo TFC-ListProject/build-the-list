@@ -38,7 +38,7 @@ def get_rows(rows, config):
         if i in skip_row_indices:
             pass
         elif i in county_indices:
-            current_county = row
+            current_county = row.lower().replace(' county', '')
         elif skip_row(row):
             pass
         else:

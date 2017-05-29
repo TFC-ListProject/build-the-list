@@ -137,7 +137,7 @@
   "COMMENT": "2014 US Senate",
   "2014-us-senate-gen-elec-results-by-county-atlantic.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Eugene Martin La Vergne", "Hank Schroeder", "Jeff Boss", "Antonio N. Sabas"],
-    "county": "Atlantic County",
+    "county": "Atlantic",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party",  "D-R Party", "Economic Growth", "Independent", "Independent"],
@@ -148,7 +148,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-bergen.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Antonio N. Sabas", "Jeff Boss", "Hank Schroeder", "Eugene Martin LaVergne"],
-    "county": "Bergen County",
+    "county": "Bergen",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Independent", "Independent", "Economic Growth", "D-R Party"],
@@ -159,7 +159,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-burlington.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Jeff Boss", "Hank Schroeder", "Eugene Martin LaVergne", "Antonio N. Sabas"],
-    "county": "Burlington County",
+    "county": "Burlington",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Independent", "Economic Growth", "D-R Party", "Independent"],
@@ -170,7 +170,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-camden.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Antonio N. Sabas", "Hank Schroeder", "Eugene Martin LaVergne", "Jeff Boss"],
-    "county": "Camden County",
+    "county": "Camden",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Independent", "Economic Growth", "D-R Party", "Independent"],
@@ -181,7 +181,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-capemay.pdf": {
     "candidates": ["Jeff Bell", "Cory Booker", "Antonio N. Sabas", "Joseph Baratelli", "Jeff Boss", "Eugene Martin LaVergne", "Hank Schroeder"],
-    "county": "Cape May County",
+    "county": "Cape May",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Republican", "Democratic", "Independent", "Libertarian Party", "Independent", "D-R Party", "Economic Growth"],
@@ -192,7 +192,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-cumberland.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Jeff Boss", "Eugene Martin LaVergne", "Hank Schroeder", "Antonio N. Sabas"],
-    "county": "Cumberland County",
+    "county": "Cumberland",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Independent", "D-R Party", "Economic Growth", "Independent"],
@@ -203,7 +203,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-essex.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Jeff Boss", "Antonio N. Sabas", "Hank Schroeder", "Eugene Martin LaVergne"],
-    "county": "Essex County",
+    "county": "Essex",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Independent", "Independent", "Economic Growth", "D-R Party"],
@@ -214,7 +214,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-gloucester.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Antonio N. Sabas", "Hank Schroeder", "Jeff Boss", "Eugene Martin LaVergne"],
-    "county": "Gloucester County",
+    "county": "Gloucester",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Independent", "Economic Growth", "Independent", "D-R Party"],
@@ -225,7 +225,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-hudson.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Eugene Martin LaVergne", "Joseph Baratelli", "Jeff Boss", "Antonio N. Sabas", "Hank Schroeder"],
-    "county": "Hudson County",
+    "county": "Hudson",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "D-R Party", "Libertarian Party", "Independent", "Independent", "Economic Growth"],
@@ -236,7 +236,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-hunterdon.pdf": {
     "candidates": ["Jeff Bell", "Cory Booker", "Joseph Baratelli", "Hank Schroeder", "Jeff Boss", "Antonio N. Sabas", "Eugene Martin LaVergne"],
-    "county": "Hunterdon County",
+    "county": "Hunterdon",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Republican", "Democratic", "Libertarian Party", "Economic Growth", "Independent", "Independent", "D-R Party"],
@@ -247,7 +247,7 @@
   },
   "2014-us-senate-gen-elec-results-by-county-mercer.pdf": {
     "candidates": ["Cory Booker", "Jeff Bell", "Joseph Baratelli", "Hank Schroeder", "Eugene Martin LaVergne", "Antonio N. Sabas", "Jeff Boss"],
-    "county": "Mercer County",
+    "county": "Mercer",
     "county_indices": [],
     "district": {"number": null, "type": null},
     "parties": ["Democratic", "Republican", "Libertarian Party", "Economic Growth", "D-R Party", "Independent", "Independent"],
@@ -973,7 +973,7 @@
   "COMMENT": "2016 President",
   "2016-gen-elect-presidential-results-atlantic.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Atlantic County",
+    "county": "Atlantic",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -984,7 +984,7 @@
   },
   "2016-gen-elect-presidential-results-bergen.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Bergen County",
+    "county": "Bergen",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -995,7 +995,7 @@
   },
   "2016-gen-elect-presidential-results-burlington.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Burlington County",
+    "county": "Burlington",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1006,7 +1006,7 @@
   },
   "2016-gen-elect-presidential-results-camden.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Camden County",
+    "county": "Camden",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1017,7 +1017,7 @@
   },
   "2016-gen-elect-presidential-results-cape-may.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Cape May County",
+    "county": "Cape May",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1028,7 +1028,7 @@
   },
   "2016-gen-elect-presidential-results-cumberland.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Cumberland County",
+    "county": "Cumberland",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1039,7 +1039,7 @@
   },
   "2016-gen-elect-presidential-results-essex.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Essex County",
+    "county": "Essex",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1050,7 +1050,7 @@
   },
   "2016-gen-elect-presidential-results-gloucester.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Gloucester County",
+    "county": "Gloucester",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1061,7 +1061,7 @@
   },
   "2016-gen-elect-presidential-results-hudson.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Hudson County",
+    "county": "Hudson",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1072,7 +1072,7 @@
   },
   "2016-gen-elect-presidential-results-hunterdon.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Hunterdon County",
+    "county": "Hunterdon",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1083,7 +1083,7 @@
   },
   "2016-gen-elect-presidential-results-mercer.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Mercer County",
+    "county": "Mercer",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1094,7 +1094,7 @@
   },
   "2016-gen-elect-presidential-results-middlesex.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Middlesex County",
+    "county": "Middlesex",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1105,7 +1105,7 @@
   },
   "2016-gen-elect-presidential-results-monmouth.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Monmouth County",
+    "county": "Monmouth",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1116,7 +1116,7 @@
   },
   "2016-gen-elect-presidential-results-morris.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Morris County",
+    "county": "Morris",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1127,7 +1127,7 @@
   },
   "2016-gen-elect-presidential-results-ocean.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Ocean County",
+    "county": "Ocean",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1138,7 +1138,7 @@
   },
   "2016-gen-elect-presidential-results-passaic.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Passaic County",
+    "county": "Passaic",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1149,7 +1149,7 @@
   },
   "2016-gen-elect-presidential-results-salem.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Salem County",
+    "county": "Salem",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1160,7 +1160,7 @@
   },
   "2016-gen-elect-presidential-results-somerset.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Sussex County",
+    "county": "Sussex",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1171,7 +1171,7 @@
   },
   "2016-gen-elect-presidential-results-sussex.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Sussex County",
+    "county": "Sussex",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1182,7 +1182,7 @@
   },
   "2016-gen-elect-presidential-results-union.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Union County",
+    "county": "Union",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
@@ -1193,7 +1193,7 @@
   },
   "2016-gen-elect-presidential-results-warren.pdf": {
     "candidates": ["Hillary Rodham Clinton", "Donald J. Trump", "Gary Johnson", "Jill Stein", "Darrell Castle", "Alyson Kennedy", "Rocky Roque De la Fuente", "Monica Moorehead", "Gloria La Riva"],
-    "county": "Warren County",
+    "county": "Warren",
     "county_indices": [],
     "district": { "number": null, "type": null },
     "parties": ["Democratic", "Republican", "Libertarian Party", "Green Party", "Constitution Party", "Socialist Workers Party", "American Delta Party", "Workers World Party", "Socialism and Liberation"],
