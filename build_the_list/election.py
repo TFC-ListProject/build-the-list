@@ -23,12 +23,18 @@ def get_parties(config):
 
 def get_rows(rows, config):
     county_indices = config['county_indices']
+    if 'county_starts' in config:
+        county_starts = config['county_starts']
+    else:
+        county_starts = {}
     skip_row_indices = config['skip_row_indices']
     current_county = config['county']
     results = []
 
     for i, row in enumerate(rows):
         # print(i, row) # uncomment to inspect row
+        if str(i) in county_starts:
+            current_county = county_starts[str(i)]
         if i in skip_row_indices:
             pass
         elif i in county_indices:
@@ -39,7 +45,7 @@ def get_rows(rows, config):
             parsed_row = extract_row(row)
 
             if parsed_row:
-                parsed_row['district'] = config['district']['name']
+                parsed_row['district'] = config['district']['number']
                 parsed_row['district_type'] = config['district']['type']
                 parsed_row['county'] = current_county
                 results.append(flatten_row(parsed_row))

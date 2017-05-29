@@ -80,7 +80,7 @@ def save_candidate(conn, data):
     ).as_dict()[0]['id']
 
 def save_district(conn, data):
-    name = data['name']
+    number = data['number']
     state = data['state']
     district_type = data['type']
 
@@ -95,13 +95,13 @@ def save_district(conn, data):
 
     return conn.query(
         """
-        INSERT INTO districts (district_type_id, name, state)
-        VALUES (:district_type_id, :name, :state)
-        ON CONFLICT (name, state) DO UPDATE SET name = :name, state = :state
+        INSERT INTO districts (district_type_id, district_number, state)
+        VALUES (:district_type_id, :number, :state)
+        ON CONFLICT (district_type_id, district_number, state) DO UPDATE SET district_number = :number, state = :state
         RETURNING id
         """,
         district_type_id=district_type_id,
-        name=format_str(name),
+        number=number,
         state=format_str(state)
     ).as_dict()[0]['id']
 
@@ -142,6 +142,7 @@ def election_add_candidate(conn, data):
         """
         INSERT INTO candidates_elections (candidate_id, election_id, party_id)
         VALUES (:candidate_id, :election_id, :party_id)
+        ON CONFLICT DO NOTHING
         """,
         candidate_id=candidate_id,
         election_id=election_id,

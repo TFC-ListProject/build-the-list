@@ -64,7 +64,7 @@ def save(db, candidates, parties, election, rows):
 
         if row[0] and row[1]:
             district_id = db.save_district(conn, {
-                'name': row[0],
+                'number': row[0],
                 'state': election['state'],
                 'type': row[1],
             })
@@ -74,7 +74,7 @@ def save(db, candidates, parties, election, rows):
             # })
             districts.append({
                 'id': district_id,
-                'name': row[0],
+                'number': row[0],
             })
 
     skip_amount = 4
@@ -85,7 +85,7 @@ def save(db, candidates, parties, election, rows):
                 'candidate_id': candidate_id,
                 'district_id': district_id,
                 'election_id': election_id,
-                'votes': votes_by_district(rows, district['name'], i, skip_amount),
+                'votes': votes_by_district(rows, district['number'], i, skip_amount),
             })
 
         # TODO: only loop over unique counties
