@@ -88,6 +88,8 @@ CREATE TABLE IF NOT EXISTS candidates_elections (
     candidate_id integer REFERENCES candidates(id) NOT NULL,
     election_id integer REFERENCES elections(id) NOT NULL,
     party_id integer REFERENCES parties(id) NOT NULL,
+    dollars integer,
+    incumbent boolean,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE UNIQUE INDEX candidates_elections_candidate_election_unique ON candidates_elections
