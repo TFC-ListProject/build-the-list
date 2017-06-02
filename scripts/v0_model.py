@@ -6,18 +6,20 @@ import argparse
 import sys
 from patsy import dmatrices
 from sklearn import metrics
+from sklearn.preprocessing import Imputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
 
+# TODO: we shouldn't have to silence this warning
+pd.options.mode.chained_assignment = None
 
-# TODO parameterize better
-def build_con_string(database):
-    return 'postgresql://localhost/%s' % database
+def build_con_string(user, pw, host, database):
+    return 'postgresql://%s:%s@%s/%s' % (user, pw, host, database)
 
 
-def base_info(year, database):
-    return pd.read_sql('''
+def base_info(year, con_str):
+    query = '''
         select
           distinct
           e.state,
@@ -30,19 +32,25 @@ def base_info(year, database):
         join district_election_results der
           on e.id = der.election_id
         where
-          et.name = 'state house regular'
-          and e.year = %d
-    ''' % (year), con=build_con_string(database))
+          et.name like 'state %%%% house'
+          and e.year = %d''' % (year)
+    return pd.read_sql(query, con=con_str)
 
-def party_results(party_name, database):
-    return pd.read_sql('''
+def party_results(party_name, con_str):
+    if party_name == 'R':
+        name = 'republican'
+    elif party_name == 'D':
+        name = 'democratic'
+    else:
+        name = None
+
+    query = '''
         select
             der.election_id,
-            d.name as district_name,
+            d.district_number as district_name,
             der.district_id,
-            sum(der.votes) as votes_%s,
-            sum(der.percentage) as percentage_votes_%s,
-            sum(ce.dollars) as dollars_%s
+            max(der.votes) as votes_%s,
+            max(ce.dollars) as dollars_%s
         from district_election_results der
         join districts d
           on der.district_id = d.id
@@ -55,10 +63,18 @@ def party_results(party_name, database):
           der.withdrew = False
           and p.name = '%s'
         group by 1, 2, 3
-    ''' % ((party_name, ) * 4), con=build_con_string(database))
+    ''' % (party_name, party_name, name)
+    return pd.read_sql(query, con_str)
 
-def party_incumbent(party_name, database):
-    return pd.read_sql('''
+def party_incumbent(party_name, con_str):
+    if party_name == 'R':
+        name = 'republican'
+    elif party_name == 'D':
+        name = 'democratic'
+    else:
+        name = None
+
+    query = '''
     with candidate_results as (
         select
            e.id as election_id,
@@ -77,8 +93,8 @@ def party_incumbent(party_name, database):
         join parties p
           on ce.party_id = p.id
         where
-          et.name = 'state house regular'
-          and der.percentage > 0
+          et.name like 'state%%%%house'
+          and der.votes > 0
           and p.name = '%s'
     )
         select
@@ -92,17 +108,18 @@ def party_incumbent(party_name, database):
              and c2.won = 't'
              and c2.year < c1.year
         group by 1, 2
-    ''' % ((party_name, ) * 2), con=build_con_string(database))
+    ''' % (name, party_name)
+    return pd.read_sql(query ,con_str)
 
-def prior_election(kind, database):
+def prior_election(kind, con_str):
     if kind == 'president':
-        et_name = 'US President - Regular General'
+        et_name = 'us president'
     elif kind == 'senate':
-        et_name = 'US Senator - Regular General'
+        et_name = 'us senate'
     else:
         print('bad election type')
         sys.exit(1)
-    df = pd.read_sql('''
+    query = '''
     with candidate_results as (
         select
            e.id as election_id,
@@ -114,7 +131,7 @@ def prior_election(kind, database):
         join district_election_results der
           on e.id = der.election_id
         where
-          et.name = 'state house regular'
+          et.name like 'state%%%%house'
     ),
     election_results as (
         select
@@ -138,7 +155,7 @@ def prior_election(kind, database):
           --- ugh, pick a side! definitely a hack
           --- counts Indys as dems, but we're only
           --- using this for senate/pres at the moment
-          and (p.name = 'D' or p.name = 'I')
+          and (p.name = 'democratic' or p.name = 'independent')
     )
         select distinct
             c1.election_id,
@@ -150,7 +167,8 @@ def prior_election(kind, database):
         left join election_results er
           on c1.district_id = er.district_id
         where er.year < c1.year
-    ''' % (kind, et_name, kind), con=build_con_string(database))
+    ''' % (kind, et_name, kind)
+    df = pd.read_sql(query, con_str)
     idx = df.groupby(['election_id', 'district_id', 'year'])['other_year'].transform(max) == df['other_year']
     df2 = df[idx]
     return df2[['election_id', 'district_id', 'prior_demvote_%s' % kind]]
@@ -161,20 +179,20 @@ def merge_to_elections_districts(df, new_df):
     merged = merged.drop(cols_to_drop, axis=1)
     return merged
 
-def generate_features(database):
+def generate_features(con_str):
     # base set of elections
-    election_set = pd.concat([base_info(2015, database),
-                              base_info(2013, database),
-                              base_info(2011, database)])
+    election_set = pd.concat([base_info(2015, con_str),
+                              base_info(2013, con_str),
+                              base_info(2011, con_str)])
     n_races = len(election_set)
 
     # generate other features, each should have election_id, district_id
-    r_outcomes = party_results('R', database)
-    d_outcomes = party_results('D', database)
-    r_incumbents = party_incumbent('R', database)
-    d_incumbents = party_incumbent('D', database)
-    prior_pres = prior_election('president', database)
-    prior_senate = prior_election('senate', database)
+    r_outcomes = party_results('R', con_str)
+    d_outcomes = party_results('D', con_str)
+    r_incumbents = party_incumbent('R', con_str)
+    d_incumbents = party_incumbent('D', con_str)
+    prior_pres = prior_election('president', con_str)
+    prior_senate = prior_election('senate', con_str)
 
     # merge in features
     df = election_set
@@ -188,23 +206,49 @@ def generate_features(database):
     # merge in features, make sure we didn't expand the dataset!
     assert n_races == len(df), 'too many rows were added'
 
-    # add target
-    df['dem_won'] = df['votes_d'] > df['votes_r']
+    # mark uncontested races
+    print('number of races: %d' % len(df))
+
+    df = df.assign(uncontested_d = np.where(df.votes_r.isnull(), 1, 0))
+    df = df.assign(uncontested_r = np.where(df.votes_d.isnull(), 1, 0))
+    df['votes_d'][df.uncontested_r == 1] = 0
+    df['votes_r'][df.uncontested_d == 1] = 0
     df['total_votes'] = df['votes_d'] + df['votes_r']
+
+    # missing dollar values
+    df['dollars_d'][df.uncontested_r == 1] = 0
+    df['dollars_r'][df.uncontested_d == 1] = 0
+    avg_d_dollars = df.dollars_d.mean()
+    avg_r_dollars = df.dollars_r.mean()
+    df['dollars_d'][df.dollars_d.isnull()] = avg_d_dollars
+    df['dollars_r'][df.dollars_r.isnull()] = avg_r_dollars
+
+    # missing incumbent values
+    df['incumbents_d'][df['incumbents_d'].isnull()] = 0
+    df['incumbents_r'][df['incumbents_r'].isnull()] = 0
 
     # add normalized variables
     df['normalized_dollars_d'] = df['dollars_d'] / df['total_votes']
     df['normalized_dollars_r'] = df['dollars_r'] / df['total_votes']
     df['normalized_dollar_difference'] = df['normalized_dollars_d'] - df['normalized_dollars_r']
     df['normalized_dollar_ratio'] = df['normalized_dollars_d'] / df['normalized_dollars_r']
+    max_ratio = df.normalized_dollar_ratio[df.normalized_dollar_ratio < np.inf].max()
+    df.normalized_dollar_ratio[df.normalized_dollar_ratio == np.inf] = max_ratio
+
+    # add target
+    df['dem_won'] = df['votes_d'] > df['votes_r']
 
     # join past election
     df['yearM2'] = df['year'] - 2
     df = df.merge(df, how='inner', left_on=['district_id', 'yearM2'], right_on=['district_id', 'year'], suffixes=('', '_prior1'))
 
+    print('number of races we have prior data for: %d' % len(df))
+
     feature_columns = [
         'incumbents_d',
         'incumbents_r',
+        'uncontested_d',
+        'uncontested_r',
         'total_votes',
         'normalized_dollar_ratio',
         'prior_demvote_president',
@@ -215,14 +259,14 @@ def generate_features(database):
     ]
     target_column = 'dem_won'
 
-    # filter out NAs.. TODO may not be desirec for all columns
-    print('WARNING: dropping rows with any NAs, this may or may not be intended!')
-
-    df = df[feature_columns + [target_column]].dropna()
 
     return df, feature_columns, target_column
 
 def run_model(df, feature_columns, target_column):
+
+    df = df[feature_columns + [target_column]]
+
+
     formula = '%s ~ %s' % (target_column, ' + '.join(feature_columns))
     print()
     print('model formula to run')
@@ -238,7 +282,7 @@ def run_model(df, feature_columns, target_column):
     print(metrics.accuracy_score(y, [0] * len(y)))
 
     print()
-    print('simple logistic regression:')
+    print('logistic regression:')
     logreg = LogisticRegression(C=1e5)
     logreg.fit(X, y)
     probs = logreg.predict_proba(X)
@@ -264,9 +308,28 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d',
                         '--database',
+                        default='buildthelist_development',
+                        help='database name')
+    parser.add_argument('-u',
+                        '--user',
                         required=True,
-                        help='name of database')
+                        help='database user')
+    parser.add_argument('-H',
+                        '--host',
+                        default='localhost',
+                        help='database host')
+    parser.add_argument('-p',
+                        '--password',
+                        default='',
+                        help='database password')
     args = parser.parse_args()
+    # python va_model.py \
+    #       --database buildthelist_production \
+    #       --host techforcampaigns.czp6qfvbka3n.us-west-2.rds.amazonaws.com \
+    #        --user techforcampaigns \
+    #        --password PASS
 
-    df, feature_columns, target_column = generate_features(args.database)
+    con_str = build_con_string(args.user, args.password, args.host, args.database)
+
+    df, feature_columns, target_column = generate_features(con_str)
     run_model(df, feature_columns, target_column)
