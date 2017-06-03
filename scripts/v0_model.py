@@ -14,8 +14,11 @@ from sklearn.model_selection import ShuffleSplit
 # TODO: we shouldn't have to silence this warning
 pd.options.mode.chained_assignment = None
 
-def build_con_string(user, pw, host, database):
-    return 'postgresql://%s:%s@%s/%s' % (user, pw, host, database)
+
+def build_con_string(user, password, host, database):
+    ''' generate connection string
+    '''
+    return 'postgresql://%s:%s@%s/%s' % (user, password, host, database)
 
 
 def base_info(year, con_str):
@@ -255,6 +258,50 @@ def prior_election(kind, con_str):
     df2 = df[idx]
     return df2[['election_id', 'district_id', 'prior_demvote_%s' % kind]]
 
+
+def latest_election(kind, con_str):
+    if kind == 'president':
+        et_name = 'us president'
+    elif kind == 'senate':
+        et_name = 'us senate'
+    else:
+        print('bad election type')
+        sys.exit(1)
+    query = '''
+        select
+           e.year,
+           e.state,
+           der.district_id,
+           d.district_number,
+           der.candidate_id,
+           max(der.percentage) as prior_demvote_%s
+        from elections e
+        join election_types et
+          on e.election_type_id = et.id
+        join district_election_results der
+          on e.id = der.election_id
+        join districts d
+          on der.district_id = d.id
+        join district_types dt
+          on d.district_type_id = dt.id
+        join candidates_elections ce
+          on der.candidate_id = ce.candidate_id
+          and der.election_id = ce.election_id
+        join parties p
+          on ce.party_id = p.id
+        where
+          et.name = '%s'
+          --- ugh, pick a side! definitely a hack
+          --- counts Indys as dems, but we're only
+          --- using this for senate/pres at the moment
+          and (p.name = 'democratic' or p.name = 'independent')
+          and dt.name = 'state lower house'
+        group by 1, 2, 3, 4, 5
+    ''' % (kind, et_name)
+    df = pd.read_sql(query, con_str)
+    return df
+
+
 def merge_to_elections_districts(df, new_df):
     merged = df.merge(new_df, how='left', on=['election_id', 'district_id'], suffixes=('', '_y'))
     cols_to_drop = [x for x in merged.columns if x.find('_y') > 0]
@@ -321,10 +368,10 @@ def generate_features(con_str):
     df['incumbents_r'][df['incumbents_r'].isnull()] = 0
 
     # add normalized dollar variables
-    df['normalized_dollars_d'] = df['dollars_d'] / df['total_votes']
-    df['normalized_dollars_r'] = df['dollars_r'] / df['total_votes']
+    df['normalized_dollars_d'] = (1.0 * df['dollars_d']) / df['total_votes']
+    df['normalized_dollars_r'] = (1.0 * df['dollars_r']) / df['total_votes']
     df['normalized_dollar_difference'] = df['normalized_dollars_d'] - df['normalized_dollars_r']
-    df['normalized_dollar_ratio'] = df['normalized_dollars_d'] / df['normalized_dollars_r']
+    df['normalized_dollar_ratio'] = (1.0 * df['normalized_dollars_d']) / df['normalized_dollars_r']
     max_ratio = df.normalized_dollar_ratio[df.normalized_dollar_ratio < np.inf].max()
     df.normalized_dollar_ratio[df.normalized_dollar_ratio == np.inf] = max_ratio
 
@@ -366,7 +413,7 @@ def generate_features(con_str):
     ]
     target_column = 'dem_won'
 
-    return df_with_prior, feature_columns, target_column
+    return df_with_prior, acs_lower, feature_columns, target_column
 
 def run_model(df, feature_columns, target_column):
 
@@ -408,6 +455,83 @@ def run_model(df, feature_columns, target_column):
     scores = cross_val_score(LogisticRegression(), X, y, scoring='accuracy', cv=cv)
     print(scores)
     print(scores.mean())
+    return formula, logreg
+
+
+def run_prediction(
+        model,
+        formula,
+        historical_data,
+        census_data,
+        all_president,
+        all_senate,
+        state,
+        district_number,
+        total_votes,
+        normalized_dollar_ratio):
+    '''
+    0                 Intercept   [-0.00037851296284]
+    1    dem_won_prior1[T.True]    [0.00152631893392]
+    2              incumbents_d     [0.0192796826367]
+    3              incumbents_r      [-0.03676366033]
+    4             uncontested_d   [0.000696905983076]
+    5             uncontested_r   [-0.00338189417497]
+    6               total_votes   [1.72829050884e-05]
+    7   normalized_dollar_ratio     [0.0756650600915]
+    8   prior_demvote_president      [0.135588849844]
+    9      prior_demvote_senate      [0.134276905444]
+    10           votes_r_prior1  [-6.78175699524e-05]
+    11           votes_d_prior1   [0.000412576800593]
+    12       total_population_e  [-0.000229263332821]
+    13         normalized_white    [-0.0020673684038]
+    14         normalized_black   [-1.7061723598e-05]
+    '''
+    d = historical_data[(historical_data.state == state) &
+                        (historical_data.district_number == district_number)]
+    c = census_df[(census_data.state == state) &
+                  (census_data.district_number == district_number)]
+
+    p = all_president[(all_president.state == state) &
+                  (all_president.district_number == district_number)]
+
+    s = all_senate[(all_senate.state == state) &
+                  (all_senate.district_number == district_number)]
+
+    last_house_results = d.sort_values(by='year', ascending=False).iloc[0]
+    last_census = c.sort_values(by='api_year', ascending=False).iloc[0]
+    last_president = p.sort_values(by='year', ascending=False).iloc[0]
+    last_senate = s.sort_values(by='year', ascending=False).iloc[0]
+
+    # generate feature matrix
+    features = pd.Series()
+    features['Intercept'] = 1.0
+    features['dem_won_prior1[T.True]'] = int(last_house_results['dem_won'])
+    if last_house_results['dem_won']:
+        incumbents_d = last_house_results['incumbents_d'] + 1
+        incumbents_r = 0
+    else:
+        incumbents_d = 0
+        incumbents_r = last_house_results['incumbents_r'] + 1
+    features['incumbents_d'] = incumbents_d
+    features['incumbents_r'] = incumbents_r
+    features['uncontested_d'] = 0
+    features['uncontested_r'] = 0
+    features['total_votes'] = d.total_votes.mean()
+    features['normalized_dollar_ratio'] = d.normalized_dollar_ratio.mean()
+    features['prior_demvote_president'] = float(last_president.loc['prior_demvote_president']),
+    features['prior_demvote_senate'] = float(last_senate.loc['prior_demvote_senate']),
+    features['prior_demvote_president'] = features['prior_demvote_president'][0]
+    features['prior_demvote_senate'] = features['prior_demvote_senate'][0]
+
+    features['votes_r_prior1'] = last_house_results.votes_r
+    features['votes_d_prior1'] = last_house_results.votes_d
+    features['total_population_e'] = last_census.total_population_e
+    features['normalized_white'] = (1.0 * last_census['race_one_white_e']) / last_census['total_population_e']
+    features['normalized_black'] = (1.0 * last_census['race_one_black_e']) / last_census['total_population_e']
+
+    prediction = model.predict_proba(features.values.reshape(1, -1))
+    print '%s district %s: %.4f%%' % (state, district_number, prediction[0][1] * 100)
+    return prediction[0]
 
 
 if __name__ == '__main__':
@@ -437,5 +561,22 @@ if __name__ == '__main__':
 
     con_str = build_con_string(args.user, args.password, args.host, args.database)
 
-    df, feature_columns, target_column = generate_features(con_str)
-    run_model(df, feature_columns, target_column)
+    df, census_df, feature_columns, target_column = generate_features(con_str)
+    formula, model = run_model(df, feature_columns, target_column)
+
+    all_president = latest_election('president', con_str)
+    all_senate = latest_election('senate', con_str)
+
+    for i in range(1, 101):
+        run_prediction(
+            model,
+            formula,
+            historical_data=df,
+            census_data=census_df,
+            all_president=all_president,
+            all_senate=all_senate,
+            state='va',
+            district_number=i,
+            total_votes=None,
+            normalized_dollar_ratio=None
+        )
