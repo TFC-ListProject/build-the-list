@@ -21,7 +21,7 @@ def populate_districts(con, cur):
     number = row['district']
     cur.execute("""
       INSERT INTO districts (state, district_type_id, district_number)
-      VALUES ('NJ', %(district_type_id)s, %(number)s)
+      VALUES ('nj', %(district_type_id)s, %(number)s)
       ON CONFLICT DO NOTHING""",
       {'district_type_id': district_type_id, 'number': number}
     )
@@ -30,7 +30,7 @@ def populate_districts(con, cur):
   cur.execute("""
     SELECT * FROM districts
     WHERE district_type_id = %(district_type_id)s
-    AND state = 'NJ'""",
+    AND state = 'nj'""",
     {'district_type_id': district_type_id}
   )
   district_to_id = {}

@@ -1,14 +1,14 @@
 INSERT INTO district_types (name) VALUES
-    ('us congressional'),
+    ('state upper house'),
     ('state lower house'),
-    ('state upper house');
+    ('us congressional');
 
 INSERT INTO election_types (name) VALUES
-    ('us president'),
-    ('us house'),
-    ('us senate'),
+    ('state upper house'),
     ('state lower house'),
-    ('state upper house');
+    ('us congressional'),
+    ('us senate'),
+    ('us president');
 
 INSERT INTO parties (name) VALUES
     ('democratic'),

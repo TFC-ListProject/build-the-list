@@ -2,8 +2,8 @@ import psycopg2
 import psycopg2.extras
 import re
 
-def query(cursor, t):
-  cursor.execute('SELECT * FROM ' + t)
+def query(cursor, t, condition = 'true'):
+  cursor.execute('SELECT * FROM ' + t + ' where ' + condition)
   return cursor.fetchall()
 
 def normalize_party(party):
@@ -85,7 +85,7 @@ def update_districts_in_db(con, cursor, district_type_id, districts):
       {'district_type_id': district_type_id, 'district_number': district, 'state': 'va'}
     )
   district_to_id = {}
-  for row in query(cursor, 'districts'):
+  for row in query(cursor, 'districts', "state = 'va'"):
     district_to_id[row['district_number']] = row['id']
   return district_to_id
 
@@ -97,7 +97,7 @@ def update_elections_in_db(con, cursor, election_names):
     election_names.values()
   )
   con.commit()
-  return query(cursor, 'elections')
+  return query(cursor, 'elections', "state = 'va'")
 
 def get_election_type_and_year_to_id(elections, election_type_to_id):
   election_type_id_to_name = dict((v, k) for k, v in election_type_to_id.items())
