@@ -263,12 +263,10 @@ def merge_to_elections_districts(df, new_df):
 
 def merge_census(df, census_df):
     merged = df.merge(census_df, how='left', on=['state', 'district_id'], suffixes=('', '_y'))
-    import pudb; pudb.set_trace()
     cols_to_drop = [x for x in merged.columns if x.endswith('_y')]
     merged = merged.drop(cols_to_drop, axis=1)
     merged['aux'] = abs(merged['year'] - merged['api_year'])
     merged = merged.loc[merged.reset_index().groupby(['district_id', 'year'])['aux'].idxmin()]
-    import pudb; pudb.set_trace()
     return merged
 
 
@@ -290,7 +288,6 @@ def generate_features(con_str):
 
     # merge in features
     df = election_set
-    import pudb; pudb.set_trace()
     df = merge_to_elections_districts(df, r_outcomes)
     df = merge_to_elections_districts(df, d_outcomes)
     df = merge_to_elections_districts(df, d_incumbents)
@@ -323,7 +320,7 @@ def generate_features(con_str):
     df['incumbents_d'][df['incumbents_d'].isnull()] = 0
     df['incumbents_r'][df['incumbents_r'].isnull()] = 0
 
-    # add normalized variables
+    # add normalized dollar variables
     df['normalized_dollars_d'] = df['dollars_d'] / df['total_votes']
     df['normalized_dollars_r'] = df['dollars_r'] / df['total_votes']
     df['normalized_dollar_difference'] = df['normalized_dollars_d'] - df['normalized_dollars_r']
@@ -331,16 +328,27 @@ def generate_features(con_str):
     max_ratio = df.normalized_dollar_ratio[df.normalized_dollar_ratio < np.inf].max()
     df.normalized_dollar_ratio[df.normalized_dollar_ratio == np.inf] = max_ratio
 
+    # add normalized census variables
+    df['normalized_white'] = df['race_one_white_e'] / df['total_population_e']
+    df['normalized_black'] = df['race_one_black_e'] / df['total_population_e']
+
     # add target
     df['dem_won'] = df['votes_d'] > df['votes_r']
 
     # join past election
     df['yearM2'] = df['year'] - 2
-    df = df.merge(df, how='inner', left_on=['district_id', 'yearM2'], right_on=['district_id', 'year'], suffixes=('', '_prior1'))
+    df_with_prior = df.merge(
+                       df,
+                       how='inner',
+                       left_on=['district_id', 'yearM2'],
+                       right_on=['district_id', 'year'],
+                       suffixes=('', '_prior1')
+                    )
 
     print('number of races we have prior data for: %d' % len(df))
 
     feature_columns = [
+        'state',
         'incumbents_d',
         'incumbents_r',
         'uncontested_d',
@@ -353,13 +361,12 @@ def generate_features(con_str):
         'votes_d_prior1',
         'dem_won_prior1',
         'total_population_e',
-        'race_one_white_e',
-        'race_one_black_e'
+        'normalized_white',
+        'normalized_black'
     ]
     target_column = 'dem_won'
 
-
-    return df, feature_columns, target_column
+    return df_with_prior, feature_columns, target_column
 
 def run_model(df, feature_columns, target_column):
 
