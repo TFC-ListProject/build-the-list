@@ -111,6 +111,88 @@ def party_incumbent(party_name, con_str):
     ''' % (name, party_name)
     return pd.read_sql(query ,con_str)
 
+def acs_data(kind, con_str):
+    query = '''
+        select
+          d.id as district_id,
+          d.district_number,
+          d.state,
+          acs.geographic_area_name_acs,
+          acs.geographic_area_name,
+          acs.api_year,
+          acs.data_year,
+          acs.state_fips,
+          acs.state_legislative_district_lower_chamber,
+          acs.median_household_income_e,
+          acs.mean_household_income_e,
+          acs.housing_total_occupied_e,
+          acs.total_population_e,
+          acs.total_population_male_e,
+          acs.total_population_female_e,
+          acs.race_total_e,
+          acs.race_single_race_e,
+          acs.race_twomore_race_e,
+          acs.race_one_e,
+          acs.race_one_white_e,
+          acs.race_one_black_e,
+          acs.race_one_amindian_e,
+          acs.race_one_asian_e,
+          acs.race_one_hawaiian_e,
+          acs.race_one_other_e,
+          acs.race_two_more_e,
+          acs.race_two_white_black_e,
+          acs.race_two_white_amindian_e,
+          acs.race_two_white_asian_e,
+          acs.race_two_black_amindian_e,
+          acs.race_alone_or_combo_total_e,
+          acs.race_alone_or_combo_white_e,
+          acs.race_alone_or_combo_black_e,
+          acs.race_alone_or_combo_amindian_e,
+          acs.race_alone_or_combo_asian_e,
+          acs.race_alone_or_combo_hawaiian_e,
+          acs.race_alone_or_combo_other_e,
+          acs.race_hispanic_latino_total_e,
+          acs.race_hispanic_latino_total_hispanic_e,
+          acs.race_hispanic_latino_total_nothispanic_e,
+          acs.race_hispanic_latino_total_nothispanic_white_e,
+          acs.race_hispanic_latino_total_nothispanic_black_e,
+          acs.race_hispanic_latino_total_nothispanic_amindian_e,
+          acs.race_hispanic_latino_total_nothispanic_asian_e,
+          acs.race_hispanic_latino_total_nothispanic_hawaiian_e,
+          acs.race_hispanic_latino_total_nothispanic_other_e,
+          acs.race_hispanic_latino_total_nothispanic_twomore_e,
+          acs.race_hispanic_latino_total_nothispanic_twomoreother_e,
+          acs.race_hispanic_latino_total_nothispanic_twomorenotother_e,
+          acs.educational_attainment_pop_25_plus_e,
+          acs.educational_attainment_less_than_9th_grade_e,
+          acs.educational_attainment_9th_to_12th_no_diploma_e,
+          acs.educational_attainment_high_school_graduate_e,
+          acs.educational_attainment_some_college_e,
+          acs.educational_attainment_associates_e,
+          acs.educational_attainment_bachelors_e,
+          acs.educational_attainment_graduate_or_professional_e,
+          acs.educational_attainment_pct_hs_grad_or_higher_pe,
+          acs.educational_attainment_pct_bachelors_or_higher_pe,
+          acs.citizen_18over_e,
+          acs.citizen_18over_male_e,
+          acs.citizen_18over_female_e
+        from districts d
+        join district_types dt
+          on d.district_type_id = dt.id
+        join census_%s_chamber_results acs
+          on
+            d.district_number = cast(acs.state_legislative_district_%s_chamber as int)
+            and (
+                (lower(d.state) = 'nj' and lower(acs.state) = 'new jersey')
+                or
+                (lower(d.state) = 'va' and lower(acs.state) = 'virginia')
+            )
+        where
+          dt.name = 'state %s house'
+    ''' % (kind, kind, kind)
+    data = pd.read_sql(query, con_str)
+    return data
+
 def prior_election(kind, con_str):
     if kind == 'president':
         et_name = 'us president'
@@ -179,6 +261,17 @@ def merge_to_elections_districts(df, new_df):
     merged = merged.drop(cols_to_drop, axis=1)
     return merged
 
+def merge_census(df, census_df):
+    merged = df.merge(census_df, how='left', on=['state', 'district_id'], suffixes=('', '_y'))
+    import pudb; pudb.set_trace()
+    cols_to_drop = [x for x in merged.columns if x.endswith('_y')]
+    merged = merged.drop(cols_to_drop, axis=1)
+    merged['aux'] = abs(merged['year'] - merged['api_year'])
+    merged = merged.loc[merged.reset_index().groupby(['district_id', 'year'])['aux'].idxmin()]
+    import pudb; pudb.set_trace()
+    return merged
+
+
 def generate_features(con_str):
     # base set of elections
     election_set = pd.concat([base_info(2015, con_str),
@@ -193,15 +286,18 @@ def generate_features(con_str):
     d_incumbents = party_incumbent('D', con_str)
     prior_pres = prior_election('president', con_str)
     prior_senate = prior_election('senate', con_str)
+    acs_lower = acs_data('lower', con_str)
 
     # merge in features
     df = election_set
+    import pudb; pudb.set_trace()
     df = merge_to_elections_districts(df, r_outcomes)
     df = merge_to_elections_districts(df, d_outcomes)
     df = merge_to_elections_districts(df, d_incumbents)
     df = merge_to_elections_districts(df, r_incumbents)
     df = merge_to_elections_districts(df, prior_pres)
     df = merge_to_elections_districts(df, prior_senate)
+    df = merge_census(df, acs_lower)
 
     # merge in features, make sure we didn't expand the dataset!
     assert n_races == len(df), 'too many rows were added'
@@ -256,6 +352,9 @@ def generate_features(con_str):
         'votes_r_prior1',
         'votes_d_prior1',
         'dem_won_prior1',
+        'total_population_e',
+        'race_one_white_e',
+        'race_one_black_e'
     ]
     target_column = 'dem_won'
 
