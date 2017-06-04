@@ -1,7 +1,10 @@
-import os
-import json
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, request
 from flask_sqlalchemy import SQLAlchemy
+from itertools import groupby
+import json
+import os
+
+from application.prediction import Prediction
 
 env = os.getenv('ENV', 'development')
 application = Flask(__name__)
@@ -17,31 +20,20 @@ db = SQLAlchemy(application)
 def not_found(error):
     return make_response(jsonify({ 'error': 'Not found' }), 404)
 
-@application.route('/', methods=['GET'])
-def index():
-    sql = """
-    SELECT
-        c.first_name || ' ' || c.last_name
-        , d.name
-        , e.state
-    FROM candidates c
-        JOIN district_election_results der ON der.candidate_id = c.id
-        JOIN districts d ON der.district_id = d.id
-        JOIN elections e ON der.election_id = e.id
-    WHERE
-        e.year = 2016
-    ORDER BY d.name
-    LIMIT 10
-    """
-    def build_result(row):
-        return dict(
-            name=row[0],
-            district=row[1],
-            state=row[1],
-        )
+@application.route('/predictions/<district_number>', methods=['POST'])
+def predictions(district_number):
+    form_data = dict(
+        district_number=district_number,
+        dollars_spent=request.form.get('dollars_spent', None),
+        election_type=request.form.get('election_type'),
+        is_encumbent=request.form.get('is_encumbent', None),
+        state = request.form.get('state'),
+        turnout=request.form.get('turnout', None),
+    )
 
-    result = list(map(build_result, db.engine.execute(sql).fetchall()))
-    return jsonify(result)
+    prediction = Prediction(db).find(form_data)
+
+    return jsonify(prediction)
 
 if __name__ == '__main__':
     application.run(debug=True, host='0.0.0.0')
