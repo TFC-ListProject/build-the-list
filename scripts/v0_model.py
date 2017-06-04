@@ -72,6 +72,37 @@ def party_results(party_name, con_str):
     ''' % (party_name, party_name, name)
     return pd.read_sql(query, con_str)
 
+def current_spend(party_name, con_str):
+    if party_name == 'R':
+        name = 'republican'
+    elif party_name == 'D':
+        name = 'democratic'
+    else:
+        name = None
+
+    query = '''
+        select
+            d.district_number as district_name,
+            der.district_id,
+            max(ce.dollars) as dollars_%s
+        from district_election_results der
+        join districts d
+          on der.district_id = d.id
+        join elections e
+          on e.id = der.election_id
+        join candidates_elections ce
+          on der.candidate_id = ce.candidate_id
+          and der.election_id = ce.election_id
+        join parties p
+          on ce.party_id = p.id
+        where
+          e.year = 2017
+          and e.election_type_id = 2
+          and p.name = '%s'
+        group by 1, 2
+    ''' % (party_name, name)
+    return pd.read_sql(query, con_str)
+
 def party_incumbent(party_name, con_str):
     if party_name == 'R':
         name = 'republican'
@@ -462,7 +493,7 @@ def run_model(df, feature_columns, target_column):
     print(rf_scores)
     print(rf_scores.mean())
 
-    return formula, lr_model, rf_model
+    return formula, X.columns, lr_model, rf_model
 
 
 def run_prediction(
@@ -475,7 +506,8 @@ def run_prediction(
         state,
         district_number,
         total_votes,
-        normalized_dollar_ratio):
+        d_spend,
+        r_spend):
 
     d = historical_data[(historical_data.state == state) &
                         (historical_data.district_number == district_number)]
@@ -509,8 +541,14 @@ def run_prediction(
     features['incumbents_r'] = incumbents_r
     features['uncontested_d'] = 0
     features['uncontested_r'] = 0
-    features['total_votes'] = d.total_votes.mean()
-    features['normalized_dollar_ratio'] = d.normalized_dollar_ratio.mean()
+
+
+    if d_spend and r_spend:
+        dollar_ratio = (1.0 * d_spend) / r_spend
+    else:
+        dollar_ratio = d.normalized_dollar_ratio.mean()
+    features['normalized_dollar_ratio'] = dollar_ratio
+
     features['prior_demvote_president'] = last_president.loc['prior_demvote_president']
     features['prior_demvote_senate'] = last_senate.loc['prior_demvote_senate']
 
@@ -519,7 +557,16 @@ def run_prediction(
     features['uncontested_r_prior1'] = last_house_results.uncontested_r
     features['uncontested_d_prior1'] = last_house_results.uncontested_d
     features['total_population_e'] = last_census.total_population_e
-    features['turnout'] = d.turnout.mean()
+
+    if total_votes:
+        turnout = total_votes / last_census.total_population_e
+        features['total_votes'] = total_votes
+    else:
+        turnout = d.turnout.mean()
+        features['total_votes'] = d.total_votes.mean()
+
+    features['turnout'] = turnout
+
     features['normalized_white'] = (1.0 * last_census['race_one_white_e']) / last_census['total_population_e']
     features['normalized_black'] = (1.0 * last_census['race_one_black_e']) / last_census['total_population_e']
 
@@ -527,9 +574,14 @@ def run_prediction(
     features['dem_won'] = False
 
     model_features, _ = data_generator(features)
-
     prediction = model.predict_proba(model_features.values.reshape(1, -1))
-    return prediction[0]
+    if district_number == 7:
+        import pudb; pudb.set_trace()
+
+    classes = model.classes_
+    pos_index = model.classes_.tolist().index(1)
+
+    return prediction[0][pos_index]
 
 
 if __name__ == '__main__':
@@ -574,7 +626,7 @@ if __name__ == '__main__':
         'uncontested_r_prior1',
         'uncontested_d_prior1',
         'dem_won_prior1',
-        'total_population_e',
+        # 'total_population_e',
         'turnout',
         'normalized_white',
         'normalized_black'
@@ -582,13 +634,25 @@ if __name__ == '__main__':
     target_column = 'dem_won'
 
     df, census_df = generate_features(con_str)
-    formula, lr_model, rf_model = run_model(df, feature_columns, target_column)
+    formula, training_columns, lr_model, rf_model = run_model(df, feature_columns, target_column)
 
     all_president = latest_election('president', con_str)
     all_senate = latest_election('senate', con_str)
+    r_spend_df = current_spend('R', con_str)
+    d_spend_df = current_spend('D', con_str)
+    r_spend = {}
+    d_spend = {}
+    for _, row in r_spend_df.iterrows():
+        if row['dollars_r'] > 0:
+            r_spend[row['district_name']] = row['dollars_r']
+    for _, row in d_spend_df.iterrows():
+        if row['dollars_d'] > 0:
+            r_spend[row['district_name']] = row['dollars_d']
 
     def data_generator(df):
         y, X = dmatrices(formula, df, return_type="dataframe")
+        X = X.rename(columns={'dem_won_prior1': 'dem_won_prior1[T.True]'})
+        X = X[training_columns]
         y = y['dem_won[True]']
         return X, y
 
@@ -602,25 +666,29 @@ if __name__ == '__main__':
         state='va',
         district_number=32,
         total_votes=None,
-        normalized_dollar_ratio=None
+        d_spend = d_spend.get(32, None),
+        r_spend = r_spend.get(32, None)
     )
-    print 'va district 32: %.4f%%' % (p[1] * 100)
+    print 'va district 32: %.4f%%' % (p * 100)
 
     res = []
+    run_rf = True
     for i in range(1, 101):
-        p1 = run_prediction(
-            rf_model,
-            data_generator,
-            historical_data=df,
-            census_data=census_df,
-            all_president=all_president,
-            all_senate=all_senate,
-            state='va',
-            district_number=i,
-            total_votes=None,
-            normalized_dollar_ratio=None
-        )
-        p2 = run_prediction(
+        if run_rf:
+            rf = run_prediction(
+                rf_model,
+                data_generator,
+                historical_data=df,
+                census_data=census_df,
+                all_president=all_president,
+                all_senate=all_senate,
+                state='va',
+                district_number=i,
+                total_votes=None,
+                d_spend = d_spend.get(i, None),
+                r_spend = r_spend.get(i, None)
+            )
+        lr = run_prediction(
             lr_model,
             data_generator,
             historical_data=df,
@@ -630,11 +698,12 @@ if __name__ == '__main__':
             state='va',
             district_number=i,
             total_votes=None,
-            normalized_dollar_ratio=None
+            d_spend = d_spend.get(i, None),
+            r_spend = r_spend.get(i, None)
         )
-        res.append([i, p2[1]])
-        # print 'va district %d: %.4f%%, %.4f%%' % (i, p1[1] * 100, p2[1] * 100)
-        print 'va district %d: %.4f' % (i, p2[1] * 100)
+        res.append([i, rf])
+        print 'va district %d: %.4f%%, %.4f%%' % (i, rf * 100, lr * 100)
+        # print 'va district %d: %.4f' % (i, lr * 100)
 
     res.sort(key=lambda x: -x[1])
 
