@@ -23,7 +23,7 @@ def build_con_string(user, password, host, database):
     return 'postgresql://%s:%s@%s/%s' % (user, password, host, database)
 
 
-def base_info(year, con_str):
+def base_info(start_year, end_year, con_str):
     query = '''
         select
           distinct
@@ -38,7 +38,8 @@ def base_info(year, con_str):
           on e.id = der.election_id
         where
           et.name like 'state %%%% house'
-          and e.year = %d''' % (year)
+          and e.year >= %d
+          and e.year <= %d''' % (start_year, end_year)
     return pd.read_sql(query, con=con_str)
 
 def party_results(party_name, con_str):
@@ -321,9 +322,7 @@ def merge_census(df, census_df):
 
 def generate_features(con_str):
     # base set of elections
-    election_set = pd.concat([base_info(2015, con_str),
-                              base_info(2013, con_str),
-                              base_info(2011, con_str)])
+    election_set = base_info(2001, 2015, con_str)
     n_races = len(election_set)
 
     # generate other features, each should have election_id, district_id
@@ -399,40 +398,19 @@ def generate_features(con_str):
 
     print('number of races we have prior data for: %d' % len(df))
 
-    feature_columns = [
-        'state',
-        'incumbents_d',
-        'incumbents_r',
-        # 'uncontested_d',
-        # 'uncontested_r',
-        # 'total_votes',
-        'normalized_dollar_ratio',
-        'prior_demvote_president',
-        'prior_demvote_senate',
-        'votesp_r_prior1',
-        'votesp_d_prior1',
-        'uncontested_r_prior1',
-        'uncontested_d_prior1',
-        'dem_won_prior1',
-        'total_population_e',
-        'turnout',
-        'normalized_white',
-        'normalized_black'
-    ]
-    target_column = 'dem_won'
+    return df_with_prior, acs_lower
 
-    return df_with_prior, acs_lower, feature_columns, target_column
 
 def run_model(df, feature_columns, target_column):
 
-    df = df[(df['uncontested_r'] == 0) & (df['uncontested_d'] == 0)]
+    contested_df = df[(df['uncontested_r'] == 0) & (df['uncontested_d'] == 0)]
     formula = '%s ~ %s' % (target_column, ' + '.join(feature_columns))
 
     print()
     print('model formula to run')
     print(formula)
 
-    y, X = dmatrices(formula, df, return_type="dataframe")
+    y, X = dmatrices(formula, contested_df, return_type="dataframe")
     y = y['dem_won[True]']
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -581,7 +559,29 @@ if __name__ == '__main__':
 
     con_str = build_con_string(args.user, args.password, args.host, args.database)
 
-    df, census_df, feature_columns, target_column = generate_features(con_str)
+    feature_columns = [
+        'state',
+        'incumbents_d',
+        'incumbents_r',
+        # 'uncontested_d',
+        # 'uncontested_r',
+        # 'total_votes',
+        'normalized_dollar_ratio',
+        'prior_demvote_president',
+        'prior_demvote_senate',
+        'votesp_r_prior1',
+        'votesp_d_prior1',
+        'uncontested_r_prior1',
+        'uncontested_d_prior1',
+        'dem_won_prior1',
+        'total_population_e',
+        'turnout',
+        'normalized_white',
+        'normalized_black'
+    ]
+    target_column = 'dem_won'
+
+    df, census_df = generate_features(con_str)
     formula, lr_model, rf_model = run_model(df, feature_columns, target_column)
 
     all_president = latest_election('president', con_str)
