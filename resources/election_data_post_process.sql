@@ -43,4 +43,30 @@ WHERE der.district_id = der_winners.district_id AND
   der.election_id = der_winners.election_id AND
   der.candidate_id != der_winners.candidate_id;
 
+-- NJ GA has two winners per district!
+
+DELETE FROM der_winners;
+
+INSERT INTO der_winners
+SELECT der.district_id, der.election_id, der.candidate_id
+FROM district_election_results der
+JOIN elections e ON der.election_id = e.id
+JOIN election_types et ON e.election_type_id = et.id
+JOIN districts d ON der.district_id = d.id
+JOIN district_types dt ON d.district_type_id = dt.id
+WHERE et.name = dt.name AND
+  der.votes > 0 AND
+  NOT der.won AND
+  d.state = 'nj' AND
+  dt.name = 'state lower house'
+ORDER BY der.votes DESC
+ON CONFLICT DO NOTHING;
+
+UPDATE district_election_results der
+SET won = TRUE
+FROM der_winners
+WHERE der.district_id = der_winners.district_id AND
+  der.election_id = der_winners.election_id AND
+  der.candidate_id = der_winners.candidate_id;
+
 DROP TABLE der_winners;
