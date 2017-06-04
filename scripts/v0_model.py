@@ -8,8 +8,10 @@ from patsy import dmatrices
 from sklearn import metrics
 from sklearn.preprocessing import Imputer
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
+from sklearn.model_selection import train_test_split
 
 # TODO: we shouldn't have to silence this warning
 pd.options.mode.chained_assignment = None
@@ -354,6 +356,8 @@ def generate_features(con_str):
     df['votes_d'][df.uncontested_r == 1] = 0
     df['votes_r'][df.uncontested_d == 1] = 0
     df['total_votes'] = df['votes_d'] + df['votes_r']
+    df['votesp_d'] = (1.0 * df['votes_d']) / df['total_votes']
+    df['votesp_r'] = (1.0 * df['votes_r']) / df['total_votes']
 
     # missing dollar values
     df['dollars_d'][df.uncontested_r == 1] = 0
@@ -378,6 +382,7 @@ def generate_features(con_str):
     # add normalized census variables
     df['normalized_white'] = df['race_one_white_e'] / df['total_population_e']
     df['normalized_black'] = df['race_one_black_e'] / df['total_population_e']
+    df['turnout'] = df['total_votes'] / df['total_population_e']
 
     # add target
     df['dem_won'] = df['votes_d'] > df['votes_r']
@@ -398,16 +403,19 @@ def generate_features(con_str):
         'state',
         'incumbents_d',
         'incumbents_r',
-        'uncontested_d',
-        'uncontested_r',
-        'total_votes',
+        # 'uncontested_d',
+        # 'uncontested_r',
+        # 'total_votes',
         'normalized_dollar_ratio',
         'prior_demvote_president',
         'prior_demvote_senate',
-        'votes_r_prior1',
-        'votes_d_prior1',
+        'votesp_r_prior1',
+        'votesp_d_prior1',
+        'uncontested_r_prior1',
+        'uncontested_d_prior1',
         'dem_won_prior1',
         'total_population_e',
+        'turnout',
         'normalized_white',
         'normalized_black'
     ]
@@ -417,10 +425,9 @@ def generate_features(con_str):
 
 def run_model(df, feature_columns, target_column):
 
-    df = df[feature_columns + [target_column]]
-
-
+    df = df[(df['uncontested_r'] == 0) & (df['uncontested_d'] == 0)]
     formula = '%s ~ %s' % (target_column, ' + '.join(feature_columns))
+
     print()
     print('model formula to run')
     print(formula)
@@ -428,39 +435,61 @@ def run_model(df, feature_columns, target_column):
     y, X = dmatrices(formula, df, return_type="dataframe")
     y = y['dem_won[True]']
 
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42)
+
     print()
-    print('data points: %d' % len(y))
-    print('mean outcome: %.4f' % y.mean())
+    print('train data points: %d' % len(y_train))
+    print('train mean outcome: %.4f' % y_train.mean())
     print('accuracy of always predicting a loss')
-    print(metrics.accuracy_score(y, [0] * len(y)))
+    print(metrics.accuracy_score(y_test, [0] * len(y_test)))
 
     print()
     print('logistic regression:')
-    logreg = LogisticRegression(C=1e5)
-    logreg.fit(X, y)
-    probs = logreg.predict_proba(X)
-    predictions = logreg.predict(X)
+    lrC = 1e5
+    lr_model = LogisticRegression(C=lrC)
+    lr_model.fit(X_train, y_train)
+    lr_probs = lr_model.predict_proba(X_test)
+    lr_predictions = lr_model.predict(X_test)
 
-    print('coeffs:')
-    print(pd.DataFrame(list(zip(X.columns, np.transpose(logreg.coef_)))))
+    n_estimators = 100
+    max_depth = 5
+    rf_model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+    rf_model.fit(X_train, y_train)
+    rf_probs = rf_model.predict_proba(X_test)
+    rf_predictions = rf_model.predict(X_test)
+
+    print('lr coeffs:')
+    print(pd.DataFrame(list(zip(X.columns, np.transpose(lr_model.coef_)))))
+    print('rf importance:')
+    print(pd.DataFrame(list(zip(X.columns, np.transpose(rf_model.feature_importances_)))))
     print('accuracy')
-    print(metrics.accuracy_score(y, predictions))
+    print(metrics.accuracy_score(y_test, lr_predictions))
+    print(metrics.accuracy_score(y_test, rf_predictions))
     print('AUC')
-    print(metrics.roc_auc_score(y, probs[:, 1]))
+    print(metrics.roc_auc_score(y_test, lr_probs[:, 1]))
+    print(metrics.roc_auc_score(y_test, rf_probs[:, 1]))
 
     # run simple cross validation
     print()
-    print('results of cross validation')
     cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
-    scores = cross_val_score(LogisticRegression(), X, y, scoring='accuracy', cv=cv)
-    print(scores)
-    print(scores.mean())
-    return formula, logreg
+    lr_scores = cross_val_score(LogisticRegression(C=lrC), X, y, scoring='accuracy', cv=cv)
+    rf_scores = cross_val_score(RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth), X, y, scoring='accuracy', cv=cv)
+
+    print('results of logistic cross validation')
+    print(lr_scores)
+    print(lr_scores.mean())
+
+    print('results of RF cross validation')
+    print(rf_scores)
+    print(rf_scores.mean())
+
+    return formula, lr_model, rf_model
 
 
 def run_prediction(
         model,
-        formula,
+        data_generator,
         historical_data,
         census_data,
         all_president,
@@ -469,23 +498,7 @@ def run_prediction(
         district_number,
         total_votes,
         normalized_dollar_ratio):
-    '''
-    0                 Intercept   [-0.00037851296284]
-    1    dem_won_prior1[T.True]    [0.00152631893392]
-    2              incumbents_d     [0.0192796826367]
-    3              incumbents_r      [-0.03676366033]
-    4             uncontested_d   [0.000696905983076]
-    5             uncontested_r   [-0.00338189417497]
-    6               total_votes   [1.72829050884e-05]
-    7   normalized_dollar_ratio     [0.0756650600915]
-    8   prior_demvote_president      [0.135588849844]
-    9      prior_demvote_senate      [0.134276905444]
-    10           votes_r_prior1  [-6.78175699524e-05]
-    11           votes_d_prior1   [0.000412576800593]
-    12       total_population_e  [-0.000229263332821]
-    13         normalized_white    [-0.0020673684038]
-    14         normalized_black   [-1.7061723598e-05]
-    '''
+
     d = historical_data[(historical_data.state == state) &
                         (historical_data.district_number == district_number)]
     c = census_df[(census_data.state == state) &
@@ -505,7 +518,9 @@ def run_prediction(
     # generate feature matrix
     features = pd.Series()
     features['Intercept'] = 1.0
-    features['dem_won_prior1[T.True]'] = int(last_house_results['dem_won'])
+    features['dem_won_prior1'] = last_house_results['dem_won']
+    # TODO
+    features['state'] = 'va'
     if last_house_results['dem_won']:
         incumbents_d = last_house_results['incumbents_d'] + 1
         incumbents_r = 0
@@ -518,19 +533,24 @@ def run_prediction(
     features['uncontested_r'] = 0
     features['total_votes'] = d.total_votes.mean()
     features['normalized_dollar_ratio'] = d.normalized_dollar_ratio.mean()
-    features['prior_demvote_president'] = float(last_president.loc['prior_demvote_president']),
-    features['prior_demvote_senate'] = float(last_senate.loc['prior_demvote_senate']),
-    features['prior_demvote_president'] = features['prior_demvote_president'][0]
-    features['prior_demvote_senate'] = features['prior_demvote_senate'][0]
+    features['prior_demvote_president'] = last_president.loc['prior_demvote_president']
+    features['prior_demvote_senate'] = last_senate.loc['prior_demvote_senate']
 
-    features['votes_r_prior1'] = last_house_results.votes_r
-    features['votes_d_prior1'] = last_house_results.votes_d
+    features['votesp_r_prior1'] = last_house_results.votesp_r
+    features['votesp_d_prior1'] = last_house_results.votesp_d
+    features['uncontested_r_prior1'] = last_house_results.uncontested_r
+    features['uncontested_d_prior1'] = last_house_results.uncontested_d
     features['total_population_e'] = last_census.total_population_e
+    features['turnout'] = d.turnout.mean()
     features['normalized_white'] = (1.0 * last_census['race_one_white_e']) / last_census['total_population_e']
     features['normalized_black'] = (1.0 * last_census['race_one_black_e']) / last_census['total_population_e']
 
-    prediction = model.predict_proba(features.values.reshape(1, -1))
-    print '%s district %s: %.4f%%' % (state, district_number, prediction[0][1] * 100)
+    # this is a dummy entry that will be thrown away
+    features['dem_won'] = False
+
+    model_features, _ = data_generator(features)
+
+    prediction = model.predict_proba(model_features.values.reshape(1, -1))
     return prediction[0]
 
 
@@ -562,15 +582,35 @@ if __name__ == '__main__':
     con_str = build_con_string(args.user, args.password, args.host, args.database)
 
     df, census_df, feature_columns, target_column = generate_features(con_str)
-    formula, model = run_model(df, feature_columns, target_column)
+    formula, lr_model, rf_model = run_model(df, feature_columns, target_column)
 
     all_president = latest_election('president', con_str)
     all_senate = latest_election('senate', con_str)
 
+    def data_generator(df):
+        y, X = dmatrices(formula, df, return_type="dataframe")
+        y = y['dem_won[True]']
+        return X, y
+
+    p = run_prediction(
+        rf_model,
+        data_generator,
+        historical_data=df,
+        census_data=census_df,
+        all_president=all_president,
+        all_senate=all_senate,
+        state='va',
+        district_number=32,
+        total_votes=None,
+        normalized_dollar_ratio=None
+    )
+    print 'va district 32: %.4f%%' % (p[1] * 100)
+
+    res = []
     for i in range(1, 101):
-        run_prediction(
-            model,
-            formula,
+        p1 = run_prediction(
+            rf_model,
+            data_generator,
             historical_data=df,
             census_data=census_df,
             all_president=all_president,
@@ -580,3 +620,23 @@ if __name__ == '__main__':
             total_votes=None,
             normalized_dollar_ratio=None
         )
+        p2 = run_prediction(
+            lr_model,
+            data_generator,
+            historical_data=df,
+            census_data=census_df,
+            all_president=all_president,
+            all_senate=all_senate,
+            state='va',
+            district_number=i,
+            total_votes=None,
+            normalized_dollar_ratio=None
+        )
+        res.append([i, p2[1]])
+        # print 'va district %d: %.4f%%, %.4f%%' % (i, p1[1] * 100, p2[1] * 100)
+        print 'va district %d: %.4f' % (i, p2[1] * 100)
+
+    res.sort(key=lambda x: -x[1])
+
+    for x in res[0:20]:
+        print "district %d, score: %.4f" % (x[0], x[1])
