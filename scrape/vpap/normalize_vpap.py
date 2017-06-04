@@ -76,18 +76,25 @@ def update_election_types_in_db(con, cursor, election_types):
     election_type_to_id[row['name']] = row['id']
   return election_type_to_id
 
-def update_districts_in_db(con, cursor, district_type_id, districts):
-  for district in districts:
-    cursor.execute("""
-      INSERT INTO districts (district_type_id, district_number, state)
-      VALUES (%(district_type_id)s, %(district_number)s, %(state)s)
-      ON CONFLICT DO NOTHING""",
-      {'district_type_id': district_type_id, 'district_number': district, 'state': 'va'}
-    )
-  district_to_id = {}
+def update_districts_in_db(con, cursor, district_type_id, red_years_districts):
+  for red_year in red_years_districts:
+    for district_number in red_years_districts[red_year]:
+      cursor.execute("""
+        INSERT INTO districts (district_type_id, redistricting_year, district_number, state)
+        VALUES (%(district_type_id)s, %(redistricting_year)s, %(district_number)s, %(state)s)
+        ON CONFLICT DO NOTHING""",
+        {
+          'district_type_id': district_type_id,
+          'redistricting_year': red_year,
+          'district_number': district_number,
+          'state': 'va'
+        }
+      )
+  district_and_year_to_id = {}
   for row in query(cursor, 'districts', "state = 'va'"):
-    district_to_id[row['district_number']] = row['id']
-  return district_to_id
+    key = str(row['district_number']) + ':' + str(row['redistricting_year'])
+    district_and_year_to_id[key] = row['id']
+  return district_and_year_to_id
 
 def update_elections_in_db(con, cursor, election_names):
   cursor.executemany("""
@@ -127,6 +134,9 @@ def update_election_results(con, cursor, candidates_elections, district_election
   )
   con.commit()
 
+def redistricting_year(year):
+  return (year / 10) * 10 + 1
+
 def main():
   con = psycopg2.connect(
     host='localhost',
@@ -143,7 +153,7 @@ def main():
   candidate_names = {}
   election_types = set()
   parties = set()
-  districts = set()
+  red_years_districts = {}
   dhc = query(cursor, 'raw_district_house_candidates')
   for row in dhc:
     candidate_names[row['firstname'] + ' ' + row['lastname']] = normalize_name(row['firstname'], row['lastname'])
@@ -152,12 +162,15 @@ def main():
 
     parties.add(normalize_party(row['party']))
 
-    districts.add(row['district'])
+    red_year = redistricting_year(row['year'])
+    if red_year not in red_years_districts:
+      red_years_districts[red_year] = set()
+    red_years_districts[red_year].add(row['district'])
 
   candidate_name_to_id = update_candidates_in_db(con, cursor, candidate_names)
   election_type_to_id = update_election_types_in_db(con, cursor, election_types)
   party_to_id = update_parties_in_db(con, cursor, parties)
-  district_to_id = update_districts_in_db(con, cursor, district_type_id, districts)
+  district_and_red_year_to_id = update_districts_in_db(con, cursor, district_type_id, red_years_districts)
 
   election_names = {}
   for row in dhc:
@@ -175,13 +188,15 @@ def main():
   candidates_elections = []
   district_election_results = []
   for row in dhc:
+    year = row['year']
     name = normalize_name(row['firstname'], row['lastname'])
     candidate_id = candidate_name_to_id[name['firstname'] + ' ' + name['lastname']]
     election_id = election_type_and_year_to_id[
-      str(row['year']) + ' state lower house'
+      str(year) + ' state lower house'
     ]
     party_id = party_to_id[normalize_party(row['party'])]
-    district_id = district_to_id[row['district']]
+    district_and_red_year = str(row['district']) + ':' + str(redistricting_year(year))
+    district_id = district_and_red_year_to_id[district_and_red_year]
 
     candidates_elections.append({
       'candidate_id': candidate_id,
@@ -253,7 +268,8 @@ def main():
     election_id = election_type_and_year_to_id[m.group(1) + ' ' + normalize_election_type(m.group(2))]
 
     party_id = party_to_id[normalize_party(row['candidateparty'])]
-    district_id = district_to_id[row['district']]
+    red_year = str(redistricting_year(int(m.group(1))))
+    district_id = district_and_red_year_to_id[str(row['district']) + ':' + red_year]
 
     candidates_elections.append({
       'candidate_id': candidate_id,

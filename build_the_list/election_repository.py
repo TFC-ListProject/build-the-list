@@ -13,6 +13,9 @@ def votes_by_municipality(rows, municipality, i, skip_amount):
 
     return reduce(lambda acc, x: acc + x[i + skip_amount], filtered_rows, 0)
 
+def redistricting_year(year):
+    return (year / 10) * 10 + 1
+
 def save(db, candidates, parties, election, rows):
     conn = db.connection()
     election_id = db.save_election(conn, {
@@ -65,6 +68,7 @@ def save(db, candidates, parties, election, rows):
         if row[0] and row[1]:
             district_id = db.save_district(conn, {
                 'number': row[0],
+                'redistricting_year': redistricting_year(election['year']),
                 'state': election['state'],
                 'type': row[1],
             })

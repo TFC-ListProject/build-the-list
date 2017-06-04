@@ -2,7 +2,8 @@ import psycopg2
 import psycopg2.extras
 import re
 
-def find_district(muni, county, muni_to_district):
+def find_district(muni, red_year, county, red_year_to_muni_to_district):
+  muni_to_district = red_year_to_muni_to_district[red_year]
   for suffix in ['', ' city', ' borough', ' township', ' town', ' village']:
     for add_county in [False, True]:
       key = muni + suffix
@@ -16,16 +17,24 @@ def populate_districts(con, cur):
   cur.execute("SELECT id FROM district_types WHERE name = 'state lower house'")
   district_type_id = cur.fetchone()['id']
 
-  cur.execute("SELECT DISTINCT district FROM municipality_district")
+  cur.execute("""
+    SELECT DISTINCT year
+    FROM municipality_election_results mer
+    JOIN elections e ON mer.election_id = e.id""")
+  red_years = set()
   for row in cur.fetchall():
-    number = row['district']
-    cur.execute("""
-      INSERT INTO districts (state, district_type_id, district_number)
-      VALUES ('nj', %(district_type_id)s, %(number)s)
-      ON CONFLICT DO NOTHING""",
-      {'district_type_id': district_type_id, 'number': number}
-    )
-    con.commit()
+    red_years.add(redistricting_year(row['year']))
+  cur.execute("SELECT DISTINCT district FROM municipality_district WHERE state = 'nj'")
+  for row in cur.fetchall():
+    for red_year in red_years:
+      number = row['district']
+      cur.execute("""
+        INSERT INTO districts (state, redistricting_year, district_type_id, district_number)
+        VALUES ('nj', %(red_year)s, %(district_type_id)s, %(number)s)
+        ON CONFLICT DO NOTHING""",
+        {'red_year': red_year, 'district_type_id': district_type_id, 'number': number}
+      )
+      con.commit()
 
   cur.execute("""
     SELECT * FROM districts
@@ -33,10 +42,14 @@ def populate_districts(con, cur):
     AND state = 'nj'""",
     {'district_type_id': district_type_id}
   )
-  district_to_id = {}
+  district_and_red_year_to_id = {}
   for row in cur.fetchall():
-    district_to_id[row['district_number']] = row['id']
-  return district_to_id
+    red_year = str(row['redistricting_year'])
+    district_and_red_year_to_id[str(row['district_number']) + ':' + red_year] = row['id']
+  return district_and_red_year_to_id
+
+def redistricting_year(year):
+  return (year / 10) * 10 + 1
 
 def main():
   con = psycopg2.connect(
@@ -46,20 +59,25 @@ def main():
   )
   cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-  district_to_id = populate_districts(con, cur)
+  district_and_red_year_to_id = populate_districts(con, cur)
 
-  muni_to_district = {}
+  red_year_to_muni_to_district = {}
 
   cur.execute("SELECT * FROM municipality_district")
   for md in cur.fetchall():
+    red_year = md['redistricting_year']
+    if red_year not in red_year_to_muni_to_district:
+      red_year_to_muni_to_district[red_year] = {}
     muni = md['municipality'].lower().replace(' (partial)', '')
-    muni_to_district[muni] = md['district']
+    red_year_to_muni_to_district[red_year][muni] = md['district']
 
   cur.execute("""
-    SELECT mer.candidate_id, mer.election_id, mer.votes, m.name AS muni_name, C.name as county_name
+    SELECT mer.candidate_id, mer.election_id, mer.votes, m.name AS muni_name,
+      c.name AS county_name, e.year AS year
     FROM municipality_election_results mer
     JOIN municipalities m ON mer.municipality_id = m.id
-    JOIN counties c ON m.county_id = c.id""")
+    JOIN counties c ON m.county_id = c.id
+    JOIN elections e ON mer.election_id = e.id""")
   hit = 0
   miss = 0
   misses = set()
@@ -67,6 +85,7 @@ def main():
   for mer in cur.fetchall():
     candidate_id = mer['candidate_id']
     election_id = mer['election_id']
+    red_year = redistricting_year(mer['year'])
     orig_muni = mer['muni_name']
 
     if orig_muni == 'federal overseas' or orig_muni == 'total':
@@ -150,12 +169,15 @@ def main():
 
     county = mer['county_name']
 
-    district_num = find_district(muni, county, muni_to_district)
+    district_num = find_district(muni, red_year, county, red_year_to_muni_to_district)
     if district_num:
       hit = hit+1
-      if district_num not in district_tallies:
-        district_tallies[district_num] = {}
-      district_dict = district_tallies[district_num]
+      if red_year not in district_tallies:
+        district_tallies[red_year] = {}
+      red_year_dict = district_tallies[red_year]
+      if district_num not in red_year_dict:
+        red_year_dict[district_num] = {}
+      district_dict = red_year_dict[district_num]
       if election_id not in district_dict:
         district_dict[election_id] = {}
       election_dict = district_dict[election_id]
@@ -167,16 +189,16 @@ def main():
       misses.add(muni + ' (' + orig_muni + ')' + ' (' + county + ')')
 
   rows_to_insert = []
-  for district_num in district_tallies:
-    for election_id in district_tallies[district_num]:
-      for candidate_id in district_tallies[district_num][election_id]:
-        district_id = district_to_id[district_num]
-        rows_to_insert.append({
-          'district_id': district_id,
-          'election_id': election_id,
-          'candidate_id': candidate_id,
-          'votes': district_tallies[district_num][election_id][candidate_id]
-        })
+  for red_year in district_tallies:
+    for district_num in district_tallies[red_year]:
+      for election_id in district_tallies[red_year][district_num]:
+        for candidate_id in district_tallies[red_year][district_num][election_id]:
+          rows_to_insert.append({
+            'district_id': district_and_red_year_to_id[str(district_num) + ':' + str(red_year)],
+            'election_id': election_id,
+            'candidate_id': candidate_id,
+            'votes': district_tallies[red_year][district_num][election_id][candidate_id]
+          })
   cur.executemany("""
     INSERT INTO district_election_results (district_id, election_id, candidate_id, votes)
     VALUES (%(district_id)s, %(election_id)s, %(candidate_id)s, %(votes)s)

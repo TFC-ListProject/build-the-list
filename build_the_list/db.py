@@ -81,6 +81,7 @@ def save_candidate(conn, data):
 
 def save_district(conn, data):
     number = data['number']
+    redistricting_year = data['redistricting_year']
     state = data['state']
     district_type = data['type']
 
@@ -95,12 +96,14 @@ def save_district(conn, data):
 
     return conn.query(
         """
-        INSERT INTO districts (district_type_id, district_number, state)
-        VALUES (:district_type_id, :number, :state)
-        ON CONFLICT (district_type_id, district_number, state) DO UPDATE SET district_number = :number, state = :state
+        INSERT INTO districts (district_type_id, redistricting_year, district_number, state)
+        VALUES (:district_type_id, :redistricting_year, :number, :state)
+        ON CONFLICT (district_type_id, redistricting_year, district_number, state)
+        DO UPDATE SET district_number = :number, state = :state, redistricting_year = :redistricting_year
         RETURNING id
         """,
         district_type_id=district_type_id,
+        redistricting_year=redistricting_year,
         number=number,
         state=format_str(state)
     ).as_dict()[0]['id']

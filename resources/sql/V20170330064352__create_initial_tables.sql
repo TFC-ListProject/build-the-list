@@ -25,20 +25,19 @@ CREATE TABLE IF NOT EXISTS district_types (
     created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE UNIQUE INDEX idx_district_types_name_unique ON district_types (name);
-CREATE UNIQUE INDEX idx_district_types_name_lower_unique ON district_types (lower(name));
 
 
 -- districts
 CREATE TABLE IF NOT EXISTS districts (
     id SERIAL PRIMARY KEY,
     district_type_id integer REFERENCES district_types(id) NOT NULL,
+    redistricting_year integer NOT NULL,
     district_number integer NOT NULL,
     state varchar(2) NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_districts_district_type_id ON districts (district_type_id);
-CREATE UNIQUE INDEX idx_districts_state_type_number_unique ON districts
-(state, district_type_id, district_number);
+CREATE UNIQUE INDEX idx_districts_state_year_type_number_unique ON districts
+(state, redistricting_year, district_type_id, district_number);
 
 
 -- election_types
