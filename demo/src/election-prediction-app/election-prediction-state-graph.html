@@ -1,19 +1,28 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="election-prediction-district-card.html">
 
 <dom-module id="election-prediction-state-graph">
   <template>
+    <style include="iron-flex-alignment"></style>
     <style include="iron-flex">
       :host {
-        display: block;
+        @apply(--layout-horizontal);
+      }
+
+      h3 {
+        @apply(--paper-font-subhead);
       }
 
       paper-material {
@@ -21,10 +30,26 @@
         margin-bottom: 16px;
       }
 
+      paper-button[raised] {
+        background-color: var(--accent-color);
+        color: white;
+      }
+
+      paper-button.make-prediction {
+        margin-bottom: 16px;
+      }
+
+      .buttons paper-button {
+        color: var(--primary-color);
+      }
+
+      .buttons paper-button:last-of-type {
+        color: var(--accent-color);
+      }
+
       paper-tooltip {
-        --paper-tooltip-background: white;
         --paper-tooltip-opacity: 1;
-        --paper-tooltip-text-color: #212121;
+        --paper-tooltip-text-color: #white;
         --paper-tooltip: {
           @apply(--shadow-elevation-4dp);
           font-size: 13px;
@@ -33,7 +58,7 @@
 
       svg {
         filter: drop-shadow(16px 16px 20px rgba(0, 0, 0, 0.14));
-        height: calc(100vh - 180px);
+        height: calc(100vh - 76px);
       }
 
       svg .district {
@@ -51,11 +76,6 @@
 
       .controls paper-input, .controls .control {
         margin-right: 32px;
-      }
-
-      .district-box {
-        margin-left: 32px;
-        padding: 16px;
       }
 
       paper-icon-button {
@@ -81,51 +101,67 @@
         }
       }
     </style>
-    <iron-ajax auto url="../src/[[state]].json" params="{}" last-response="{{response}}" loading="{{loading}}"></iron-ajax>
+    <iron-ajax auto url="../src/geojson/[[state]]/[[year]]/[[election]].json" params="{}" last-response="{{response}}" loading="{{loading}}"></iron-ajax>
+    <div>
     <paper-material class="controls layout horizontal center">
-      <!-- <paper-dropdown-menu label="State">
-        <paper-menu attr-for-selected="name" class="dropdown-content" selected="{{state}}">
-          <paper-item name="nj">New Jersey</paper-item>
-          <paper-item name="va">Virgina</paper-item>
-        </paper-menu>
-      </paper-dropdown-menu> -->
-      <paper-dropdown-menu class="flex control" label="Election">
-        <paper-listbox class="dropdown-content" selected="0">
-          <paper-item>Congressional</paper-item>
-          <paper-item>Legislative</paper-item>
-          <paper-item>Governor</paper-item>
+      <paper-dropdown-menu class="flex control" label="State">
+        <paper-listbox attr-for-selected="value" class="dropdown-content" selected="{{state}}">
+          <paper-item value="nj">New Jersey</paper-item>
+          <paper-item value="va">Virgina</paper-item>
         </paper-listbox>
       </paper-dropdown-menu>
-      <paper-input class="flex control" label="Turnout" type="number" value="0">
-        <div suffix>%</div>
-      </paper-input>
-      <paper-input class="flex control" label="Money spent" type="number" value="0">
-        <div prefix>$</div>
-      </paper-input>
-      <paper-checkbox class="control">Incumbent</paper-checkbox>
-      <paper-icon-button icon="settings"></paper-icon-button>
+      <paper-dropdown-menu class="flex control" label="Election">
+        <paper-listbox attr-for-selected="value" class="dropdown-content" selected="{{election}}">
+          <paper-item value="senate">Senate</paper-item>
+          <paper-item value="house">House</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <paper-dropdown-menu class="flex control" hidden$="[[isPredicting]]" label="Year">
+        <paper-listbox attr-for-selected="value" class="dropdown-content" selected="{{year}}">
+          <paper-item value="2014">2014</paper-item>
+          <paper-item value="2015">2015</paper-item>
+          <paper-item value="2016">2016</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
     </paper-material>
-    <div class="graph layout horizontal center">
-      <paper-material hidden$="[[!district.NAME]]" class="district-box" elevation="4">
-        <h3>District [[district.NAME]]</h3>
-        TODO: Fill in with stuff
-      </paper-material>
-      <div id="vis" class="flex">
+    <paper-button active="{{isPredicting}}" class="make-prediction" hidden$="[[isPredicting]]" raised toggles>Make prediction</paper-button>
+    <paper-material class="controls" hidden$="[[!isPredicting]]">
+      <div class="layout horizontal center">
+        <paper-input class="flex control" label="Turnout" type="number" value="0">
+          <div suffix>%</div>
+        </paper-input>
+        <paper-input class="flex control" label="Money spent" type="number" value="0">
+          <div prefix>$</div>
+        </paper-input>
+        <paper-checkbox class="control">Incumbent</paper-checkbox>
+      </div>
+      <div class="buttons layout horizontal flex end-justified">
+        <paper-button active="{{!isPredicting}}" toggles>Cancel</paper-button>
+        <paper-button>Predict</paper-button>
+      </div>
+    </paper-material>
+    <election-prediction-district-card district="[[district]]" hidden$="[[!district.NAME]]">
+    </election-prediction-district-card>
+  </div>
+  <div class="flex">
+    <div class="graph flex layout horizontal center-justified">
+      <div id="vis" class="flex layout horizontal center-justified">
         <svg id="svg" viewBox="0 0 500 500"></svg>
       </div>
     </div>
+  </div>
   </template>
   <script>
     Polymer({
       is: 'election-prediction-state-graph',
       properties: {
-        appTitle: {
-          type: String,
-          computed: 'computeAppTitle_(state)',
-          notify: true
-        },
         district: {
           type: Object,
+          value() {
+            return {
+              NAME: undefined
+            };
+          },
           notify: true
         },
         state: {
@@ -133,14 +169,18 @@
           notify: true,
           value: 'nj'
         },
+        year: {
+          type: String,
+          value: '2016'
+        },
+        election: {
+          type: String,
+          value: 'senate'
+        },
         tooltipText: String
       },
 
       observers: ['onResponse_(response, isAttached)'],
-
-      computeAppTitle_(state) {
-        return state == 'nj' ? 'New Jersey' : 'Virgina';
-      },
 
       onResponse_(response) {
         console.log(response);
@@ -156,6 +196,7 @@
         const t = [(width - s * (bounds[1][0] + bounds[0][0])) / 2, (height - s * (bounds[1][1] + bounds[0][1])) / 2];
 
         projection.scale(s).translate(t);
+        d3.selectAll('path').remove();
         svg.append('g')
            .selectAll('path')
            .data(response.features)
@@ -178,10 +219,10 @@
              return 'district';
            })
            .on('mouseover', d => {
-             this.district = d.properties;
+             console.log('Some tooltip for ', d);
            })
            .on('click', d => {
-             window.location.hash = `#/district/${d.properties.NAME}`;
+             this.district = d.properties;
            });
       }
     });

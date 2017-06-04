@@ -25,7 +25,8 @@
     "iron-media-query": "PolymerElements/iron-media-query#^1.0.8",
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^1.0.6",
     "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.0",
-    "d3": "^4.9.1"
+    "d3": "^4.9.1",
+    "paper-button": "PolymerElements/paper-button#^2.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

@@ -1,14 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -56,7 +53,7 @@
       }
 
       app-toolbar {
-        height: 48px;
+        height: 52px;
       }
 
       paper-material {
@@ -74,23 +71,16 @@
         }
       }
     </style>
-    <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
-    <app-route route="{{subroute}}" pattern="/:id" data="{{subrouteData}}"></app-route>
     <app-header-layout fullbleed>
       <app-header shadow fixed>
         <app-toolbar>
-          <paper-icon-button icon="arrow-back" on-tap="onBackTap_" hidden$="[[computeHideBackButton_(routeData.page)]]"></paper-icon-button>
-          <div main-title>[[appTitle]]</div>
+          <div main-title>Build the List</div>
           <paper-icon-button icon="more-vert"></paper-icon-button>
         </app-toolbar>
       </app-header>
       <div class="main-content">
-        <neon-animated-pages animate-initial-selection attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation" fallback-selection="state" selected="{{routeData.page}}">
-          <election-prediction-state-graph app-title="{{stateTitle}}" name="state" state="{{state}}">
-          </election-prediction-state-graph>
-          <election-prediction-district-charts class="flex" district="[[subrouteData.id]]" app-title="{{districtTitle}}" name="district" state="[[state]]"></election-prediction-district-charts>
-        </neon-animated-pages>
+        <election-prediction-state-graph app-title="{{stateTitle}}" name="state" state="{{state}}">
+        </election-prediction-state-graph>
       </div>
     </app-header-layout>
   </template>
