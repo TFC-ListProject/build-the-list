@@ -12,9 +12,8 @@ class VpapPipeline(object):
   def __init__(self):
     self.connection = psycopg2.connect(
       host='localhost',
-      database='vpap_spider',
-      user='scrapy',
-      password='Scr@py!'
+      database='buildthelist_development',
+      user='techforcampaigns'
     )
     self.cursor = self.connection.cursor()
 

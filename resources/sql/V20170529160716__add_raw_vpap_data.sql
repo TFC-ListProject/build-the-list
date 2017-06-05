@@ -28,46 +28,6 @@ CREATE TABLE raw_statewide_candidates (
 );
 
 COPY raw_district_house_candidates (firstname, lastname, party, percentage, numvotes, dollars, wasincumbent, waswinner, withdrew, year, district, electiontype, state) FROM stdin;
-Scott	Garrett	R	\N	\N	69660	t	\N	f	2017	23	regular	VA
-Natalie	Short	D	\N	\N	0	f	\N	f	2017	23	regular	VA
-Kathy	Byron	R	\N	\N	72208	t	\N	f	2017	22	regular	VA
-Michael C Jr.	Millner	L	\N	\N	0	f	\N	f	2017	22	regular	VA
-Bill	Haley	R	\N	\N	14655	f	\N	f	2017	21	regular	VA
-Ron	Villanueva	R	\N	\N	115000	t	\N	f	2017	21	regular	VA
-Thomas	Brock	D	\N	\N	1525	f	\N	f	2017	21	regular	VA
-Kelly	Fowler	D	\N	\N	0	f	\N	f	2017	21	regular	VA
-Dickie	Bell	R	\N	\N	43305	t	\N	f	2017	20	regular	VA
-Michele	Edwards	D	\N	\N	0	f	\N	f	2017	20	regular	VA
-Will	Hammer	L	\N	\N	0	f	\N	f	2017	20	regular	VA
-Terry	Austin	R	\N	\N	33954	t	\N	f	2017	19	regular	VA
-Reagan	Flaherty	D	\N	\N	0	f	\N	f	2017	19	regular	VA
-Michael	Webert	R	\N	\N	19267	t	\N	f	2017	18	regular	VA
-Tristan	Shields	D	\N	\N	0	f	\N	f	2017	18	regular	VA
-Will	King	Green	\N	\N	0	f	\N	f	2017	18	regular	VA
-Christopher	Head	R	\N	\N	28630	t	\N	f	2017	17	regular	VA
-Djuna	Osborne	D	\N	\N	0	f	\N	f	2017	17	regular	VA
-Les	Adams	R	\N	\N	32256	t	\N	f	2017	16	regular	VA
-Todd	Gilbert	R	\N	\N	103854	t	\N	f	2017	15	regular	VA
-Danny	Marshall	R	\N	\N	67541	t	\N	f	2017	14	regular	VA
-Bob	Marshall	R	\N	\N	43268	t	\N	f	2017	13	regular	VA
-Andrew A	Adams	D	\N	\N	0	f	\N	f	2017	13	regular	VA
-Steven	Jansen	D	\N	\N	0	f	\N	f	2017	13	regular	VA
-Mansimran	Kahlon	D	\N	\N	17607	f	\N	f	2017	13	regular	VA
-Danica	Roem	D	\N	\N	0	f	\N	f	2017	13	regular	VA
-Joseph	Yost	R	\N	\N	48627	t	\N	f	2017	12	regular	VA
-Chris	Hurst	D	\N	\N	0	f	\N	f	2017	12	regular	VA
-Andrew Michael	Schultz	D	\N	\N	0	f	\N	t	2017	12	regular	VA
-Sam	Rasoul	D	\N	\N	113853	t	\N	f	2017	11	regular	VA
-Randy	Minchew	R	\N	\N	32760	t	\N	f	2017	10	regular	VA
-Wendy	Gooditis	D	\N	\N	0	f	\N	f	2017	10	regular	VA
-Charles	Poindexter	R	\N	\N	29865	t	\N	f	2017	9	regular	VA
-Justin A	Washer	R	\N	\N	0	f	\N	f	2017	9	regular	VA
-Stephanie	Cook	D	\N	\N	0	f	\N	f	2017	9	regular	VA
-Greg	Habeeb	R	\N	\N	89196	t	\N	f	2017	8	regular	VA
-Bryan	Keele	D	\N	\N	0	f	\N	f	2017	8	regular	VA
-Steve G II	McBride	D	\N	\N	0	f	\N	f	2017	8	regular	VA
-Rob	Bloxom	R	\N	\N	22814	t	\N	f	2017	100	regular	VA
-Willie	Randall	D	\N	\N	0	f	\N	f	2017	100	regular	VA
 Bob	Bloxom	R	77.29	10638	19197	t	t	f	1997	100	regular	VA
 Jim	Scott	D	\N	\N	36305	t	\N	f	2013	53	regular	VA
 Richard R	Andrews	I	22.71	3125	4083	f	f	f	1997	100	regular	VA
@@ -391,42 +351,6 @@ Scott	Garrett	R	75.45	17080	173235	t	t	f	2013	23	regular	VA
 Jonathan	Parrish	L	22.34	5058	4352	f	f	f	2013	23	regular	VA
 Scott	Garrett	R	100.0	7390	156587	t	t	f	2015	23	regular	VA
 Edward	Polloway	I	8.7	743	0	f	f	f	2015	23	regular	VA
-Margaret	Ransone	R	\N	\N	61173	t	\N	f	2017	99	regular	VA
-Francis N	Edwards	D	\N	\N	0	f	\N	f	2017	99	regular	VA
-Vivian	Messner	D	\N	\N	0	f	\N	f	2017	99	regular	VA
-Keith	Hodges	R	\N	\N	28850	t	\N	f	2017	98	regular	VA
-Elizabeth B	Webster	D	\N	\N	0	f	\N	f	2017	98	regular	VA
-Chris	Peace	R	\N	\N	96916	t	\N	f	2017	97	regular	VA
-Brenda	Pogge	R	\N	\N	28422	t	\N	f	2017	96	regular	VA
-Kelly	DeLucia	D	\N	\N	0	f	\N	f	2017	96	regular	VA
-Cia	Price	D	\N	\N	17635	t	\N	f	2017	95	regular	VA
-David	Yancey	R	\N	\N	110635	t	\N	f	2017	94	regular	VA
-Zack	Wittkamp	D	\N	\N	0	f	\N	f	2017	94	regular	VA
-Heather	Cordasco	R	\N	\N	150150	f	\N	f	2017	93	regular	VA
-Mike	Mullin	D	\N	\N	255195	t	\N	f	2017	93	regular	VA
-Monty	Mason	D	\N	\N	19522	f	\N	t	2017	93	regular	VA
-Mic	Harris	D	\N	\N	0	f	\N	f	2017	92	regular	VA
-Jeion	Ward	D	\N	\N	39679	t	\N	f	2017	92	regular	VA
-Gordon	Helsel	R	\N	\N	36575	t	\N	f	2017	91	regular	VA
-Michael	Wade	D	\N	\N	340	f	\N	f	2017	91	regular	VA
-Joe	Lindsey	D	\N	\N	21575	t	\N	f	2017	90	regular	VA
-Joe	Dillard	D	\N	\N	0	f	\N	f	2017	89	regular	VA
-Jay	Jones	D	\N	\N	0	f	\N	f	2017	89	regular	VA
-Terry	Hurst	L	\N	\N	355	f	\N	f	2017	89	regular	VA
-Daun	Hester	D	\N	\N	25475	t	\N	t	2017	89	regular	VA
-Mark	Cole	R	\N	\N	15371	t	\N	f	2017	88	regular	VA
-Steve	Aycock	D	\N	\N	2225	f	\N	f	2017	88	regular	VA
-Gerald	Anderson	Green	\N	\N	0	f	\N	f	2017	88	regular	VA
-Subba R	Kolla	R	\N	\N	0	f	\N	f	2017	87	regular	VA
-John	Bell	D	\N	\N	84923	t	\N	f	2017	87	regular	VA
-Jennifer	Boysko	D	\N	\N	52511	t	\N	f	2017	86	regular	VA
-Rocky	Holcomb	R	\N	\N	103846	t	\N	f	2017	85	regular	VA
-Cheryl	Turpin	D	\N	\N	182555	f	\N	f	2017	85	regular	VA
-Glenn	Davis	R	\N	\N	28368	t	\N	f	2017	84	regular	VA
-Erin	Edlow	D	\N	\N	0	f	\N	f	2017	84	regular	VA
-Chris	Stolle	R	\N	\N	52516	t	\N	f	2017	83	regular	VA
-Justin	Morgan	D	\N	\N	0	f	\N	f	2017	83	regular	VA
-David	Rose-Carmack	D	\N	\N	0	f	\N	f	2017	83	regular	VA
 Leo C Jr	Wardrup	R	98.72	11321	55092	t	t	f	1997	83	regular	VA
 Leo C Jr	Wardrup	R	60.5	6717	138687	t	t	f	1999	83	regular	VA
 Samuel W Jr	Meekins	D	39.37	4371	118369	f	f	f	1999	83	regular	VA
@@ -474,8 +398,6 @@ Scott	Taylor	R	56.27	11041	240967	f	t	f	2013	85	regular	VA
 Bill	Dale	D	43.46	8528	74810	f	f	f	2013	85	regular	VA
 Bob	Tata	R	\N	\N	23440	t	\N	f	2013	85	regular	VA
 Scott	Taylor	R	100.0	9406	77311	t	t	f	2015	85	regular	VA
-Rocky	Holcomb	R	52.8	3301	80417	f	t	f	2017	85	special	VA
-Cheryl	Turpin	D	47.1	2939	144486	f	f	f	2017	85	special	VA
 Donald L	Williams	D	49.9	2473	250558	f	t	f	1997	86	regular	VA
 Beverly B	Graeber	R	49.74	2465	172206	f	f	f	1997	86	regular	VA
 George H Jr	Heilig	D	49.9	2473	26384	t	f	f	1997	86	regular	VA
@@ -756,47 +678,6 @@ Nick	Smith	D	30.68	6364	9826	f	f	f	2011	99	regular	VA
 Albert	Pollard	D	\N	\N	42127	t	\N	f	2011	99	regular	VA
 Margaret	Ransone	R	91.62	17839	67643	t	t	f	2013	99	regular	VA
 Margaret	Ransone	R	100.0	16861	101216	t	t	f	2015	99	regular	VA
-Jason	Miyares	R	\N	\N	34985	t	\N	f	2017	82	regular	VA
-Alvina	Torres	D	\N	\N	0	f	\N	f	2017	82	regular	VA
-Marina Elizabeth	Hayslip	R	\N	\N	0	f	\N	f	2017	81	regular	VA
-Barry	Knight	R	\N	\N	167004	t	\N	f	2017	81	regular	VA
-Nancy	Carothers	D	\N	\N	0	f	\N	f	2017	81	regular	VA
-Kimberly Anne	Tucker	D	\N	\N	0	f	\N	f	2017	81	regular	VA
-Matthew	James	D	\N	\N	29275	t	\N	f	2017	80	regular	VA
-Steve	Heretick	D	\N	\N	23926	t	\N	f	2017	79	regular	VA
-Jay	Leftwich	R	\N	\N	46773	t	\N	f	2017	78	regular	VA
-Cliff	Hayes	D	\N	\N	26570	t	\N	f	2017	77	regular	VA
-Jeff	Staples	Green	\N	\N	0	f	\N	f	2017	77	regular	VA
-Lionell Sr	Spruill	D	\N	\N	48933	f	\N	t	2017	77	regular	VA
-Chris	Jones	R	\N	\N	253267	t	\N	f	2017	76	regular	VA
-Roslyn	Tyler	D	\N	\N	30914	t	\N	f	2017	75	regular	VA
-Lamont	Bagby	D	\N	\N	21618	t	\N	f	2017	74	regular	VA
-Preston	Brown	I	\N	\N	0	f	\N	f	2017	74	regular	VA
-John	O'Bannon	R	\N	\N	177951	t	\N	f	2017	73	regular	VA
-Bill	Coleman	D	\N	\N	0	f	\N	f	2017	73	regular	VA
-Debra H	Rodman	D	\N	\N	0	f	\N	f	2017	73	regular	VA
-Chelsea	Savage	D	\N	\N	0	f	\N	f	2017	73	regular	VA
-Sarah	Smith	D	\N	\N	0	f	\N	f	2017	73	regular	VA
-Ernesto	Sampson	R	\N	\N	0	f	\N	f	2017	72	regular	VA
-Eddie	Whitlock	R	\N	\N	0	f	\N	f	2017	72	regular	VA
-Schuyler T	VanValkenburg	D	\N	\N	0	f	\N	f	2017	72	regular	VA
-Jimmie	Massie	R	\N	\N	239791	t	\N	f	2017	72	regular	VA
-Jeff	Bourne	D	\N	\N	57489	t	\N	f	2017	71	regular	VA
-Jennifer	McClellan	D	\N	\N	96249	f	\N	t	2017	71	regular	VA
-Delores	McQuinn	D	\N	\N	16955	t	\N	f	2017	70	regular	VA
-Alex	Mejias	D	\N	\N	0	f	\N	f	2017	70	regular	VA
-Betsy	Carr	D	\N	\N	44923	t	\N	f	2017	69	regular	VA
-Montigue	Magruder	Green	\N	\N	0	f	\N	f	2017	69	regular	VA
-Manoli	Loupassi	R	\N	\N	92255	t	\N	f	2017	68	regular	VA
-Dawn Marie	Adams	D	\N	\N	0	f	\N	f	2017	68	regular	VA
-Ben	Pearson-Nelson	D	\N	\N	0	f	\N	f	2017	68	regular	VA
-Mary Jo	Sheeley	D	\N	\N	0	f	\N	f	2017	68	regular	VA
-Jim	LeMunyon	R	\N	\N	63951	t	\N	f	2017	67	regular	VA
-John	Carey	D	\N	\N	0	f	\N	f	2017	67	regular	VA
-Karrie	Delaney	D	\N	\N	17281	f	\N	f	2017	67	regular	VA
-Hannah	Risheq	D	\N	\N	0	f	\N	f	2017	67	regular	VA
-Kirk	Cox	R	\N	\N	254803	t	\N	f	2017	66	regular	VA
-Katie Ann	Sponsler	D	\N	\N	0	f	\N	f	2017	66	regular	VA
 Kirk	Cox	R	98.74	20827	44186	t	t	f	1997	66	regular	VA
 Kirk	Cox	R	98.69	11260	52260	t	t	f	1999	66	regular	VA
 Kirk	Cox	R	98.29	19077	70115	t	t	f	2001	66	regular	VA
@@ -896,9 +777,6 @@ Jennifer	McClellan	D	87.79	18219	133031	t	t	f	2013	71	regular	VA
 Matt	Fitch	R	11.89	2468	1520	f	f	f	2013	71	regular	VA
 Jennifer	McClellan	D	88.85	9809	136169	t	t	f	2015	71	regular	VA
 Steve	Imholt	I	11.15	1231	1364	f	f	f	2015	71	regular	VA
-Jeff	Bourne	D	\N	\N	25436	f	\N	f	2017	71	special	VA
-John Waggoner	Barclay	L	\N	\N	1801	f	\N	f	2017	71	special	VA
-Regie	Ford	I	\N	\N	0	f	\N	f	2017	71	special	VA
 John S	Reid	R	71.65	19908	40745	t	t	f	1997	72	regular	VA
 Shelby F	McCurnin	I	27.97	7773	14593	f	f	f	1997	72	regular	VA
 John S	Reid	R	82.66	12656	41434	t	t	f	1999	72	regular	VA
@@ -1079,48 +957,6 @@ Bob	Purkey	R	\N	\N	78193	t	\N	f	2013	82	regular	VA
 Jason	Miyares	R	65.31	10046	266310	f	t	f	2015	82	regular	VA
 Bill	Fleming	D	34.69	5335	74779	f	f	f	2015	82	regular	VA
 Bill	DeSteph	R	\N	\N	121761	t	\N	t	2015	82	regular	VA
-Lee	Ware	R	\N	\N	104105	t	\N	f	2017	65	regular	VA
-Rex	Alphin	R	\N	\N	0	f	\N	f	2017	64	regular	VA
-Emily	Brewer	R	\N	\N	4058	f	\N	f	2017	64	regular	VA
-Jerry Alexander	Cantrell	D	\N	\N	0	f	\N	f	2017	64	regular	VA
-Rebecca S	Colaw	D	\N	\N	0	f	\N	f	2017	64	regular	VA
-John	Wandling	D	\N	\N	9540	f	\N	f	2017	64	regular	VA
-Rick	Morris	R	\N	\N	12488	t	\N	f	2017	64	regular	VA
-Lashrecse	Aird	D	\N	\N	25450	t	\N	f	2017	63	regular	VA
-Riley	Ingram	R	\N	\N	47846	t	\N	f	2017	62	regular	VA
-Sheila	Bynum-Coleman	D	\N	\N	0	f	\N	f	2017	62	regular	VA
-Tavorise K	Marks	D	\N	\N	0	f	\N	f	2017	62	regular	VA
-Tommy	Wright	R	\N	\N	14765	t	\N	f	2017	61	regular	VA
-James	Edmunds	R	\N	\N	21419	t	\N	f	2017	60	regular	VA
-Jamaal	Johnston	D	\N	\N	0	f	\N	f	2017	60	regular	VA
-Matt	Fariss	R	\N	\N	19295	t	\N	f	2017	59	regular	VA
-Rob	Bell	R	\N	\N	300146	t	\N	f	2017	58	regular	VA
-Kellen	Squire	D	\N	\N	0	f	\N	f	2017	58	regular	VA
-Mike	Allers	R	\N	\N	0	f	\N	t	2017	58	regular	VA
-Ross	Mittiga	D	\N	\N	0	f	\N	f	2017	57	regular	VA
-David	Toscano	D	\N	\N	200683	t	\N	f	2017	57	regular	VA
-Graven	Craig	R	\N	\N	0	f	\N	f	2017	56	regular	VA
-Surya	Dhakar	R	\N	\N	0	f	\N	f	2017	56	regular	VA
-George	Goodwin	R	\N	\N	0	f	\N	f	2017	56	regular	VA
-John III	McGuire	R	\N	\N	0	f	\N	f	2017	56	regular	VA
-Matt C	Pinsker	R	\N	\N	0	f	\N	f	2017	56	regular	VA
-Melissa M	Dart	D	\N	\N	0	f	\N	f	2017	56	regular	VA
-Lizzie	Drucker-Basch	D	\N	\N	0	f	\N	f	2017	56	regular	VA
-Peter	Farrell	R	\N	\N	89625	t	\N	f	2017	56	regular	VA
-Buddy	Fowler	R	\N	\N	29975	t	\N	f	2017	55	regular	VA
-Nick	Ignacio	R	\N	\N	100	f	\N	f	2017	54	regular	VA
-Bobby	Orrock	R	\N	\N	89945	t	\N	f	2017	54	regular	VA
-Al	Durante	D	\N	\N	0	f	\N	f	2017	54	regular	VA
-Marcus	Simon	D	\N	\N	42902	t	\N	f	2017	53	regular	VA
-Luke	Torian	D	\N	\N	50720	t	\N	f	2017	52	regular	VA
-Rich	Anderson	R	\N	\N	41208	t	\N	f	2017	51	regular	VA
-Hala	Ayala	D	\N	\N	0	f	\N	f	2017	51	regular	VA
-Ken	Boddye	D	\N	\N	5267	f	\N	f	2017	51	regular	VA
-Jackson	Miller	R	\N	\N	140109	t	\N	f	2017	50	regular	VA
-Hal	Parrish	R	\N	\N	0	f	\N	f	2017	50	regular	VA
-Lee Jin	Carter	D	\N	\N	12662	f	\N	f	2017	50	regular	VA
-Adam	Roosevelt	R	\N	\N	850	f	\N	f	2017	49	regular	VA
-Alfonso	Lopez	D	\N	\N	38465	t	\N	f	2017	49	regular	VA
 L Karen	Darner	D	62.05	8745	37467	t	t	f	1997	49	regular	VA
 Sandra Kay	Bushue	R	37.9	5342	35964	f	f	f	1997	49	regular	VA
 L Karen	Darner	D	99.04	8661	18326	t	t	f	1999	49	regular	VA
@@ -1422,33 +1258,6 @@ Lee	Ware	R	97.6	14991	120466	t	t	f	2011	65	regular	VA
 Lee	Ware	R	67.6	19839	208567	t	t	f	2013	65	regular	VA
 William	Quarles	D	32.14	9431	120264	f	f	f	2013	65	regular	VA
 Lee	Ware	R	100.0	19842	197281	t	t	f	2015	65	regular	VA
-Rip	Sullivan	D	\N	\N	27903	t	\N	f	2017	48	regular	VA
-Patrick	Hope	D	\N	\N	28698	t	\N	f	2017	47	regular	VA
-Charniele	Herring	D	\N	\N	47110	t	\N	f	2017	46	regular	VA
-Charles Jr	Sumpter	D	\N	\N	3190	f	\N	t	2017	46	regular	VA
-Mark	Levine	D	\N	\N	39045	t	\N	f	2017	45	regular	VA
-Karen	Graf	D	\N	\N	0	f	\N	t	2017	45	regular	VA
-Paul	Krizek	D	\N	\N	54870	t	\N	f	2017	44	regular	VA
-Mark	Sickles	D	\N	\N	65007	t	\N	f	2017	43	regular	VA
-Tilly	Blanding	D	\N	\N	0	f	\N	f	2017	42	regular	VA
-Kathy	Tran	D	\N	\N	0	f	\N	f	2017	42	regular	VA
-Dave	Albo	R	\N	\N	158234	t	\N	f	2017	42	regular	VA
-Eileen	Filler-Corn	D	\N	\N	174135	t	\N	f	2017	41	regular	VA
-Tim	Hugo	R	\N	\N	281725	t	\N	f	2017	40	regular	VA
-Donte	Tanner	D	\N	\N	0	f	\N	f	2017	40	regular	VA
-Vivian	Watts	D	\N	\N	34686	t	\N	f	2017	39	regular	VA
-Kaye	Kory	D	\N	\N	12110	t	\N	f	2017	38	regular	VA
-David	Bulova	D	\N	\N	48199	t	\N	f	2017	37	regular	VA
-Ken	Plum	D	\N	\N	39285	t	\N	f	2017	36	regular	VA
-Mark	Keam	D	\N	\N	32076	t	\N	f	2017	35	regular	VA
-Cheryl A	Buford	R	\N	\N	0	f	\N	f	2017	34	regular	VA
-Kathleen	Murphy	D	\N	\N	47918	t	\N	f	2017	34	regular	VA
-Puneet	Ahluwalia	R	\N	\N	0	f	\N	t	2017	34	regular	VA
-Dave	LaRock	R	\N	\N	23150	t	\N	f	2017	33	regular	VA
-Mavis	Taintor	D	\N	\N	0	f	\N	f	2017	33	regular	VA
-Tia	Walbridge	D	\N	\N	0	f	\N	f	2017	33	regular	VA
-Tag	Greason	R	\N	\N	92386	t	\N	f	2017	32	regular	VA
-David	Reid	D	\N	\N	0	f	\N	f	2017	32	regular	VA
 William C	Mims	R	71.11	16485	76930	t	t	f	1997	32	regular	VA
 Katherine	Fisher	D	28.69	6652	1191	f	f	f	1997	32	regular	VA
 Dick	Black	R	56.75	3874	41226	f	t	f	1998	32	special	VA
@@ -1823,40 +1632,6 @@ Lindsey	Bolton	L	\N	\N	2215	f	\N	t	2013	48	regular	VA
 Rip	Sullivan	D	62.21	5972	146053	f	t	f	2014	48	special	VA
 Dave	Foster	R	37.71	3620	102770	f	f	f	2014	48	special	VA
 Rip	Sullivan	D	100.0	13141	112784	t	t	f	2015	48	regular	VA
-BJ	Brown	R	\N	\N	0	f	\N	f	2017	31	regular	VA
-Scott	Lingamfelter	R	\N	\N	76276	t	\N	f	2017	31	regular	VA
-Elizabeth	Guzman	D	\N	\N	10255	f	\N	f	2017	31	regular	VA
-Sara	Townsend	D	\N	\N	0	f	\N	f	2017	31	regular	VA
-Jatia	Wrighten	D	\N	\N	0	f	\N	t	2017	31	regular	VA
-Nick	Freitas	R	\N	\N	8850	t	\N	f	2017	30	regular	VA
-Annette H	Hyde	D	\N	\N	0	f	\N	f	2017	30	regular	VA
-Chris	Collins	R	\N	\N	27950	t	\N	f	2017	29	regular	VA
-Casey	Turben	D	\N	\N	0	f	\N	f	2017	29	regular	VA
-Paul V III	Milde	R	\N	\N	0	f	\N	f	2017	28	regular	VA
-Susan	Stimpson	R	\N	\N	3020	f	\N	f	2017	28	regular	VA
-Robert Michael Jr	Thomas	R	\N	\N	0	f	\N	f	2017	28	regular	VA
-Joshua	Cole	D	\N	\N	20	f	\N	f	2017	28	regular	VA
-Karen M	Hyland	D	\N	\N	0	f	\N	f	2017	28	regular	VA
-Bill	Howell	R	\N	\N	290056	t	\N	f	2017	28	regular	VA
-Roxann	Robinson	R	\N	\N	50645	t	\N	f	2017	27	regular	VA
-Larry V	Barnett	D	\N	\N	0	f	\N	f	2017	27	regular	VA
-Tony	Wilt	R	\N	\N	37032	t	\N	f	2017	26	regular	VA
-Cathy	Copeland	D	\N	\N	0	f	\N	f	2017	26	regular	VA
-Brent	Finnegan	D	\N	\N	0	f	\N	f	2017	26	regular	VA
-Steve	Landes	R	\N	\N	119716	t	\N	f	2017	25	regular	VA
-Angela	Lynn	D	\N	\N	0	f	\N	f	2017	25	regular	VA
-Ben	Cline	R	\N	\N	35572	t	\N	f	2017	24	regular	VA
-Nick	Rush	R	\N	\N	35130	t	\N	f	2017	7	regular	VA
-Jeff	Campbell	R	\N	\N	22342	t	\N	f	2017	6	regular	VA
-Israel	O'Quinn	R	\N	\N	60050	t	\N	f	2017	5	regular	VA
-Todd	Pillion	R	\N	\N	21424	t	\N	f	2017	4	regular	VA
-Bob	Altizer	R	\N	\N	0	f	\N	f	2017	3	regular	VA
-Will	Morefield	R	\N	\N	26911	t	\N	f	2017	3	regular	VA
-Laquan	Austion	R	\N	\N	0	f	\N	f	2017	2	regular	VA
-Jennifer Carroll	Foy	D	\N	\N	0	f	\N	f	2017	2	regular	VA
-Josh	King	D	\N	\N	9875	f	\N	f	2017	2	regular	VA
-Mark	Dudenhefer	R	\N	\N	22458	t	\N	f	2017	2	regular	VA
-Terry	Kilgore	R	\N	\N	170960	t	\N	f	2017	1	regular	VA
 Jay	Katzen	R	63.09	11529	79391	t	t	f	1997	31	regular	VA
 Paul J	Asciolla	D	31.21	5703	33675	f	f	f	1997	31	regular	VA
 Robert A	Buchanan	I	5.6	1024	1551	f	f	f	1997	31	regular	VA
@@ -2120,6 +1895,236 @@ Scott	Lingamfelter	R	50.4	11508	264393	t	t	f	2013	31	regular	VA
 Jeremy	McPike	D	49.4	11280	104651	f	f	f	2013	31	regular	VA
 Scott	Lingamfelter	R	53.43	9506	463876	t	t	f	2015	31	regular	VA
 Sara	Townsend	D	46.57	8287	272835	f	f	f	2015	31	regular	VA
+Danny	Marshall	R	\N	\N	70542	t	\N	f	2017	14	regular	\N
+Bob	Marshall	R	\N	\N	47965	t	\N	f	2017	13	regular	\N
+Andrew A	Adams	D	\N	\N	5600	f	\N	f	2017	13	regular	\N
+Steven	Jansen	D	\N	\N	73039	f	\N	f	2017	13	regular	\N
+Mansimran	Kahlon	D	\N	\N	78472	f	\N	f	2017	13	regular	\N
+Danica	Roem	D	\N	\N	26492	f	\N	f	2017	13	regular	\N
+Joseph	Yost	R	\N	\N	115474	t	\N	f	2017	12	regular	\N
+Chris	Hurst	D	\N	\N	84514	f	\N	f	2017	12	regular	\N
+Andrew Michael	Schultz	D	\N	\N	0	f	\N	t	2017	12	regular	\N
+Sam	Rasoul	D	\N	\N	135742	t	\N	f	2017	11	regular	\N
+Randy	Minchew	R	\N	\N	38803	t	\N	f	2017	10	regular	\N
+Wendy	Gooditis	D	\N	\N	8869	f	\N	f	2017	10	regular	\N
+Charles	Poindexter	R	\N	\N	35393	t	\N	f	2017	9	regular	\N
+Stephanie	Cook	D	\N	\N	1555	f	\N	f	2017	9	regular	\N
+Justin A	Washer	I	\N	\N	200	f	\N	f	2017	9	regular	\N
+Greg	Habeeb	R	\N	\N	99569	t	\N	f	2017	8	regular	\N
+Bryan	Keele	D	\N	\N	1303	f	\N	f	2017	8	regular	\N
+Steve G II	McBride	D	\N	\N	6550	f	\N	f	2017	8	regular	\N
+Nick	Rush	R	\N	\N	37157	t	\N	f	2017	7	regular	\N
+Flo Marie Moore	Ketner	D	\N	\N	0	f	\N	f	2017	7	regular	\N
+Jeff	Campbell	R	\N	\N	23542	t	\N	f	2017	6	regular	\N
+Israel	O'Quinn	R	\N	\N	62300	t	\N	f	2017	5	regular	\N
+Todd	Pillion	R	\N	\N	24624	t	\N	f	2017	4	regular	\N
+Will	Morefield	R	\N	\N	98322	t	\N	f	2017	3	regular	\N
+Laquan	Austion	R	\N	\N	44699	f	\N	f	2017	2	regular	\N
+Jennifer Carroll	Foy	D	\N	\N	24129	f	\N	f	2017	2	regular	\N
+Josh	King	D	\N	\N	51123	f	\N	f	2017	2	regular	\N
+Mark	Dudenhefer	R	\N	\N	17319	t	\N	t	2017	2	regular	\N
+Terry	Kilgore	R	\N	\N	188460	t	\N	f	2017	1	regular	\N
+Linda C	Schulz	R	\N	\N	0	f	\N	f	2017	86	regular	\N
+Jennifer	Boysko	D	\N	\N	68920	t	\N	f	2017	86	regular	\N
+Rocky	Holcomb	R	\N	\N	106266	t	\N	f	2017	85	regular	\N
+Cheryl	Turpin	D	\N	\N	214038	f	\N	f	2017	85	regular	\N
+Rob	Bloxom	R	\N	\N	25839	t	\N	f	2017	100	regular	\N
+Willie	Randall	D	\N	\N	28680	f	\N	f	2017	100	regular	\N
+Margaret	Ransone	R	\N	\N	82823	t	\N	f	2017	99	regular	\N
+Francis N	Edwards	D	\N	\N	4062	f	\N	f	2017	99	regular	\N
+Vivian	Messner	D	\N	\N	352	f	\N	f	2017	99	regular	\N
+Keith	Hodges	R	\N	\N	30100	t	\N	f	2017	98	regular	\N
+Sheila	Crowley	D	\N	\N	0	f	\N	f	2017	98	regular	\N
+Chris	Peace	R	\N	\N	108621	t	\N	f	2017	97	regular	\N
+Cori	Johnson	I	\N	\N	0	f	\N	f	2017	97	regular	\N
+Brenda	Pogge	R	\N	\N	32236	t	\N	f	2017	96	regular	\N
+Kelly	DeLucia	D	\N	\N	20068	f	\N	f	2017	96	regular	\N
+Cia	Price	D	\N	\N	19450	t	\N	f	2017	95	regular	\N
+David	Yancey	R	\N	\N	155185	t	\N	f	2017	94	regular	\N
+Zack	Wittkamp	D	\N	\N	10743	f	\N	f	2017	94	regular	\N
+Heather	Cordasco	R	\N	\N	178729	f	\N	f	2017	93	regular	\N
+Mike	Mullin	D	\N	\N	281004	t	\N	f	2017	93	regular	\N
+Monty	Mason	D	\N	\N	19522	f	\N	t	2017	93	regular	\N
+Mic	Harris	D	\N	\N	100	f	\N	f	2017	92	regular	\N
+Jeion	Ward	D	\N	\N	42110	t	\N	f	2017	92	regular	\N
+Gordon	Helsel	R	\N	\N	36650	t	\N	f	2017	91	regular	\N
+Michael	Wade	D	\N	\N	7257	f	\N	f	2017	91	regular	\N
+Joe	Lindsey	D	\N	\N	21965	t	\N	f	2017	90	regular	\N
+Joe William Jr	Dillard	D	\N	\N	22880	f	\N	f	2017	89	regular	\N
+Jay	Jones	D	\N	\N	71147	f	\N	f	2017	89	regular	\N
+Terry	Hurst	L	\N	\N	913	f	\N	f	2017	89	regular	\N
+Daun	Hester	D	\N	\N	26475	t	\N	t	2017	89	regular	\N
+Mark	Cole	R	\N	\N	15383	t	\N	f	2017	88	regular	\N
+Steve	Aycock	D	\N	\N	8534	f	\N	f	2017	88	regular	\N
+Gerald	Anderson	Green	\N	\N	835	f	\N	f	2017	88	regular	\N
+Subba R	Kolla	R	\N	\N	284693	f	\N	f	2017	87	regular	\N
+John	Bell	D	\N	\N	153949	t	\N	f	2017	87	regular	\N
+Glenn	Davis	R	\N	\N	31068	t	\N	f	2017	84	regular	\N
+Veronica	Coleman	D	\N	\N	0	f	\N	f	2017	84	regular	\N
+Chris	Stolle	R	\N	\N	67729	t	\N	f	2017	83	regular	\N
+Justin	Morgan	D	\N	\N	400	f	\N	f	2017	83	regular	\N
+David	Rose-Carmack	D	\N	\N	1581	f	\N	f	2017	83	regular	\N
+Jason	Miyares	R	\N	\N	45464	t	\N	f	2017	82	regular	\N
+Leigh Anne	Bowling	D	\N	\N	0	f	\N	f	2017	82	regular	\N
+Alvina	Torres	D	\N	\N	0	f	\N	f	2017	82	regular	\N
+Barry	Knight	R	\N	\N	342508	t	\N	f	2017	81	regular	\N
+Nancy	Carothers	D	\N	\N	0	f	\N	f	2017	81	regular	\N
+Kimberly Anne	Tucker	D	\N	\N	955	f	\N	f	2017	81	regular	\N
+Marina Elizabeth	Hayslip	R	\N	\N	0	f	\N	f	2017	81	regular	\N
+Matthew	James	D	\N	\N	30675	t	\N	f	2017	80	regular	\N
+Steve	Heretick	D	\N	\N	32955	t	\N	f	2017	79	regular	\N
+Jay	Leftwich	R	\N	\N	54873	t	\N	f	2017	78	regular	\N
+Cliff	Hayes	D	\N	\N	31555	t	\N	f	2017	77	regular	\N
+Jeff	Staples	Green	\N	\N	201	f	\N	f	2017	77	regular	\N
+Lionell Sr	Spruill	D	\N	\N	48933	f	\N	t	2017	77	regular	\N
+Chris	Jones	R	\N	\N	275467	t	\N	f	2017	76	regular	\N
+Roslyn	Tyler	D	\N	\N	31164	t	\N	f	2017	75	regular	\N
+Lamont	Bagby	D	\N	\N	22968	t	\N	f	2017	74	regular	\N
+Preston	Brown	I	\N	\N	0	f	\N	f	2017	74	regular	\N
+John	O'Bannon	R	\N	\N	191501	t	\N	f	2017	73	regular	\N
+Debra H	Rodman	D	\N	\N	12344	f	\N	f	2017	73	regular	\N
+Kevin M	Gary	I	\N	\N	0	f	\N	f	2017	73	regular	\N
+Ernesto	Sampson	R	\N	\N	6860	f	\N	f	2017	72	regular	\N
+Eddie	Whitlock	R	\N	\N	51100	f	\N	f	2017	72	regular	\N
+Schuyler T	VanValkenburg	D	\N	\N	32384	f	\N	f	2017	72	regular	\N
+Jimmie	Massie	R	\N	\N	239791	t	\N	t	2017	72	regular	\N
+Jeff	Bourne	D	\N	\N	61565	t	\N	f	2017	71	regular	\N
+Jennifer	McClellan	D	\N	\N	96249	f	\N	t	2017	71	regular	\N
+Delores	McQuinn	D	\N	\N	19555	t	\N	f	2017	70	regular	\N
+Alex	Mejias	D	\N	\N	6013	f	\N	f	2017	70	regular	\N
+Betsy	Carr	D	\N	\N	58447	t	\N	f	2017	69	regular	\N
+Montigue	Magruder	Green	\N	\N	0	f	\N	f	2017	69	regular	\N
+Manoli	Loupassi	R	\N	\N	95605	t	\N	f	2017	68	regular	\N
+Dawn Marie	Adams	D	\N	\N	34949	f	\N	f	2017	68	regular	\N
+Ben	Pearson-Nelson	D	\N	\N	3624	f	\N	f	2017	68	regular	\N
+Mary Jo	Sheeley	D	\N	\N	23574	f	\N	f	2017	68	regular	\N
+Jim	LeMunyon	R	\N	\N	63951	t	\N	f	2017	67	regular	\N
+John	Carey	D	\N	\N	12922	f	\N	f	2017	67	regular	\N
+Karrie	Delaney	D	\N	\N	85942	f	\N	f	2017	67	regular	\N
+Hannah	Risheq	D	\N	\N	5437	f	\N	f	2017	67	regular	\N
+Kirk	Cox	R	\N	\N	290885	t	\N	f	2017	66	regular	\N
+Katie Ann	Sponsler	D	\N	\N	3643	f	\N	f	2017	66	regular	\N
+Lee	Ware	R	\N	\N	120055	t	\N	f	2017	65	regular	\N
+Francis	Stevens	D	\N	\N	0	f	\N	f	2017	65	regular	\N
+Rex	Alphin	R	\N	\N	78138	f	\N	f	2017	64	regular	\N
+Emily	Brewer	R	\N	\N	35265	f	\N	f	2017	64	regular	\N
+Jerry Alexander	Cantrell	D	\N	\N	372	f	\N	f	2017	64	regular	\N
+Rebecca S	Colaw	D	\N	\N	5019	f	\N	f	2017	64	regular	\N
+John	Wandling	D	\N	\N	9565	f	\N	f	2017	64	regular	\N
+Rick	Morris	R	\N	\N	12488	t	\N	t	2017	64	regular	\N
+Lashrecse	Aird	D	\N	\N	33835	t	\N	f	2017	63	regular	\N
+Gerry	Rawlinson	D	\N	\N	706	f	\N	f	2017	63	regular	\N
+Riley	Ingram	R	\N	\N	50446	t	\N	f	2017	62	regular	\N
+Sheila	Bynum-Coleman	D	\N	\N	52480	f	\N	f	2017	62	regular	\N
+Tavorise K	Marks	D	\N	\N	606	f	\N	t	2017	62	regular	\N
+Tommy	Wright	R	\N	\N	15015	t	\N	f	2017	61	regular	\N
+James	Edmunds	R	\N	\N	23669	t	\N	f	2017	60	regular	\N
+Jamaal	Johnston	D	\N	\N	0	f	\N	f	2017	60	regular	\N
+Matt	Fariss	R	\N	\N	21003	t	\N	f	2017	59	regular	\N
+Tracy	Carver	D	\N	\N	0	f	\N	f	2017	59	regular	\N
+Marcus T	Sutphin	Green	\N	\N	0	f	\N	f	2017	59	regular	\N
+Rob	Bell	R	\N	\N	338091	t	\N	f	2017	58	regular	\N
+Kellen	Squire	D	\N	\N	9044	f	\N	f	2017	58	regular	\N
+Mike	Allers	R	\N	\N	0	f	\N	t	2017	58	regular	\N
+Ross III	Mittiga	D	\N	\N	3786	f	\N	f	2017	57	regular	\N
+David	Toscano	D	\N	\N	235288	t	\N	f	2017	57	regular	\N
+Graven	Craig	R	\N	\N	16879	f	\N	f	2017	56	regular	\N
+Surya	Dhakar	R	\N	\N	58173	f	\N	f	2017	56	regular	\N
+George	Goodwin	R	\N	\N	3000	f	\N	f	2017	56	regular	\N
+John III	McGuire	R	\N	\N	3856	f	\N	f	2017	56	regular	\N
+Matt C	Pinsker	R	\N	\N	14434	f	\N	f	2017	56	regular	\N
+Jay F	Prendergast	R	\N	\N	0	f	\N	f	2017	56	regular	\N
+Melissa M	Dart	D	\N	\N	5400	f	\N	f	2017	56	regular	\N
+Lizzie	Drucker-Basch	D	\N	\N	15760	f	\N	f	2017	56	regular	\N
+Peter	Farrell	R	\N	\N	91625	t	\N	t	2017	56	regular	\N
+Buddy	Fowler	R	\N	\N	32375	t	\N	f	2017	55	regular	\N
+Morgan	Goodman	D	\N	\N	0	f	\N	f	2017	55	regular	\N
+Nick	Ignacio	R	\N	\N	2545	f	\N	f	2017	54	regular	\N
+Bobby	Orrock	R	\N	\N	100676	t	\N	f	2017	54	regular	\N
+Al	Durante	D	\N	\N	150	f	\N	f	2017	54	regular	\N
+Marcus	Simon	D	\N	\N	56090	t	\N	f	2017	53	regular	\N
+Luke	Torian	D	\N	\N	51720	t	\N	f	2017	52	regular	\N
+Rich	Anderson	R	\N	\N	45663	t	\N	f	2017	51	regular	\N
+Hala	Ayala	D	\N	\N	9685	f	\N	f	2017	51	regular	\N
+Ken	Boddye	D	\N	\N	20727	f	\N	f	2017	51	regular	\N
+Jackson	Miller	R	\N	\N	312718	f	\N	f	2017	50	regular	\N
+Lee Jin	Carter	D	\N	\N	27418	f	\N	f	2017	50	regular	\N
+Hal	Parrish	R	\N	\N	40314	f	\N	t	2017	50	regular	\N
+Adam	Roosevelt	R	\N	\N	3730	f	\N	f	2017	49	regular	\N
+Alfonso	Lopez	D	\N	\N	53083	t	\N	f	2017	49	regular	\N
+Rip	Sullivan	D	\N	\N	31343	t	\N	f	2017	48	regular	\N
+Patrick	Hope	D	\N	\N	34355	t	\N	f	2017	47	regular	\N
+Charniele	Herring	D	\N	\N	67722	t	\N	f	2017	46	regular	\N
+Charles Jr	Sumpter	D	\N	\N	3565	f	\N	t	2017	46	regular	\N
+Mark	Levine	D	\N	\N	53780	t	\N	f	2017	45	regular	\N
+Karen	Graf	D	\N	\N	9942	f	\N	t	2017	45	regular	\N
+Paul	Krizek	D	\N	\N	66640	t	\N	f	2017	44	regular	\N
+Mark	Sickles	D	\N	\N	66157	t	\N	f	2017	43	regular	\N
+Steve	Adragna	R	\N	\N	0	f	\N	f	2017	42	regular	\N
+Michael	Drobnis	R	\N	\N	0	f	\N	f	2017	42	regular	\N
+Lolita	Mancheno-Smoak	R	\N	\N	0	f	\N	f	2017	42	regular	\N
+Tilly	Blanding	D	\N	\N	44109	f	\N	f	2017	42	regular	\N
+Kathy	Tran	D	\N	\N	43232	f	\N	f	2017	42	regular	\N
+Dave	Albo	R	\N	\N	158234	t	\N	t	2017	42	regular	\N
+Eileen	Filler-Corn	D	\N	\N	195180	t	\N	f	2017	41	regular	\N
+Tim	Hugo	R	\N	\N	340770	t	\N	f	2017	40	regular	\N
+Donte	Tanner	D	\N	\N	4628	f	\N	f	2017	40	regular	\N
+Vivian	Watts	D	\N	\N	37731	t	\N	f	2017	39	regular	\N
+Paul	Haring	R	\N	\N	0	f	\N	f	2017	38	regular	\N
+Kaye	Kory	D	\N	\N	12915	t	\N	f	2017	38	regular	\N
+David	Bulova	D	\N	\N	57776	t	\N	f	2017	37	regular	\N
+Ken	Plum	D	\N	\N	41386	t	\N	f	2017	36	regular	\N
+Mark	Keam	D	\N	\N	32826	t	\N	f	2017	35	regular	\N
+Cheryl A	Buford	R	\N	\N	6534	f	\N	f	2017	34	regular	\N
+Kathleen	Murphy	D	\N	\N	126944	t	\N	f	2017	34	regular	\N
+Puneet	Ahluwalia	R	\N	\N	0	f	\N	t	2017	34	regular	\N
+Dave	LaRock	R	\N	\N	28855	t	\N	f	2017	33	regular	\N
+Mavis B	Taintor	D	\N	\N	175210	f	\N	f	2017	33	regular	\N
+Tia	Walbridge	D	\N	\N	14995	f	\N	f	2017	33	regular	\N
+Tag	Greason	R	\N	\N	152791	t	\N	f	2017	32	regular	\N
+David	Reid	D	\N	\N	69141	f	\N	f	2017	32	regular	\N
+Scott	Lingamfelter	R	\N	\N	173582	f	\N	f	2017	31	regular	\N
+Elizabeth	Guzman	D	\N	\N	62810	f	\N	f	2017	31	regular	\N
+Sara	Townsend	D	\N	\N	32353	f	\N	f	2017	31	regular	\N
+Jatia	Wrighten	D	\N	\N	0	f	\N	t	2017	31	regular	\N
+Nick	Freitas	R	\N	\N	10164	t	\N	f	2017	30	regular	\N
+Ben	Hixon	D	\N	\N	0	f	\N	f	2017	30	regular	\N
+Chris	Collins	R	\N	\N	31675	t	\N	f	2017	29	regular	\N
+Casey	Turben	D	\N	\N	0	f	\N	f	2017	29	regular	\N
+Paul V III	Milde	R	\N	\N	55429	f	\N	f	2017	28	regular	\N
+Susan	Stimpson	R	\N	\N	13998	f	\N	f	2017	28	regular	\N
+Robert Michael Jr	Thomas	R	\N	\N	16845	f	\N	f	2017	28	regular	\N
+Joshua	Cole	D	\N	\N	6876	f	\N	f	2017	28	regular	\N
+Bill	Howell	R	\N	\N	320056	t	\N	t	2017	28	regular	\N
+Karen M	Hyland	D	\N	\N	10075	f	\N	t	2017	28	regular	\N
+Roxann	Robinson	R	\N	\N	50945	t	\N	f	2017	27	regular	\N
+Larry V	Barnett	D	\N	\N	4437	f	\N	f	2017	27	regular	\N
+Tony	Wilt	R	\N	\N	43335	t	\N	f	2017	26	regular	\N
+Brent	Finnegan	D	\N	\N	7840	f	\N	f	2017	26	regular	\N
+Steve	Landes	R	\N	\N	135388	t	\N	f	2017	25	regular	\N
+Angela	Lynn	D	\N	\N	14833	f	\N	f	2017	25	regular	\N
+Ben	Cline	R	\N	\N	46285	t	\N	f	2017	24	regular	\N
+John C	Winfrey	I	\N	\N	0	f	\N	f	2017	24	regular	\N
+Scott	Garrett	R	\N	\N	80410	t	\N	f	2017	23	regular	\N
+Natalie	Short	D	\N	\N	854	f	\N	f	2017	23	regular	\N
+Kathy	Byron	R	\N	\N	79906	t	\N	f	2017	22	regular	\N
+Michael C Jr.	Millner	L	\N	\N	0	f	\N	f	2017	22	regular	\N
+Bill	Haley	R	\N	\N	16495	f	\N	f	2017	21	regular	\N
+Ron	Villanueva	R	\N	\N	145550	t	\N	f	2017	21	regular	\N
+Thomas	Brock	D	\N	\N	22644	f	\N	f	2017	21	regular	\N
+Kelly	Fowler	D	\N	\N	22143	f	\N	f	2017	21	regular	\N
+Dickie	Bell	R	\N	\N	38165	t	\N	f	2017	20	regular	\N
+Michele	Edwards	D	\N	\N	4801	f	\N	f	2017	20	regular	\N
+Will	Hammer	L	\N	\N	0	f	\N	f	2017	20	regular	\N
+Terry	Austin	R	\N	\N	35204	t	\N	f	2017	19	regular	\N
+Reagan	Flaherty	D	\N	\N	6325	f	\N	t	2017	19	regular	\N
+Michael	Webert	R	\N	\N	22917	t	\N	f	2017	18	regular	\N
+Tristan	Shields	D	\N	\N	11980	f	\N	f	2017	18	regular	\N
+Will	King	Green	\N	\N	16222	f	\N	f	2017	18	regular	\N
+Christopher	Head	R	\N	\N	32530	t	\N	f	2017	17	regular	\N
+Djuna	Osborne	D	\N	\N	7381	f	\N	f	2017	17	regular	\N
+Les	Adams	R	\N	\N	34506	t	\N	f	2017	16	regular	\N
+Todd	Gilbert	R	\N	\N	113804	t	\N	f	2017	15	regular	\N
 \.
 
 COPY raw_statewide_candidates (district, electionname, vpapelectionid, candidatename, candidateparty, numvotes, percentage, state) FROM stdin;
