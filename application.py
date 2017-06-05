@@ -5,6 +5,7 @@ import json
 import os
 
 from application.prediction import Prediction
+from application.state import State
 
 env = os.getenv('ENV', 'development')
 application = Flask(__name__)
@@ -22,18 +23,26 @@ def not_found(error):
 
 @application.route('/predictions/<district_number>', methods=['POST'])
 def predictions(district_number):
-    form_data = dict(
+    prediction = Prediction(db).find(dict(
         district_number=district_number,
         dollars_spent=request.form.get('dollars_spent', None),
         election_type=request.form.get('election_type'),
         is_encumbent=request.form.get('is_encumbent', None),
         state = request.form.get('state'),
         turnout=request.form.get('turnout', None),
-    )
-
-    prediction = Prediction(db).find(form_data)
+    ))
 
     return jsonify(prediction)
+
+@application.route('/states/<state>', methods=['GET'])
+def states(state):
+    districts = State(db).find_districts(dict(
+        election_type=request.args.get('election_type'),
+        state=state,
+        year=request.args.get('year')
+    ))
+
+    return jsonify(districts)
 
 if __name__ == '__main__':
     application.run(debug=True, host='0.0.0.0')
