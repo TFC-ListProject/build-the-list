@@ -405,7 +405,7 @@ def generate_features(con_str):
     df['normalized_dollars_d'] = (1.0 * df['dollars_d']) / df['total_votes']
     df['normalized_dollars_r'] = (1.0 * df['dollars_r']) / df['total_votes']
     df['normalized_dollar_difference'] = df['normalized_dollars_d'] - df['normalized_dollars_r']
-    df['normalized_dollar_ratio'] = (1.0 * df['normalized_dollars_d']) / df['normalized_dollars_r']
+    df['normalized_dollar_ratio'] = (1.0 * df['dollars_d']) / df['dollars_r']
     max_ratio = df.normalized_dollar_ratio[df.normalized_dollar_ratio < np.inf].max()
     df.normalized_dollar_ratio[df.normalized_dollar_ratio == np.inf] = max_ratio
 
@@ -498,21 +498,21 @@ def run_model(df, feature_columns, target_column):
 
 def run_prediction(
         model,
-        data_generator,
+        data_formatter,
         historical_data,
         census_data,
         all_president,
         all_senate,
         state,
         district_number,
-        total_votes,
+        turnout,
         d_spend,
         r_spend):
 
     d = historical_data[(historical_data.state == state) &
                         (historical_data.district_number == district_number)]
-    c = census_df[(census_data.state == state) &
-                  (census_data.district_number == district_number)]
+    c = census_data[(census_data.state == state) &
+                    (census_data.district_number == district_number)]
 
     p = all_president[(all_president.state == state) &
                   (all_president.district_number == district_number)]
@@ -542,11 +542,15 @@ def run_prediction(
     features['uncontested_d'] = 0
     features['uncontested_r'] = 0
 
-
-    if d_spend and r_spend:
-        dollar_ratio = (1.0 * d_spend) / r_spend
-    else:
+    if not d_spend:
+        d_spend = d.dollars_d.mean()
+    if not r_spend:
+        r_spend = d.dollars_r.mean()
+    if not r_spend:
         dollar_ratio = d.normalized_dollar_ratio.mean()
+    else:
+        dollar_ratio = (1.0 * d_spend) / r_spend
+
     features['normalized_dollar_ratio'] = dollar_ratio
 
     features['prior_demvote_president'] = last_president.loc['prior_demvote_president']
@@ -558,13 +562,8 @@ def run_prediction(
     features['uncontested_d_prior1'] = last_house_results.uncontested_d
     features['total_population_e'] = last_census.total_population_e
 
-    if total_votes:
-        turnout = total_votes / last_census.total_population_e
-        features['total_votes'] = total_votes
-    else:
+    if not turnout:
         turnout = d.turnout.mean()
-        features['total_votes'] = d.total_votes.mean()
-
     features['turnout'] = turnout
 
     features['normalized_white'] = (1.0 * last_census['race_one_white_e']) / last_census['total_population_e']
@@ -573,44 +572,145 @@ def run_prediction(
     # this is a dummy entry that will be thrown away
     features['dem_won'] = False
 
-    model_features, _ = data_generator(features)
+    model_features, _ = data_formatter(features)
     prediction = model.predict_proba(model_features.values.reshape(1, -1))
-    if district_number == 7:
-        import pudb; pudb.set_trace()
 
     classes = model.classes_
     pos_index = model.classes_.tolist().index(1)
 
-    return prediction[0][pos_index]
+    pos_prob = prediction[0][pos_index]
+
+    return pos_prob
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d',
-                        '--database',
-                        default='buildthelist_development',
-                        help='database name')
-    parser.add_argument('-u',
-                        '--user',
-                        required=True,
-                        help='database user')
-    parser.add_argument('-H',
-                        '--host',
-                        default='localhost',
-                        help='database host')
-    parser.add_argument('-p',
-                        '--password',
-                        default='',
-                        help='database password')
-    args = parser.parse_args()
-    # python va_model.py \
-    #       --database buildthelist_production \
-    #       --host techforcampaigns.czp6qfvbka3n.us-west-2.rds.amazonaws.com \
-    #        --user techforcampaigns \
-    #        --password PASS
+def generate_data_for_predictions(con_str):
+    # Data needed for making predictions
+    # TODO, we should probably run all the queries in sequence in the same place
+    all_president = latest_election('president', con_str)
+    all_senate = latest_election('senate', con_str)
+    r_spend_df = current_spend('R', con_str)
+    d_spend_df = current_spend('D', con_str)
+    r_spend = {}
+    d_spend = {}
+    for _, row in r_spend_df.iterrows():
+        if row['dollars_r'] > 0:
+            r_spend[row['district_name']] = row['dollars_r']
+    for _, row in d_spend_df.iterrows():
+        if row['dollars_d'] > 0:
+            r_spend[row['district_name']] = row['dollars_d']
+    return {
+      'all_president': all_president,
+      'all_senate': all_senate,
+      'current_r_spend': r_spend,
+      'current_d_spend': d_spend,
+    }
 
-    con_str = build_con_string(args.user, args.password, args.host, args.database)
 
+def make_predictions(prediction_data, historical_df, census_df, models, data_formatter):
+    all_president = prediction_data['all_president']
+    all_senate = prediction_data['all_senate']
+    r_spend = prediction_data['current_r_spend']
+    d_spend = prediction_data['current_d_spend']
+
+    rf_model = models['random_forest']
+    lr_model = models['logistic_regression']
+
+    p = run_prediction(
+        rf_model,
+        data_formatter,
+        historical_data=historical_df,
+        census_data=census_df,
+        all_president=all_president,
+        all_senate=all_senate,
+        state='va',
+        district_number=32,
+        turnout=None,
+        d_spend = d_spend.get(32, None),
+        r_spend = r_spend.get(32, None)
+    )
+    print 'va district 32: %.4f%%' % (p * 100)
+
+    res = []
+    run_rf = True
+    for i in range(1, 101):
+        if run_rf:
+            rf = run_prediction(
+                rf_model,
+                data_formatter,
+                historical_data=historical_df,
+                census_data=census_df,
+                all_president=all_president,
+                all_senate=all_senate,
+                state='va',
+                district_number=i,
+                turnout=None,
+                d_spend = d_spend.get(i, None),
+                r_spend = r_spend.get(i, None)
+            )
+        lr = run_prediction(
+            lr_model,
+            data_formatter,
+            historical_data=historical_df,
+            census_data=census_df,
+            all_president=all_president,
+            all_senate=all_senate,
+            state='va',
+            district_number=i,
+            turnout=None,
+            d_spend = d_spend.get(i, None),
+            r_spend = r_spend.get(i, None)
+        )
+        res.append([i, rf])
+        print 'va district %d: %.4f%%, %.4f%%' % (i, rf * 100, lr * 100)
+        # print 'va district %d: %.4f' % (i, lr * 100)
+
+    res.sort(key=lambda x: -x[1])
+
+    for x in res[0:20]:
+        print "district %d, score: %.4f" % (x[0], x[1])
+
+
+def write_predictions(prediction_data, historical_df, census_df, model, data_formatter):
+    all_president = prediction_data['all_president']
+    all_senate = prediction_data['all_senate']
+    r_spend = prediction_data['current_r_spend']
+    d_spend = prediction_data['current_d_spend']
+
+    results = []
+    state = 'va'
+    turnout_range = [x / 10.0 for x in range(1, 6)]
+    spend_range = [20000, 50000, 100000, 200000, 500000, 1000000]
+
+    n = 0
+
+    for district in range(1, 101):
+        for turnout in turnout_range:
+            for d_spend in spend_range:
+                res = run_prediction(
+                    model,
+                    data_formatter,
+                    historical_data=historical_df,
+                    census_data=census_df,
+                    all_president=all_president,
+                    all_senate=all_senate,
+                    state='va',
+                    district_number=district,
+                    turnout=turnout,
+                    d_spend=d_spend,
+                    r_spend=r_spend.get(district, None)
+                )
+                results.append([state, district, turnout, d_spend, res])
+                n += 1
+                if n % 100 == 0:
+                    print "%d predictions done" % n
+
+    out_df = pd.DataFrame(results, columns=['state', 'district', 'turnout', 'spend', 'prediction'])
+    out_df.to_csv('predictions.csv', index=False)
+
+    return
+
+
+def main(con_str):
     feature_columns = [
         'state',
         'incumbents_d',
@@ -635,77 +735,48 @@ if __name__ == '__main__':
 
     df, census_df = generate_features(con_str)
     formula, training_columns, lr_model, rf_model = run_model(df, feature_columns, target_column)
+    models = {
+      'logistic_regression': lr_model,
+      'random_forest': rf_model,
+    }
 
-    all_president = latest_election('president', con_str)
-    all_senate = latest_election('senate', con_str)
-    r_spend_df = current_spend('R', con_str)
-    d_spend_df = current_spend('D', con_str)
-    r_spend = {}
-    d_spend = {}
-    for _, row in r_spend_df.iterrows():
-        if row['dollars_r'] > 0:
-            r_spend[row['district_name']] = row['dollars_r']
-    for _, row in d_spend_df.iterrows():
-        if row['dollars_d'] > 0:
-            r_spend[row['district_name']] = row['dollars_d']
-
-    def data_generator(df):
+    def data_formatter(df):
         y, X = dmatrices(formula, df, return_type="dataframe")
         X = X.rename(columns={'dem_won_prior1': 'dem_won_prior1[T.True]'})
         X = X[training_columns]
         y = y['dem_won[True]']
         return X, y
 
-    p = run_prediction(
-        rf_model,
-        data_generator,
-        historical_data=df,
-        census_data=census_df,
-        all_president=all_president,
-        all_senate=all_senate,
-        state='va',
-        district_number=32,
-        total_votes=None,
-        d_spend = d_spend.get(32, None),
-        r_spend = r_spend.get(32, None)
-    )
-    print 'va district 32: %.4f%%' % (p * 100)
+    prediction_data = generate_data_for_predictions(con_str)
+    make_predictions(prediction_data, df, census_df, models, data_formatter)
+    write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter)
 
-    res = []
-    run_rf = True
-    for i in range(1, 101):
-        if run_rf:
-            rf = run_prediction(
-                rf_model,
-                data_generator,
-                historical_data=df,
-                census_data=census_df,
-                all_president=all_president,
-                all_senate=all_senate,
-                state='va',
-                district_number=i,
-                total_votes=None,
-                d_spend = d_spend.get(i, None),
-                r_spend = r_spend.get(i, None)
-            )
-        lr = run_prediction(
-            lr_model,
-            data_generator,
-            historical_data=df,
-            census_data=census_df,
-            all_president=all_president,
-            all_senate=all_senate,
-            state='va',
-            district_number=i,
-            total_votes=None,
-            d_spend = d_spend.get(i, None),
-            r_spend = r_spend.get(i, None)
-        )
-        res.append([i, rf])
-        print 'va district %d: %.4f%%, %.4f%%' % (i, rf * 100, lr * 100)
-        # print 'va district %d: %.4f' % (i, lr * 100)
 
-    res.sort(key=lambda x: -x[1])
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d',
+                        '--database',
+                        default='buildthelist_development',
+                        help='database name')
+    parser.add_argument('-u',
+                        '--user',
+                        required=True,
+                        help='database user')
+    parser.add_argument('-H',
+                        '--host',
+                        default='localhost',
+                        help='database host')
+    parser.add_argument('-p',
+                        '--password',
+                        default='',
+                        help='database password')
+    args = parser.parse_args()
+    # python va_model.py \
+    #       --database buildthelist_production \
+    #       --host techforcampaigns.czp6qfvbka3n.us-west-2.rds.amazonaws.com \
+    #       --user techforcampaigns \
+    #       --password PASS
 
-    for x in res[0:20]:
-        print "district %d, score: %.4f" % (x[0], x[1])
+    con_str = build_con_string(args.user, args.password, args.host, args.database)
+
+    main(con_str)
