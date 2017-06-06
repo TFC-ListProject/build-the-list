@@ -30,6 +30,13 @@ eb init
 eb deploy
 ```
 
+## Updating the Prediction Results
+
+```
+TRUNCATE TABLE predictions RESTART IDENTITY;
+\copy predictions(state,district_number,turnout,dollars_spent,chance_win) FROM 'path/to/predictions.csv' DELIMITER ',' CSV HEADER;
+```
+
 ## Running
 
 ### Application Server
