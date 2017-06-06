@@ -768,7 +768,7 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
         print "district %d, score: %.4f" % (x[0], x[1])
 
 
-def write_predictions(prediction_data, historical_df, census_df, model, data_formatter):
+def write_predictions(prediction_data, historical_df, census_df, model, data_formatter, classification):
     all_president = prediction_data['all_president']
     all_senate = prediction_data['all_senate']
     r_spend = prediction_data['current_r_spend']
@@ -795,7 +795,8 @@ def write_predictions(prediction_data, historical_df, census_df, model, data_for
                     district_number=district,
                     turnout=turnout,
                     d_spend=d_spend,
-                    r_spend=r_spend.get(district, None)
+                    r_spend=r_spend.get(district, None),
+                    classification=classification
                 )
                 results.append([state, district, turnout, d_spend, res])
                 n += 1
@@ -849,9 +850,10 @@ def main(con_str):
     prediction_data = generate_data_for_predictions(con_str)
     if classification:
         make_predictions(prediction_data, df, census_df, models, data_formatter)
+        write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter, classification=True)
     else:
         make_reg_predictions(prediction_data, df, census_df, models, data_formatter)
-    # write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter)
+        write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter, classification=False)
 
 
 if __name__ == '__main__':
