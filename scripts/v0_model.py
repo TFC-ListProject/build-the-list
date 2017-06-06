@@ -9,6 +9,7 @@ from sklearn import metrics
 from sklearn.preprocessing import Imputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import train_test_split
@@ -400,6 +401,7 @@ def generate_features(con_str):
     # missing incumbent values
     df['incumbents_d'][df['incumbents_d'].isnull()] = 0
     df['incumbents_r'][df['incumbents_r'].isnull()] = 0
+    df['incumbents_r_bin'] = np.where(df['incumbents_r'] > 0, 1, 0)
 
     # add normalized dollar variables
     df['normalized_dollars_d'] = (1.0 * df['dollars_d']) / df['total_votes']
@@ -416,7 +418,7 @@ def generate_features(con_str):
 
     # add target
     df['dem_won'] = (df['votes_d'] > df['votes_r']).astype(int)
-    df['dem_won_by_p'] = df['votes_d'] - df['votes_r']
+    df['dem_won_by_p'] = df['votesp_d'] - df['votesp_r']
 
     # join past election
     df['yearM2'] = df['year'] - 2
@@ -447,56 +449,86 @@ def build_model(df, feature_columns, target_column, classification=True):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
 
-    print()
-    print('train data points: %d' % len(y_train))
-    print('train mean outcome: %.4f' % y_train.mean())
-    print('accuracy of always predicting a loss')
-    print(metrics.accuracy_score(y_test, [0] * len(y_test)))
+    if classification:
+        print()
+        print('train data points: %d' % len(y_train))
+        print('train mean outcome: %.4f' % y_train.mean())
+        print('accuracy of always predicting a loss')
+        print(metrics.accuracy_score(y_test, [0] * len(y_test)))
 
-    print()
-    print('logistic regression:')
-    lrC = 1e5
-    lr_model = LogisticRegression(C=lrC)
-    lr_model.fit(X_train, y_train)
-    lr_probs = lr_model.predict_proba(X_test)
-    lr_predictions = lr_model.predict(X_test)
+        print()
+        print('logistic regression:')
+        lrC = 1e5
+        lr_model = LogisticRegression(C=lrC)
+        lr_model.fit(X_train, y_train)
+        lr_probs = lr_model.predict_proba(X_test)
+        lr_predictions = lr_model.predict(X_test)
 
-    n_estimators = 100
-    max_depth = 5
-    rf_model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
-    rf_model.fit(X_train, y_train)
-    rf_probs = rf_model.predict_proba(X_test)
-    rf_predictions = rf_model.predict(X_test)
+        n_estimators = 100
+        max_depth = 5
+        rf_model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+        rf_model.fit(X_train, y_train)
+        rf_probs = rf_model.predict_proba(X_test)
+        rf_predictions = rf_model.predict(X_test)
 
-    print('lr coeffs:')
-    print(pd.DataFrame(list(zip(X.columns, np.transpose(lr_model.coef_)))))
-    print('rf importance:')
-    print(pd.DataFrame(list(zip(X.columns, np.transpose(rf_model.feature_importances_)))))
-    print('accuracy')
-    print(metrics.accuracy_score(y_test, lr_predictions))
-    print(metrics.accuracy_score(y_test, rf_predictions))
-    print('AUC')
-    print(metrics.roc_auc_score(y_test, lr_probs[:, 1]))
-    print(metrics.roc_auc_score(y_test, rf_probs[:, 1]))
+        print('lr coeffs:')
+        print(pd.DataFrame(list(zip(X.columns, np.transpose(lr_model.coef_)))))
+        print('rf importance:')
+        print(pd.DataFrame(list(zip(X.columns, np.transpose(rf_model.feature_importances_)))))
+        print('accuracy')
+        print(metrics.accuracy_score(y_test, lr_predictions))
+        print(metrics.accuracy_score(y_test, rf_predictions))
+        print('AUC')
+        print(metrics.roc_auc_score(y_test, lr_probs[:, 1]))
+        print(metrics.roc_auc_score(y_test, rf_probs[:, 1]))
 
-    # run simple cross validation
-    print()
-    cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
-    lr_scores = cross_val_score(LogisticRegression(C=lrC), X, y, scoring='accuracy', cv=cv)
-    rf_scores = cross_val_score(RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth), X, y, scoring='accuracy', cv=cv)
+        # run simple cross validation
+        print()
+        cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
+        lr_scores = cross_val_score(LogisticRegression(C=lrC), X, y, scoring='accuracy', cv=cv)
+        rf_scores = cross_val_score(RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth), X, y, scoring='accuracy', cv=cv)
 
-    print('results of logistic cross validation')
-    print(lr_scores)
-    print(lr_scores.mean())
+        print('results of logistic cross validation')
+        print(lr_scores)
+        print(lr_scores.mean())
 
-    print('results of RF cross validation')
-    print(rf_scores)
-    print(rf_scores.mean())
+        print('results of RF cross validation')
+        print(rf_scores)
+        print(rf_scores.mean())
 
-    models = {
-      'logistic_regression': lr_model,
-      'random_forest': rf_model,
-    }
+        models = {
+          'logistic_regression': lr_model,
+          'random_forest': rf_model,
+        }
+    else:
+        print()
+        print('train data points: %d' % len(y_train))
+        print('train mean outcome: %.4f' % y_train.mean())
+        print('r2 of always predicting mean')
+        print(metrics.r2_score(y_test, [y_train.mean()] * len(y_test)))
+
+        print()
+        print('random forest:')
+        n_estimators = 100
+        max_depth = 5
+        rf_model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth)
+        rf_model.fit(X_train, y_train)
+        rf_reg = rf_model.predict(X_test)
+        print('rf importance:')
+        print(pd.DataFrame(list(zip(X.columns, np.transpose(rf_model.feature_importances_)))))
+        print('r2 score')
+        print(metrics.r2_score(y_test, rf_reg))
+
+        cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
+        rf_scores = cross_val_score(RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth), X, y, scoring='r2', cv=cv)
+
+        print('results of RF cross validation')
+        print(rf_scores)
+        print(rf_scores.mean())
+
+        models = {
+          'random_forest': rf_model,
+        }
 
     return formula, X.columns, models
 
@@ -512,7 +544,8 @@ def run_prediction(
         district_number,
         turnout,
         d_spend,
-        r_spend):
+        r_spend,
+        classification=True):
 
     d = historical_data[(historical_data.state == state) &
                         (historical_data.district_number == district_number)]
@@ -544,6 +577,10 @@ def run_prediction(
         incumbents_r = last_house_results['incumbents_r'] + 1
     features['incumbents_d'] = incumbents_d
     features['incumbents_r'] = incumbents_r
+    if incumbents_r >= 1:
+        features['incumbents_r_bin'] = 1
+    else:
+        features['incumbents_r_bin'] = 0
     features['uncontested_d'] = 0
     features['uncontested_r'] = 0
 
@@ -576,16 +613,20 @@ def run_prediction(
 
     # this is a dummy entry that will be thrown away
     features['dem_won'] = 0
+    features['dem_won_by_p'] = 0
 
     model_features, _ = data_formatter(features)
-    prediction = model.predict_proba(model_features.values.reshape(1, -1))
+    if classification:
+        prediction = model.predict_proba(model_features.values.reshape(1, -1))
 
-    classes = model.classes_
-    pos_index = model.classes_.tolist().index(1)
+        classes = model.classes_
+        pos_index = model.classes_.tolist().index(1)
 
-    pos_prob = prediction[0][pos_index]
+        pos_prob = prediction[0][pos_index]
 
-    return pos_prob
+        return pos_prob
+    else:
+        return model.predict(model_features.values.reshape(1, -1))
 
 
 def generate_data_for_predictions(con_str):
@@ -631,7 +672,8 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
         district_number=32,
         turnout=None,
         d_spend = d_spend.get(32, None),
-        r_spend = r_spend.get(32, None)
+        r_spend = r_spend.get(32, None),
+        classification=True,
     )
     print 'va district 32: %.4f%%' % (p * 100)
 
@@ -650,7 +692,8 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
                 district_number=i,
                 turnout=None,
                 d_spend = d_spend.get(i, None),
-                r_spend = r_spend.get(i, None)
+                r_spend = r_spend.get(i, None),
+                classification=True,
             )
         lr = run_prediction(
             lr_model,
@@ -663,13 +706,63 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
             district_number=i,
             turnout=None,
             d_spend = d_spend.get(i, None),
-            r_spend = r_spend.get(i, None)
+            r_spend = r_spend.get(i, None),
+            classification=True,
         )
         res.append([i, rf])
         print 'va district %d: %.4f%%, %.4f%%' % (i, rf * 100, lr * 100)
         # print 'va district %d: %.4f' % (i, lr * 100)
 
     res.sort(key=lambda x: -x[1])
+
+    for x in res[0:20]:
+        print "district %d, score: %.4f" % (x[0], x[1])
+
+
+def make_reg_predictions(prediction_data, historical_df, census_df, models, data_formatter):
+    all_president = prediction_data['all_president']
+    all_senate = prediction_data['all_senate']
+    r_spend = prediction_data['current_r_spend']
+    d_spend = prediction_data['current_d_spend']
+
+    rf_model = models['random_forest']
+
+    p = run_prediction(
+        rf_model,
+        data_formatter,
+        historical_data=historical_df,
+        census_data=census_df,
+        all_president=all_president,
+        all_senate=all_senate,
+        state='va',
+        district_number=32,
+        turnout=None,
+        d_spend = d_spend.get(32, None),
+        r_spend = r_spend.get(32, None),
+        classification=False
+    )
+    print 'va district 32: %.4f' % p
+
+    res = []
+    for i in range(1, 101):
+        rf = run_prediction(
+            rf_model,
+            data_formatter,
+            historical_data=historical_df,
+            census_data=census_df,
+            all_president=all_president,
+            all_senate=all_senate,
+            state='va',
+            district_number=i,
+            turnout=None,
+            d_spend = d_spend.get(i, None),
+            r_spend = r_spend.get(i, None),
+            classification=False
+        )
+        res.append([i, rf])
+        print 'va district %d: %.4f' % (i, rf)
+
+    res.sort(key=lambda x: abs(x[1]))
 
     for x in res[0:20]:
         print "district %d, score: %.4f" % (x[0], x[1])
@@ -736,10 +829,12 @@ def main(con_str):
         'normalized_white',
         'normalized_black'
     ]
-    target_column = 'dem_won'
+    # target_column = 'dem_won'
+    target_column = 'dem_won_by_p'
+    classification = False
 
     df, census_df = generate_features(con_str)
-    formula, training_columns, models = build_model(df, feature_columns, target_column)
+    formula, training_columns, models = build_model(df, feature_columns, target_column, classification=classification)
 
     models = {
       'logistic_regression': models.get('logistic_regression', None),
@@ -752,7 +847,10 @@ def main(con_str):
         return X, y
 
     prediction_data = generate_data_for_predictions(con_str)
-    make_predictions(prediction_data, df, census_df, models, data_formatter)
+    if classification:
+        make_predictions(prediction_data, df, census_df, models, data_formatter)
+    else:
+        make_reg_predictions(prediction_data, df, census_df, models, data_formatter)
     # write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter)
 
 
