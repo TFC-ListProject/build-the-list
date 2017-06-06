@@ -26,9 +26,7 @@ def predictions(district_number):
     prediction = Prediction(db).find(dict(
         district_number=district_number,
         dollars_spent=request.form.get('dollars_spent', None),
-        election_type=request.form.get('election_type'),
-        is_encumbent=request.form.get('is_encumbent', None),
-        state = request.form.get('state'),
+        state=request.form.get('state'),
         turnout=request.form.get('turnout', None),
     ))
 

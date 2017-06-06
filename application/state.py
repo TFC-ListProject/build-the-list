@@ -27,7 +27,7 @@ class State:
             AND e.year = {year}
             AND der.won = true
         ORDER BY d.district_number
-        '''.format( election_type=election_type, state=state, year=year)
+        '''.format(election_type=election_type, state=state, year=year)
         rows = self.db.engine.execute(sql).fetchall()
 
         def build_row(row):
