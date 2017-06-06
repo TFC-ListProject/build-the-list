@@ -415,7 +415,8 @@ def generate_features(con_str):
     df['turnout'] = df['total_votes'] / df['total_population_e']
 
     # add target
-    df['dem_won'] = df['votes_d'] > df['votes_r']
+    df['dem_won'] = (df['votes_d'] > df['votes_r']).astype(int)
+    df['dem_won_by_p'] = df['votes_d'] - df['votes_r']
 
     # join past election
     df['yearM2'] = df['year'] - 2
@@ -432,7 +433,7 @@ def generate_features(con_str):
     return df_with_prior, acs_lower
 
 
-def run_model(df, feature_columns, target_column):
+def build_model(df, feature_columns, target_column, classification=True):
 
     contested_df = df[(df['uncontested_r'] == 0) & (df['uncontested_d'] == 0)]
     formula = '%s ~ %s' % (target_column, ' + '.join(feature_columns))
@@ -442,7 +443,6 @@ def run_model(df, feature_columns, target_column):
     print(formula)
 
     y, X = dmatrices(formula, contested_df, return_type="dataframe")
-    y = y['dem_won[True]']
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
@@ -493,7 +493,12 @@ def run_model(df, feature_columns, target_column):
     print(rf_scores)
     print(rf_scores.mean())
 
-    return formula, X.columns, lr_model, rf_model
+    models = {
+      'logistic_regression': lr_model,
+      'random_forest': rf_model,
+    }
+
+    return formula, X.columns, models
 
 
 def run_prediction(
@@ -570,7 +575,7 @@ def run_prediction(
     features['normalized_black'] = (1.0 * last_census['race_one_black_e']) / last_census['total_population_e']
 
     # this is a dummy entry that will be thrown away
-    features['dem_won'] = False
+    features['dem_won'] = 0
 
     model_features, _ = data_formatter(features)
     prediction = model.predict_proba(model_features.values.reshape(1, -1))
@@ -734,22 +739,21 @@ def main(con_str):
     target_column = 'dem_won'
 
     df, census_df = generate_features(con_str)
-    formula, training_columns, lr_model, rf_model = run_model(df, feature_columns, target_column)
+    formula, training_columns, models = build_model(df, feature_columns, target_column)
+
     models = {
-      'logistic_regression': lr_model,
-      'random_forest': rf_model,
+      'logistic_regression': models.get('logistic_regression', None),
+      'random_forest': models.get('random_forest', None),
     }
 
     def data_formatter(df):
         y, X = dmatrices(formula, df, return_type="dataframe")
-        X = X.rename(columns={'dem_won_prior1': 'dem_won_prior1[T.True]'})
         X = X[training_columns]
-        y = y['dem_won[True]']
         return X, y
 
     prediction_data = generate_data_for_predictions(con_str)
     make_predictions(prediction_data, df, census_df, models, data_formatter)
-    write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter)
+    # write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter)
 
 
 if __name__ == '__main__':
