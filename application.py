@@ -25,9 +25,9 @@ def not_found(error):
 def predictions(district_number):
     prediction = Prediction(db).find(dict(
         district_number=district_number,
-        dollars_spent=request.form.get('dollars_spent', None),
+        dollars_spent=request.form.get('dollars_spent'),
         state=request.form.get('state'),
-        turnout=request.form.get('turnout', None),
+        turnout=request.form.get('turnout'),
     ))
 
     return jsonify(prediction)
