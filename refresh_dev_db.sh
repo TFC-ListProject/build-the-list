@@ -9,4 +9,5 @@
 for f in `find resources/tmp -type f -name "*.pdf"`; do echo $f; ./go extract_pdf -f $f || break; done &&\
 python build_the_list/aggregate_nj_municipality_data.py &&\
 python scrape/vpap/normalize_vpap.py &&\
+python scrape/vpap/normalize_vpap_precinct.py &&\
 psql -U techforcampaigns buildthelist_development < resources/election_data_post_process.sql

@@ -53,13 +53,14 @@ CREATE UNIQUE INDEX idx_election_types_name_unique ON election_types (name);
 CREATE TABLE IF NOT EXISTS elections (
     id SERIAL PRIMARY KEY,
     election_type_id integer REFERENCES election_types(id) NOT NULL,
+    district_id integer default 0,
     year smallint NOT NULL,
     state varchar(2) NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX idx_elections_election_type_id ON elections (election_type_id);
 CREATE UNIQUE INDEX idx_elections_state_year_type_unique ON elections
-(state, year, election_type_id);
+(state, year, election_type_id, district_id);
 
 
 -- municipalities

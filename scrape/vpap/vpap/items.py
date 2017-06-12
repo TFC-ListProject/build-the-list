@@ -11,7 +11,6 @@ class VpapDistrictCandidateItem(scrapy.Item):
   electionType = scrapy.Field()
   firstName = scrapy.Field()
   lastName = scrapy.Field()
-  # url = scrapy.Field()
   party = scrapy.Field()
   percentage = scrapy.Field()
   numVotes = scrapy.Field()
@@ -28,3 +27,13 @@ class VpapDistrictVoteHistoryForOtherElection(scrapy.Item):
   candidateParty = scrapy.Field()
   numVotes = scrapy.Field()
   percentage = scrapy.Field()
+
+class VpapPrecinctVote(scrapy.Item):
+  vpapPrecinctId = scrapy.Field()
+  precinctName = scrapy.Field()
+  districtType = scrapy.Field()
+  districtNumber = scrapy.Field()
+  year = scrapy.Field()
+  candidateName = scrapy.Field()
+  candidateParty = scrapy.Field()
+  votes = scrapy.Field()

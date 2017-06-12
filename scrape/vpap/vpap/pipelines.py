@@ -18,7 +18,6 @@ class VpapPipeline(object):
     self.cursor = self.connection.cursor()
 
   def process_item(self, item, spider):
-    # check item type to decide which table to insert
     try:
       if type(item) is VpapDistrictCandidateItem:
         self.cursor.execute("""
@@ -39,6 +38,15 @@ class VpapPipeline(object):
           (item.get('district'), item.get('electionName'), item.get('vpapElectionId'),
            item.get('candidateName'), item.get('candidateParty'), item.get('numVotes'),
            item.get('percentage')))
+      elif type(item) is VpapPrecinctVote:
+        self.cursor.execute("""
+          INSERT INTO raw_precinct_vote
+          (state, sourcePrecinctId, precinctName, districtType, districtNumber, year,
+           candidateName, candidateParty, votes)
+          VALUES('va', %s, %s, %s, %s, %s, %s, %s, %s)""",
+          (item.get('vpapPrecinctId'), item.get('precinctName'), item.get('districtType'),
+           item.get('districtNumber'), item.get('year'), item.get('candidateName'),
+           item.get('candidateParty'), item.get('votes')))
       self.connection.commit()
 
     except psycopg2.DatabaseError, e:
