@@ -603,6 +603,8 @@ def run_prediction(
     features['uncontested_r_prior1'] = last_house_results.uncontested_r
     features['uncontested_d_prior1'] = last_house_results.uncontested_d
     features['total_population_e'] = last_census.total_population_e
+    features['educational_attainment_bachelors_e'] = last_census.educational_attainment_bachelors_e
+    features['mean_household_income_e'] = last_census.mean_household_income_e
 
     if not turnout:
         turnout = d.turnout.mean()
@@ -626,7 +628,7 @@ def run_prediction(
 
         return pos_prob
     else:
-        return model.predict(model_features.values.reshape(1, -1))
+        return model.predict(model_features.values.reshape(1, -1))[0]
 
 
 def generate_data_for_predictions(con_str):
@@ -828,7 +830,9 @@ def main(con_str):
         # 'total_population_e',
         'turnout',
         'normalized_white',
-        'normalized_black'
+        'normalized_black',
+        'mean_household_income_e',
+        'educational_attainment_bachelors_e',
     ]
     # target_column = 'dem_won'
     target_column = 'dem_won_by_p'
