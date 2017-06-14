@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, send_file, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from itertools import groupby
 import json
@@ -20,6 +20,23 @@ db = SQLAlchemy(application)
 @application.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({ 'error': 'Not found' }), 404)
+
+@application.route('/')
+def index():
+    return send_file('index.html')
+
+@application.route('/src/<path:path>')
+def send_static_content(path):
+    return send_from_directory('src', path)
+
+# Rewrite these URLs to be served from same static content dir
+@application.route('/bower_components/<path:path>')
+def send_bower_content(path):
+    return send_from_directory('src', path)
+
+@application.route('/fake_data/<path:path>')
+def send_fake_data(path):
+    return send_from_directory('src', path)
 
 @application.route('/predictions/<district_number>', methods=['POST'])
 def predictions(district_number):
