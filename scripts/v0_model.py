@@ -7,7 +7,7 @@ import sys
 from patsy import dmatrices
 from sklearn import metrics
 from sklearn.preprocessing import Imputer
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_score
@@ -236,6 +236,8 @@ def prior_election(kind, con_str):
         et_name = 'us president'
     elif kind == 'senate':
         et_name = 'us senate'
+    elif kind == 'congress':
+        et_name = 'us congressional'
     else:
         print('bad election type')
         sys.exit(1)
@@ -299,6 +301,8 @@ def latest_election(kind, con_str):
         et_name = 'us president'
     elif kind == 'senate':
         et_name = 'us senate'
+    elif kind == 'congress':
+        et_name = 'us congressional'
     else:
         print('bad election type')
         sys.exit(1)
@@ -364,6 +368,8 @@ def generate_features(con_str):
     d_incumbents = party_incumbent('D', con_str)
     prior_pres = prior_election('president', con_str)
     prior_senate = prior_election('senate', con_str)
+    prior_congress = prior_election('congress', con_str)
+    prior_congress = prior_congress.groupby(['election_id', 'district_id']).mean().reset_index()
     acs_lower = acs_data('lower', con_str)
 
     # merge in features
@@ -374,6 +380,7 @@ def generate_features(con_str):
     df = merge_to_elections_districts(df, r_incumbents)
     df = merge_to_elections_districts(df, prior_pres)
     df = merge_to_elections_districts(df, prior_senate)
+    df = merge_to_elections_districts(df, prior_congress)
     df = merge_census(df, acs_lower)
 
     # merge in features, make sure we didn't expand the dataset!
@@ -414,6 +421,7 @@ def generate_features(con_str):
     # add normalized census variables
     df['normalized_white'] = df['race_one_white_e'] / df['total_population_e']
     df['normalized_black'] = df['race_one_black_e'] / df['total_population_e']
+    df['normalized_bachelors'] = df['educational_attainment_bachelors_e'] / df['total_population_e']
     df['turnout'] = df['total_votes'] / df['total_population_e']
 
     # add target
@@ -504,8 +512,26 @@ def build_model(df, feature_columns, target_column, classification=True):
         print()
         print('train data points: %d' % len(y_train))
         print('train mean outcome: %.4f' % y_train.mean())
+        print("root mean squared error of mean prediction: %.4f"
+            % np.sqrt(np.mean((y_train.mean() - y_test) ** 2)))
         print('r2 of always predicting mean')
         print(metrics.r2_score(y_test, [y_train.mean()] * len(y_test)))
+
+        print()
+        print('linear regression:')
+        print(X_train.head())
+        lr_model = LinearRegression(fit_intercept=True, normalize=True)
+        lr_model.fit(X_train, y_train)
+        lr_reg = lr_model.predict(X_test)
+        print('Coefficients:')
+        print('intercept: ', lr_model.intercept_)
+        print(pd.DataFrame(list(zip(X.columns, np.transpose(lr_model.coef_)))))
+        # The root mean squared error
+        print("Root Mean squared error: %.4f"
+            % np.sqrt(np.mean((lr_reg - y_test) ** 2)))
+        # Explained variance score (1 is perfect prediction)
+        print('r2 score: %.2f' % lr_model.score(X_test, y_test))
+
 
         print()
         print('random forest:')
@@ -516,6 +542,8 @@ def build_model(df, feature_columns, target_column, classification=True):
         rf_reg = rf_model.predict(X_test)
         print('rf importance:')
         print(pd.DataFrame(list(zip(X.columns, np.transpose(rf_model.feature_importances_)))))
+        print("root Mean squared error: %.4f"
+            % np.sqrt(np.mean((rf_reg - np.array(np.transpose(y_test))) ** 2)))
         print('r2 score')
         print(metrics.r2_score(y_test, rf_reg))
 
@@ -540,6 +568,7 @@ def run_prediction(
         census_data,
         all_president,
         all_senate,
+        all_congress,
         state,
         district_number,
         turnout,
@@ -558,10 +587,14 @@ def run_prediction(
     s = all_senate[(all_senate.state == state) &
                   (all_senate.district_number == district_number)]
 
+    co = all_congress[(all_congress.state == state) &
+                      (all_congress.district_number == district_number)]
+
     last_house_results = d.sort_values(by='year', ascending=False).iloc[0]
     last_census = c.sort_values(by='api_year', ascending=False).iloc[0]
     last_president = p.sort_values(by='year', ascending=False).iloc[0]
     last_senate = s.sort_values(by='year', ascending=False).iloc[0]
+    last_congress = co.sort_values(by='year', ascending=False).iloc[0]
 
     # generate feature matrix
     features = pd.Series()
@@ -597,6 +630,7 @@ def run_prediction(
 
     features['prior_demvote_president'] = last_president.loc['prior_demvote_president']
     features['prior_demvote_senate'] = last_senate.loc['prior_demvote_senate']
+    features['prior_demvote_congress'] = last_congress.loc['prior_demvote_congress']
 
     features['votesp_r_prior1'] = last_house_results.votesp_r
     features['votesp_d_prior1'] = last_house_results.votesp_d
@@ -612,6 +646,7 @@ def run_prediction(
 
     features['normalized_white'] = (1.0 * last_census['race_one_white_e']) / last_census['total_population_e']
     features['normalized_black'] = (1.0 * last_census['race_one_black_e']) / last_census['total_population_e']
+    features['normalized_bachelors'] = (1.0 * last_census['educational_attainment_bachelors_e']) / last_census['total_population_e']
 
     # this is a dummy entry that will be thrown away
     features['dem_won'] = 0
@@ -628,7 +663,7 @@ def run_prediction(
 
         return pos_prob
     else:
-        return model.predict(model_features.values.reshape(1, -1))[0]
+        return model_features, model.predict(model_features.values.reshape(1, -1))[0]
 
 
 def generate_data_for_predictions(con_str):
@@ -636,6 +671,8 @@ def generate_data_for_predictions(con_str):
     # TODO, we should probably run all the queries in sequence in the same place
     all_president = latest_election('president', con_str)
     all_senate = latest_election('senate', con_str)
+    all_congress = latest_election('congress', con_str)
+    all_congress = all_congress.groupby(['year', 'state', 'district_id', 'district_number']).mean().reset_index()
     r_spend_df = current_spend('R', con_str)
     d_spend_df = current_spend('D', con_str)
     r_spend = {}
@@ -649,6 +686,7 @@ def generate_data_for_predictions(con_str):
     return {
       'all_president': all_president,
       'all_senate': all_senate,
+      'all_congress': all_congress,
       'current_r_spend': r_spend,
       'current_d_spend': d_spend,
     }
@@ -657,19 +695,21 @@ def generate_data_for_predictions(con_str):
 def make_predictions(prediction_data, historical_df, census_df, models, data_formatter):
     all_president = prediction_data['all_president']
     all_senate = prediction_data['all_senate']
+    all_congress = prediction_data['all_congress']
     r_spend = prediction_data['current_r_spend']
     d_spend = prediction_data['current_d_spend']
 
     rf_model = models['random_forest']
     lr_model = models['logistic_regression']
 
-    p = run_prediction(
+    _, p = run_prediction(
         rf_model,
         data_formatter,
         historical_data=historical_df,
         census_data=census_df,
         all_president=all_president,
         all_senate=all_senate,
+        all_congress=all_congress,
         state='va',
         district_number=32,
         turnout=None,
@@ -683,13 +723,14 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
     run_rf = True
     for i in range(1, 101):
         if run_rf:
-            rf = run_prediction(
+            features, rf = run_prediction(
                 rf_model,
                 data_formatter,
                 historical_data=historical_df,
                 census_data=census_df,
                 all_president=all_president,
                 all_senate=all_senate,
+                all_congress=all_congress,
                 state='va',
                 district_number=i,
                 turnout=None,
@@ -697,13 +738,14 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
                 r_spend = r_spend.get(i, None),
                 classification=True,
             )
-        lr = run_prediction(
+        features, lr = run_prediction(
             lr_model,
             data_formatter,
             historical_data=historical_df,
             census_data=census_df,
             all_president=all_president,
             all_senate=all_senate,
+            all_congress=all_congress,
             state='va',
             district_number=i,
             turnout=None,
@@ -724,18 +766,20 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
 def make_reg_predictions(prediction_data, historical_df, census_df, models, data_formatter):
     all_president = prediction_data['all_president']
     all_senate = prediction_data['all_senate']
+    all_congress = prediction_data['all_congress']
     r_spend = prediction_data['current_r_spend']
     d_spend = prediction_data['current_d_spend']
 
     rf_model = models['random_forest']
 
-    p = run_prediction(
+    features, p = run_prediction(
         rf_model,
         data_formatter,
         historical_data=historical_df,
         census_data=census_df,
         all_president=all_president,
         all_senate=all_senate,
+        all_congress=all_congress,
         state='va',
         district_number=32,
         turnout=None,
@@ -746,14 +790,16 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
     print 'va district 32: %.4f' % p
 
     res = []
+    feature_results = pd.DataFrame()
     for i in range(1, 101):
-        rf = run_prediction(
+        features, rf = run_prediction(
             rf_model,
             data_formatter,
             historical_data=historical_df,
             census_data=census_df,
             all_president=all_president,
             all_senate=all_senate,
+            all_congress=all_congress,
             state='va',
             district_number=i,
             turnout=None,
@@ -764,15 +810,21 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
         res.append([i, rf])
         print 'va district %d: %.4f' % (i, rf)
 
-    res.sort(key=lambda x: abs(x[1]))
+        features['district'] = i
+        features['prediction'] = rf
+        feature_results = feature_results.append(features, ignore_index=True)
 
+    res.sort(key=lambda x: abs(x[1]))
     for x in res[0:20]:
         print "district %d, score: %.4f" % (x[0], x[1])
+
+    return feature_results
 
 
 def write_predictions(prediction_data, historical_df, census_df, model, data_formatter, classification):
     all_president = prediction_data['all_president']
     all_senate = prediction_data['all_senate']
+    all_congress = prediction_data['all_congress']
     r_spend = prediction_data['current_r_spend']
     d_spend = prediction_data['current_d_spend']
 
@@ -786,13 +838,14 @@ def write_predictions(prediction_data, historical_df, census_df, model, data_for
     for district in range(1, 101):
         for turnout in turnout_range:
             for d_spend in spend_range:
-                res = run_prediction(
+                _, res = run_prediction(
                     model,
                     data_formatter,
                     historical_data=historical_df,
                     census_data=census_df,
                     all_president=all_president,
                     all_senate=all_senate,
+                    all_congress=all_congress,
                     state='va',
                     district_number=district,
                     turnout=turnout,
@@ -822,7 +875,8 @@ def main(con_str):
         'normalized_dollar_ratio',
         'prior_demvote_president',
         'prior_demvote_senate',
-        'votesp_r_prior1',
+        'prior_demvote_congress',
+        # 'votesp_r_prior1',
         'votesp_d_prior1',
         'uncontested_r_prior1',
         'uncontested_d_prior1',
@@ -832,7 +886,8 @@ def main(con_str):
         'normalized_white',
         'normalized_black',
         'mean_household_income_e',
-        'educational_attainment_bachelors_e',
+        # 'educational_attainment_bachelors_e',
+        'normalized_bachelors',
     ]
     # target_column = 'dem_won'
     target_column = 'dem_won_by_p'
@@ -856,7 +911,9 @@ def main(con_str):
         make_predictions(prediction_data, df, census_df, models, data_formatter)
         write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter, classification=True)
     else:
-        make_reg_predictions(prediction_data, df, census_df, models, data_formatter)
+        print('skipping')
+        results = make_reg_predictions(prediction_data, df, census_df, models, data_formatter)
+        results.to_csv('features_and_results.csv')
         write_predictions(prediction_data, df, census_df, models['random_forest'], data_formatter, classification=False)
 
 
