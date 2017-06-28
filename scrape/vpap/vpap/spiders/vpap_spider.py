@@ -13,7 +13,6 @@ def parse_int(s):
 class VpapSpider(scrapy.Spider):
   name = "Vpap"
   start_urls = ['http://www.vpap.org/elections/house/candidates/general/']
-  #start_urls = ['http://www.vpap.org/offices/house-of-delegates-46/elections/?year_and_type=2017regular']
 
   def parse(self, response):
     # enqueue the current election page for all 100 house districts
