@@ -437,10 +437,17 @@ def generate_features(con_str):
                        right_on=['district_id', 'year'],
                        suffixes=('', '_prior1')
                     )
+    df_with_prior2 = df_with_prior.merge(
+                       df_with_prior,
+                       how='left',
+                       left_on=['district_id', 'yearM2_prior1'],
+                       right_on=['district_id', 'year'],
+                       suffixes=('', '_prior2')
+                    )
 
-    print('number of races we have prior data for: %d' % len(df))
+    print('number of races we have prior data for: %d' % len(df_with_prior2))
 
-    return df_with_prior, acs_lower
+    return df_with_prior2, acs_lower
 
 
 def build_model(df, feature_columns, target_column, classification=True):
@@ -571,9 +578,10 @@ def run_prediction(
         all_congress,
         state,
         district_number,
-        turnout,
+        turnout_delta,
         d_spend,
         r_spend,
+        spend_ratio=None,
         classification=True):
 
     d = historical_data[(historical_data.state == state) &
@@ -617,16 +625,24 @@ def run_prediction(
     features['uncontested_d'] = 0
     features['uncontested_r'] = 0
 
+    historical_d_spend = d.dollars_d.mean()
+    historical_r_spend = d.dollars_r.mean()
+    historical_spend_ratio = d.normalized_dollar_ratio.mean()
+
     if not d_spend:
-        d_spend = d.dollars_d.mean()
+        d_spend = historical_d_spend
     if not r_spend:
-        r_spend = d.dollars_r.mean()
+        r_spend = historical_r_spend
+
     if not r_spend:
-        dollar_ratio = d.normalized_dollar_ratio.mean()
+        dollar_ratio = historical_spend_ratio
     else:
         dollar_ratio = (1.0 * d_spend) / r_spend
 
-    features['normalized_dollar_ratio'] = dollar_ratio
+    if spend_ratio:
+        features['normalized_dollar_ratio'] = spend_ratio
+    else:
+        features['normalized_dollar_ratio'] = dollar_ratio
 
     features['prior_demvote_president'] = last_president.loc['prior_demvote_president']
     features['prior_demvote_senate'] = last_senate.loc['prior_demvote_senate']
@@ -640,9 +656,10 @@ def run_prediction(
     features['educational_attainment_bachelors_e'] = last_census.educational_attainment_bachelors_e
     features['mean_household_income_e'] = last_census.mean_household_income_e
 
-    if not turnout:
-        turnout = d.turnout.mean()
+    turnout = d.turnout.mean()
     features['turnout'] = turnout
+    if turnout_delta:
+        features['turnout'] += turnout_delta
 
     features['normalized_white'] = (1.0 * last_census['race_one_white_e']) / last_census['total_population_e']
     features['normalized_black'] = (1.0 * last_census['race_one_black_e']) / last_census['total_population_e']
@@ -653,6 +670,15 @@ def run_prediction(
     features['dem_won_by_p'] = 0
 
     model_features, _ = data_formatter(features)
+    baseline_features = {
+        'turnout': turnout,
+        'historical_d_spend': historical_d_spend,
+        'historical_r_spend': historical_r_spend,
+        'historical_spend_ratio': historical_spend_ratio,
+        'current_d_spend': d_spend,
+        'current_r_spend': r_spend,
+    }
+
     if classification:
         prediction = model.predict_proba(model_features.values.reshape(1, -1))
 
@@ -663,7 +689,7 @@ def run_prediction(
 
         return pos_prob
     else:
-        return model_features, model.predict(model_features.values.reshape(1, -1))[0]
+        return baseline_features, model_features, model.predict(model_features.values.reshape(1, -1))[0]
 
 
 def generate_data_for_predictions(con_str):
@@ -702,7 +728,7 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
     rf_model = models['random_forest']
     lr_model = models['logistic_regression']
 
-    _, p = run_prediction(
+    _, _, p = run_prediction(
         rf_model,
         data_formatter,
         historical_data=historical_df,
@@ -712,9 +738,10 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
         all_congress=all_congress,
         state='va',
         district_number=32,
-        turnout=None,
+        turnout_delta=None,
         d_spend = d_spend.get(32, None),
         r_spend = r_spend.get(32, None),
+        spend_ratio=None,
         classification=True,
     )
     print 'va district 32: %.4f%%' % (p * 100)
@@ -723,7 +750,7 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
     run_rf = True
     for i in range(1, 101):
         if run_rf:
-            features, rf = run_prediction(
+            baseline_features, features, rf = run_prediction(
                 rf_model,
                 data_formatter,
                 historical_data=historical_df,
@@ -733,12 +760,13 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
                 all_congress=all_congress,
                 state='va',
                 district_number=i,
-                turnout=None,
+                turnout_delta=None,
                 d_spend = d_spend.get(i, None),
                 r_spend = r_spend.get(i, None),
+                spend_ratio=None,
                 classification=True,
             )
-        features, lr = run_prediction(
+        baseline_features, features, lr = run_prediction(
             lr_model,
             data_formatter,
             historical_data=historical_df,
@@ -748,9 +776,10 @@ def make_predictions(prediction_data, historical_df, census_df, models, data_for
             all_congress=all_congress,
             state='va',
             district_number=i,
-            turnout=None,
+            turnout_delta=None,
             d_spend = d_spend.get(i, None),
             r_spend = r_spend.get(i, None),
+            spend_ratio=None,
             classification=True,
         )
         res.append([i, rf])
@@ -772,7 +801,7 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
 
     rf_model = models['random_forest']
 
-    features, p = run_prediction(
+    baselin_features, features, p = run_prediction(
         rf_model,
         data_formatter,
         historical_data=historical_df,
@@ -782,9 +811,10 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
         all_congress=all_congress,
         state='va',
         district_number=32,
-        turnout=None,
+        turnout_delta=None,
         d_spend = d_spend.get(32, None),
         r_spend = r_spend.get(32, None),
+        spend_ratio=None,
         classification=False
     )
     print 'va district 32: %.4f' % p
@@ -792,7 +822,7 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
     res = []
     feature_results = pd.DataFrame()
     for i in range(1, 101):
-        features, rf = run_prediction(
+        baseline_features, features, rf = run_prediction(
             rf_model,
             data_formatter,
             historical_data=historical_df,
@@ -802,9 +832,10 @@ def make_reg_predictions(prediction_data, historical_df, census_df, models, data
             all_congress=all_congress,
             state='va',
             district_number=i,
-            turnout=None,
+            turnout_delta=None,
             d_spend = d_spend.get(i, None),
             r_spend = r_spend.get(i, None),
+            spend_ratio=None,
             classification=False
         )
         res.append([i, rf])
@@ -830,15 +861,15 @@ def write_predictions(prediction_data, historical_df, census_df, model, data_for
 
     results = []
     state = 'va'
-    turnout_range = [x / 10.0 for x in range(1, 6)]
-    spend_range = [20000, 50000, 100000, 200000, 500000, 1000000]
+    turnout_deltas = [-0.05, -0.04, -0.03, -0.02, -0.01, 0.0, 0.01, 0.02, 0.03, 0.04, 0.05]
+    spend_ratios = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
 
     n = 0
 
     for district in range(1, 101):
-        for turnout in turnout_range:
-            for d_spend in spend_range:
-                _, res = run_prediction(
+        for turnout_delta in turnout_deltas:
+            for spend_ratio in spend_ratios:
+                baseline_features, _, res = run_prediction(
                     model,
                     data_formatter,
                     historical_data=historical_df,
@@ -848,17 +879,38 @@ def write_predictions(prediction_data, historical_df, census_df, model, data_for
                     all_congress=all_congress,
                     state='va',
                     district_number=district,
-                    turnout=turnout,
-                    d_spend=d_spend,
+                    turnout_delta=turnout_delta,
+                    d_spend=d_spend.get(district, None),
                     r_spend=r_spend.get(district, None),
+                    spend_ratio=spend_ratio,
                     classification=classification
                 )
-                results.append([state, district, turnout, d_spend, res])
+                results.append([state,
+                                district,
+                                turnout_delta,
+                                spend_ratio,
+                                baseline_features['turnout'],
+                                baseline_features['historical_d_spend'],
+                                baseline_features['historical_r_spend'],
+                                baseline_features['historical_spend_ratio'],
+                                baseline_features['current_d_spend'],
+                                baseline_features['current_r_spend'],
+                                res])
                 n += 1
                 if n % 100 == 0:
                     print "%d predictions done" % n
 
-    out_df = pd.DataFrame(results, columns=['state', 'district', 'turnout', 'spend', 'prediction'])
+    out_df = pd.DataFrame(results, columns=['state',
+                                            'district',
+                                            'turnout_delta',
+                                            'spend_ratio',
+                                            'historical_turnout',
+                                            'historical_d_spend',
+                                            'historical_r_spend',
+                                            'historical_spend_ratio',
+                                            'current_d_spend',
+                                            'current_r_spend',
+                                            'prediction'])
     out_df.to_csv('predictions.csv', index=False)
 
     return
