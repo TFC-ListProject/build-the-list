@@ -54,7 +54,7 @@ function go_db {
           psql -U "$DB_ROLE" -d "$DB_NAME"_"$ENVIRONMENT"
           ;;
         production)
-          psql -h "$DB_ROLE".czp6qfvbka3n.us-west-2.rds.amazonaws.com \
+          psql -h "$DB_ROLE".cyjskhr1nqie.us-east-2.rds.amazonaws.com \
             -p 5432 \
             -U "$DB_ROLE" \
             -d "$DB_NAME"_"$ENVIRONMENT"
