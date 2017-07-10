@@ -1,1 +1,0 @@
-define(function(t){"use strict";function n(t){this.Klass=n,this.config=i.defaults({},t),this.withSmallData=function(){var t=i.extend({},this.config,s);return new this.Klass(t)},this.build=function(){return this.config}}var i=t("underscore"),s=t("json!../json/stepDataSmall.json");return{StepDataBuilder:n}});

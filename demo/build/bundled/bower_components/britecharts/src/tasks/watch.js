@@ -1,1 +1,0 @@
-module.exports=function(s){"use strict";s.config.set("watch",{scripts:{files:["demos/**/*"],tasks:["moveDemos"]}})};

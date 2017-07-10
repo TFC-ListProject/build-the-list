@@ -1,1 +1,0 @@
-module.exports=function(s){"use strict";require("load-grunt-tasks")(s,{pattern:["grunt-*"]}),s.loadTasks("src/tasks")};

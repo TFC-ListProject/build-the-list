@@ -1,1 +1,0 @@
-var testsContext=require.context("./test/specs",!0,/.spec\.js$/);testsContext.keys().forEach(testsContext);var srcContext=require.context("./src/charts",!0,/\.js$/);srcContext.keys().forEach(srcContext);var jsFixturesContext=require.context("./test/fixtures",!0,/\.js$/);jsFixturesContext.keys().forEach(jsFixturesContext);

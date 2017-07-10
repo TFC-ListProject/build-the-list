@@ -1,1 +1,0 @@
-module.exports=function(s){"use strict";s.config.set("sasslint",{options:{configFile:".sass-lint.yml"},target:["./src/styles/**/*.scss"]}),s.registerTask("lint",["sasslint"])};

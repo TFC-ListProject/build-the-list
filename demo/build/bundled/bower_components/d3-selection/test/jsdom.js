@@ -1,1 +1,0 @@
-var jsdom=require("jsdom");module.exports=function(o){return new jsdom.JSDOM(o).window.document};
