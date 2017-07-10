@@ -10654,7 +10654,7 @@ function MakePromise (asap) {
 		});
 	};
 
-
+	
   return Promise;
 }
 
@@ -13773,7 +13773,7 @@ if (!window.Promise) {
        *
        * @event iron-form-element-unregister
        */
-
+       
       /**
        * The name of this element.
        */
@@ -15666,7 +15666,7 @@ if (!window.Promise) {
       .input-content ::slotted(iron-input) {
         @apply --paper-input-container-shared-input-style;
       }
-
+      
       .input-content ::slotted(input),
       .input-content ::slotted(textarea),
       .input-content ::slotted(iron-autogrow-textarea),
@@ -15679,7 +15679,7 @@ if (!window.Promise) {
       .input-content ::slotted(input)::-webkit-inner-spin-button {
         @apply --paper-input-container-input-webkit-spinner;
       }
-
+      
       .input-content.focused ::slotted(input),
       .input-content.focused ::slotted(textarea),
       .input-content.focused ::slotted(iron-autogrow-textarea),
@@ -15693,7 +15693,7 @@ if (!window.Promise) {
       .input-content.is-invalid ::slotted(.paper-input-input) {
         @apply --paper-input-container-input-invalid;
       }
-
+      
       .prefix ::slotted(*) {
         display: inline-block;
         @apply --paper-font-subhead;
@@ -16213,13 +16213,13 @@ if (!window.Promise) {
     </paper-input-container>
   </template>
 
-
+  
   <template id="v0">
     <input is="iron-input" id="input" slot="input" aria-labelledby$="[[_ariaLabelledBy]]" aria-describedby$="[[_ariaDescribedBy]]" disabled$="[[disabled]]" title$="[[title]]" bind-value="{{value}}" invalid="{{invalid}}" prevent-invalid-input="[[preventInvalidInput]]" allowed-pattern="[[allowedPattern]]" validator="[[validator]]" type$="[[type]]" pattern$="[[pattern]]" required$="[[required]]" autocomplete$="[[autocomplete]]" autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" minlength$="[[minlength]]" maxlength$="[[maxlength]]" min$="[[min]]" max$="[[max]]" step$="[[step]]" name$="[[name]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" list$="[[list]]" size$="[[size]]" autocapitalize$="[[autocapitalize]]" autocorrect$="[[autocorrect]]" on-change="_onChange" tabindex$="[[tabIndex]]" autosave$="[[autosave]]" results$="[[results]]" accept$="[[accept]]" multiple$="[[multiple]]">
   </template>
 
   <template id="v1">
-
+    
     <iron-input bind-value="{{value}}" id="input" slot="input" maxlength$="[[maxlength]]" allowed-pattern="[[allowedPattern]]" invalid="{{invalid}}" validator="[[validator]]">
       <input id="nativeInput" aria-labelledby$="[[_ariaLabelledBy]]" aria-describedby$="[[_ariaDescribedBy]]" disabled$="[[disabled]]" title$="[[title]]" type$="[[type]]" pattern$="[[pattern]]" required$="[[required]]" autocomplete$="[[autocomplete]]" autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" minlength$="[[minlength]]" maxlength$="[[maxlength]]" min$="[[min]]" max$="[[max]]" step$="[[step]]" name$="[[name]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" list$="[[list]]" size$="[[size]]" autocapitalize$="[[autocapitalize]]" autocorrect$="[[autocorrect]]" on-change="_onChange" tabindex$="[[tabIndex]]" autosave$="[[autosave]]" results$="[[results]]" accept$="[[accept]]" multiple$="[[multiple]]">
     </iron-input>
@@ -18675,7 +18675,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
           this._scrollInteractionHandler.bind(this);
         for (var i = 0, l = scrollEvents.length; i < l; i++) {
           // NOTE: browsers that don't support objects as third arg will
-          // interpret it as boolean, hence useCapture = true in this case.
+          // interpret it as boolean, hence useCapture = true in this case. 
           document.addEventListener(scrollEvents[i], this._boundScrollHandler, {
             capture: true,
             passive: false
@@ -20590,15 +20590,15 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
   <template>
     <style include="paper-dropdown-menu-shared-styles"></style>
 
-
+    
     <span role="button"></span>
     <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" dynamic-align="[[dynamicAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}" close-on-activate="" allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]">
-
+      
       <div class="dropdown-trigger" slot="dropdown-trigger">
         <paper-ripple></paper-ripple>
-
+        
         <paper-input type="text" invalid="[[invalid]]" readonly="" disabled="[[disabled]]" value="[[selectedItemLabel]]" placeholder="[[placeholder]]" error-message="[[errorMessage]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]" label="[[label]]">
-
+          
           <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix="" slot="suffix"></iron-icon>
         </paper-input>
       </div>
@@ -20753,7 +20753,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
           dynamicAlign: {
             type: Boolean
           },
-
+            
           /**
            * Whether focus should be restored to the dropdown when the menu closes.
            */
@@ -22728,10 +22728,10 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
       }
     </style>
 
-
+    
     <slot></slot>
 
-
+    
     <form id="helper" action$="[[action]]" method$="[[method]]" enctype$="[[enctype]]"></form>
   </template>
 
@@ -23483,7 +23483,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
         outline: none;
       }
 
-      /**
+      /** 
        * NOTE(keanulee): Though :host-context is not universally supported, some pages
        * still rely on paper-slider being flipped when dir="rtl" is set on body. For full
        * compatability, dir="rtl" must be explicitly set on paper-slider.
@@ -23493,7 +23493,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
         transform: scaleX(-1);
       }
 
-      /**
+      /** 
        * NOTE(keanulee): This is separate from the rule above because :host-context may
        * not be recognized.
        */
@@ -23502,7 +23502,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
         transform: scaleX(-1);
       }
 
-      /**
+      /** 
        * NOTE(keanulee): Needed to override the :host-context rule (where supported)
        * to support LTR sliders in RTL pages.
        */
@@ -26905,7 +26905,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
      }
     </style>
 
-
+    
     <div class="primary" tabindex="0" role="gridcell" on-focus="_onBaitFocus" on-blur="_onBaitBlur"><div aria-hidden="true">&nbsp;</div></div>
     <div class="secondary" tabindex="-1" role="gridcell" on-focus="_onBaitFocus" on-blur="_onBaitBlur"><div aria-hidden="true">&nbsp;</div></div>
 
@@ -27174,7 +27174,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
             // template content leftovers.
             // TODO: implement cell content cleanup when header or footer cells are
             // detached, and enable cell caching for header and footer rows back.
-            disableCache = disableCache ||
+            disableCache = disableCache || 
                 this.is === 'vaadin-grid-table-header-row' ||
                 this.is === 'vaadin-grid-table-footer-row';
 
@@ -30802,11 +30802,11 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
       <vaadin-grid-table-body id="items" slot="items"></vaadin-grid-table-body>
       <vaadin-grid-table-footer id="footer" slot="footer" target="[[_getContentTarget()]]" column-tree="[[_columnTree]]"></vaadin-grid-table-footer>
 
-
+      
       <slot name="footerFocusTrap"></slot>
 
-
-
+      
+      
       <slot></slot>
 
       <vaadin-grid-table-focus-trap id="footerFocusTrap" slot="footerFocusTrap" on-focus-gained="_onFooterFocus" on-focus-lost="_onFocusout">
@@ -31356,8 +31356,8 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
     <div class="paper-material" elevation="3">
       <app-toolbar>
         <div main-title="">Virginia <span hidden$="[[!district.NAME]]"><iron-icon icon="chevron-right"></iron-icon> District [[district.NAME]]</span></div>
-
-
+        
+        
       </app-toolbar>
       <div class="container">
         <div hidden$="[[district.NAME]]">
@@ -31560,7 +31560,7 @@ within `fitInto` boundaries, while preserving the element's CSS margin values.
           return prediction.district == item.name && prediction.turnout_delta == turnout / 100 && prediction.spend_ratio == spend / 100;
         });
         this.set('item.prediction', district.prediction);
-        return district.prediction;
+        return this.computePredictionDisplay_(district.prediction);
       },
 
       computeDistrictPredictions_: function(district, predictions) {
@@ -31901,7 +31901,7 @@ this._y1=this._y2,this._y2=n}};var _w=function t(n){function e(t){return new qc(
         <svg id="svg" viewBox="0 0 500 500" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
     </div>
-
+    
   </template>
   <script>
     Polymer({
